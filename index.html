@@ -8,15 +8,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* Design Variables: Luxury Theme */
         :root { --primary: #1a2a3a; --accent: #cda45e; --bg-light: #f8f9fa; --text-dark: #333; --white: #ffffff; --shadow: 0 10px 30px rgba(0, 0, 0, 0.08); --transition: all 0.3s ease; }
-        /* Chat Variables: WhatsApp Theme */
-        :root { --wa-green: #25d366; --wa-header: #075e54; --wa-bg: #e5ddd5; --wa-me: #dcf8c6; --wa-other: #ffffff; }
+        /* Chat Styles */
+        :root { --wa-green: #25d366; --wa-dark: #075e54; --wa-bg: #e5ddd5; }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
         body { background-color: var(--bg-light); color: var(--text-dark); overflow-x: hidden; padding-bottom: 80px; }
 
-        /* Navbar & Header (Luxury) */
+        /* Navbar */
         .navbar { background-color: var(--white); padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 15px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; height: 70px; }
         .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary); cursor: pointer; }
         .logo i { color: var(--accent); margin-left: 5px; }
@@ -25,11 +24,11 @@
         .nav-links a:hover { color: var(--accent); }
         .badge { background: var(--accent); color: white; padding: 2px 6px; border-radius: 50%; font-size: 0.7rem; vertical-align: top; }
 
+        /* Hero */
         .hero-section { height: 60vh; background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=2000') no-repeat center center/cover; display: flex; align-items: center; justify-content: center; text-align: center; color: white; }
         .cta-btn { padding: 12px 35px; background: var(--accent); color: white; border: none; border-radius: 30px; font-size: 1rem; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .cta-btn:hover { background: #b88e46; transform: translateY(-3px); }
-
-        /* Categories Tabs */
+        
+        /* Products */
         .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
         .categories-tabs { display: flex; justify-content: center; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
         .categories-tabs span { padding: 10px 25px; border: 2px solid #ddd; border-radius: 25px; cursor: pointer; background: white; transition: 0.3s; font-weight: bold; }
@@ -38,7 +37,6 @@
         .sub-categories-tabs span { padding: 6px 15px; background: #eee; border-radius: 15px; cursor: pointer; font-size: 0.9rem; transition: 0.3s; }
         .sub-categories-tabs span.active-sub { background: var(--accent); color: white; }
 
-        /* Products Grid */
         .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
         .product-card { background: var(--white); border-radius: 15px; overflow: hidden; box-shadow: var(--shadow); transition: var(--transition); cursor: pointer; position: relative; }
         .product-card:hover { transform: translateY(-10px); }
@@ -49,31 +47,34 @@
         .current-price { font-size: 1.3rem; font-weight: 700; color: var(--accent); }
         .old-price { text-decoration: line-through; color: #999; margin-right: 10px; font-size: 0.9rem; }
 
-        /* Chat Widget (WhatsApp Style) */
-        .wa-float-btn { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: var(--wa-green); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 3000; cursor: pointer; transition: 0.3s; }
-        .wa-float-btn:hover { transform: scale(1.1); }
+        /* ==================== زر الشات (تعديل جذري) ==================== */
+        .chat-float-container { position: fixed; bottom: 25px; right: 25px; z-index: 10000; display: flex; align-items: center; gap: 10px; cursor: pointer; animation: floatUp 0.5s ease-out; }
+        .chat-label { background: white; padding: 8px 15px; border-radius: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); font-weight: bold; font-size: 0.9rem; color: #333; animation: fadeIn 1s; }
+        .chat-btn-icon { width: 65px; height: 65px; background: var(--wa-green); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 5px 20px rgba(37, 211, 102, 0.4); transition: transform 0.3s; }
+        .chat-float-container:hover .chat-btn-icon { transform: scale(1.1); }
+        @keyframes floatUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        #chatModal { display: none; position: fixed; bottom: 90px; right: 20px; width: 350px; height: 500px; background: var(--wa-bg); border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); z-index: 3001; flex-direction: column; overflow: hidden; background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); }
-        .chat-header { background: var(--wa-header); color: white; padding: 15px; display: flex; align-items: center; gap: 10px; }
-        .chat-header img { width: 40px; height: 40px; border-radius: 50%; background: white; }
-        #chatMessages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-        .msg { padding: 8px 12px; border-radius: 7px; max-width: 80%; font-size: 0.9rem; position: relative; line-height: 1.4; word-wrap: break-word; box-shadow: 0 1px 0.5px rgba(0,0,0,0.13); }
-        .msg-me { align-self: flex-end; background: var(--wa-me); border-top-left-radius: 0; }
-        .msg-other { align-self: flex-start; background: var(--wa-other); border-top-right-radius: 0; }
-        .chat-input { background: #f0f0f0; padding: 10px; display: flex; gap: 8px; align-items: center; }
-        .chat-input input { flex: 1; padding: 10px; border-radius: 20px; border: none; outline: none; }
-        .chat-input button { background: var(--wa-header); color: white; width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        /* Chat Modal (WhatsApp Style) */
+        #chatModal { display: none; position: fixed; bottom: 100px; right: 25px; width: 360px; height: 550px; background: var(--wa-bg); border-radius: 18px; box-shadow: 0 10px 50px rgba(0,0,0,0.3); z-index: 10001; flex-direction: column; overflow: hidden; background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); border: 1px solid #ddd; }
+        .chat-header { background: var(--wa-dark); color: white; padding: 15px; display: flex; align-items: center; gap: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .chat-header img { width: 40px; height: 40px; border-radius: 50%; background: white; padding: 2px; }
+        #chatMessages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .msg { padding: 10px 15px; border-radius: 8px; max-width: 80%; font-size: 0.95rem; line-height: 1.5; position: relative; box-shadow: 0 1px 1px rgba(0,0,0,0.1); }
+        .msg-me { align-self: flex-end; background: #dcf8c6; border-top-left-radius: 0; }
+        .msg-other { align-self: flex-start; background: white; border-top-right-radius: 0; }
+        .chat-input { background: #f0f0f0; padding: 12px; display: flex; gap: 10px; align-items: center; }
+        .chat-input input { flex: 1; padding: 12px; border-radius: 25px; border: none; outline: none; background: white; }
+        .chat-input button { background: var(--wa-dark); color: white; width: 45px; height: 45px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
 
-        /* Cart Sidebar & Modals */
-        .cart-sidebar { position: fixed; top: 0; left: -400px; width: 350px; height: 100%; background: white; z-index: 2500; box-shadow: 5px 0 20px rgba(0,0,0,0.1); transition: 0.4s; display: flex; flex-direction: column; }
-        .cart-sidebar.open { left: 0; }
-        
-        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
-        .modal-content { background: white; margin: 5% auto; width: 95%; max-width: 600px; border-radius: 20px; overflow: hidden; padding: 30px; position: relative; animation: zoomIn 0.3s; }
+        /* Modals & Cart */
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); }
+        .modal-content { background: white; margin: 5% auto; width: 95%; max-width: 600px; border-radius: 15px; padding: 25px; position: relative; animation: zoomIn 0.3s; }
         @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        
+        .cart-sidebar { position: fixed; top: 0; left: -400px; width: 350px; height: 100%; background: white; z-index: 5000; box-shadow: 5px 0 20px rgba(0,0,0,0.1); transition: 0.4s; display: flex; flex-direction: column; }
+        .cart-sidebar.open { left: 0; }
 
-        /* Mobile Responsive */
-        @media(max-width:768px) { .hero-section { height: 50vh; } .hero-content h1 { font-size: 1.8rem; } }
+        @media(max-width: 768px) { .chat-float-container { bottom: 20px; right: 20px; } #chatModal { width: 90%; right: 5%; bottom: 90px; } }
     </style>
 </head>
 <body>
@@ -81,30 +82,35 @@
     <nav class="navbar">
         <div class="logo" onclick="location.reload()"><i class="fa-solid fa-couch"></i> الشماع</div>
         <ul class="nav-links">
-            <li><a onclick="document.getElementById('homeSection').scrollIntoView()">الرئيسية</a></li>
+            <li><a onclick="document.getElementById('homeSection').scrollIntoView({behavior:'smooth'})">الرئيسية</a></li>
             <li><a onclick="toggleCart()">السلة <span id="cartCount" class="badge">0</span></a></li>
             <li><a onclick="openProfile()">حسابي</a></li>
         </ul>
     </nav>
 
-    <!-- Chat Button -->
-    <div class="wa-float-btn" onclick="toggleChat()"><i class="fa-brands fa-whatsapp"></i></div>
+    <!-- زر الشات الجديد (واضح جداً) -->
+    <div class="chat-float-container" onclick="toggleChat()">
+        <div class="chat-label">تواصل معنا</div>
+        <div class="chat-btn-icon"><i class="fa-brands fa-whatsapp"></i></div>
+    </div>
 
-    <!-- Chat Modal -->
+    <!-- نافذة الشات -->
     <div id="chatModal">
         <div class="chat-header">
             <img src="https://cdn-icons-png.flaticon.com/512/4712/4712035.png" alt="Admin">
             <div>
                 <div style="font-weight:bold;">خدمة العملاء</div>
-                <div style="font-size:0.75rem;">متصل الآن</div>
+                <div style="font-size:0.75rem; opacity:0.9;">متصل الآن</div>
             </div>
             <i class="fa-solid fa-xmark" style="margin-right:auto; cursor:pointer;" onclick="toggleChat()"></i>
         </div>
         <div id="chatMessages">
-            <p style="text-align:center; color:#555; font-size:0.8rem; margin-top:20px;">ابدأ المحادثة معنا</p>
+            <div style="text-align:center; padding:20px; background:#fff; border-radius:10px; font-size:0.85rem; color:#555; opacity:0.9;">
+                أهلاً بك في معرض الشماع! <br> كيف يمكننا مساعدتك في اختيار أثاث منزلك؟
+            </div>
         </div>
         <div class="chat-input">
-            <input type="text" id="chatInput" placeholder="اكتب رسالة...">
+            <input type="text" id="chatInput" placeholder="اكتب رسالتك..." onkeypress="if(event.key==='Enter') sendChat()">
             <button onclick="sendChat()"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
     </div>
@@ -112,37 +118,28 @@
     <header class="hero-section">
         <div class="hero-content">
             <h1>فخامة منزلك تبدأ من هنا</h1>
-            <p style="margin-bottom:20px;">أحدث صيحات الأثاث العصري والكلاسيكي</p>
-            <button class="cta-btn" onclick="document.getElementById('homeSection').scrollIntoView()">تسوق الآن</button>
+            <p style="margin-bottom:20px;">تصاميم عصرية تجمع بين الراحة والأناقة</p>
+            <button class="cta-btn" onclick="document.getElementById('homeSection').scrollIntoView({behavior:'smooth'})">تسوق الآن</button>
         </div>
     </header>
 
     <div class="container">
         <section id="homeSection">
-            <div style="text-align:center; margin-bottom:40px;">
-                <h2>تشكيلة المعرض</h2>
-                <div style="width:60px; height:3px; background:var(--accent); margin:10px auto;"></div>
-            </div>
-            
-            <!-- Filters -->
+            <div style="text-align:center; margin-bottom:40px;"><h2>المعروضات</h2><div style="width:60px; height:3px; background:var(--accent); margin:10px auto;"></div></div>
             <div id="mainCategoriesTabs" class="categories-tabs"></div>
             <div id="subCategoriesTabs" class="sub-categories-tabs"></div>
-
-            <!-- Products -->
-            <div class="products-grid" id="productsContainer">
-                <!-- Products loaded via JS -->
-            </div>
+            <div class="products-grid" id="productsContainer"></div>
         </section>
     </div>
 
-    <!-- Product Details Modal -->
+    <!-- Product Modal -->
     <div id="productModal" class="modal">
         <div class="modal-content">
             <span onclick="document.getElementById('productModal').style.display='none'" style="position:absolute; left:20px; top:20px; cursor:pointer; font-size:1.5rem;"><i class="fa-solid fa-xmark"></i></span>
             <div style="text-align:center;">
-                <img id="mImg" src="" style="width:100%; height:250px; object-fit:cover; border-radius:10px; margin-bottom:15px;">
+                <img id="mImg" src="" style="width:100%; height:280px; object-fit:cover; border-radius:10px; margin-bottom:15px;">
                 <h2 id="mTitle" style="color:var(--primary); margin-bottom:10px;"></h2>
-                <p id="mDesc" style="color:#666; line-height:1.6; margin-bottom:15px;"></p>
+                <p id="mDesc" style="color:#666; line-height:1.6; margin-bottom:20px;"></p>
                 <div style="margin-bottom:20px;">
                     <span id="mPrice" class="current-price"></span> 
                     <span id="mOldPrice" class="old-price"></span>
@@ -152,11 +149,11 @@
         </div>
     </div>
 
-    <!-- Profile Modal (Orders) -->
+    <!-- Profile Modal -->
     <div id="profileModal" class="modal">
         <div class="modal-content">
             <span onclick="document.getElementById('profileModal').style.display='none'" style="position:absolute; left:20px; top:20px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></span>
-            <h3 style="color:var(--primary); border-bottom:2px solid var(--accent); display:inline-block; padding-bottom:5px;">سجل طلباتي</h3>
+            <h3>طلباتي السابقة</h3>
             <div id="myOrdersList" style="margin-top:20px; max-height:400px; overflow-y:auto;"></div>
         </div>
     </div>
@@ -169,9 +166,7 @@
         </div>
         <div id="cartItems" style="flex:1; padding:20px; overflow-y:auto;"></div>
         <div style="padding:20px; border-top:1px solid #eee; background:#f9f9f9;">
-            <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-weight:bold;">
-                <span>المجموع:</span><span id="totalPrice" style="color:var(--accent)">0 ج.م</span>
-            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-weight:bold;"><span>المجموع:</span><span id="totalPrice" style="color:var(--accent)">0 ج.م</span></div>
             <button class="cta-btn" style="width:100%;" onclick="checkout()">تأكيد الطلب</button>
         </div>
     </div>
@@ -184,265 +179,177 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // State Variables
-        let productsData = [];
-        let categoriesData = [];
-        let currentMainCat = 'all';
-        let currentSubCat = 'all';
+        let productsData = [], categoriesData = [];
+        let currentMainCat = 'all', currentSubCat = 'all';
         let currentProduct = null;
-        
-        // Identity (Phone)
-        let userPhone = localStorage.getItem('shamma_phone');
-        if(!userPhone) {
-            userPhone = 'User_' + Math.floor(Math.random() * 100000);
-            localStorage.setItem('shamma_phone', userPhone);
-        }
+        let userPhone = localStorage.getItem('shamma_phone') || 'Guest_' + Math.floor(Math.random()*100000);
+        if(!localStorage.getItem('shamma_phone')) localStorage.setItem('shamma_phone', userPhone);
 
-        // ================= REAL-TIME LISTENERS =================
-        
-        // 1. استماع للمنتجات (تحديث فوري بدون ريفريش)
-        onSnapshot(collection(db, "products"), (snapshot) => {
-            productsData = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
-            renderProducts(); // إعادة رسم المنتجات فوراً عند أي تغيير
+        // Real-time Listeners
+        onSnapshot(collection(db, "products"), (snap) => {
+            productsData = snap.docs.map(doc => ({id: doc.id, ...doc.data()}));
+            renderProducts();
         });
 
-        // 2. استماع للأقسام
-        onSnapshot(collection(db, "categories"), (snapshot) => {
-            categoriesData = snapshot.docs.map(doc => doc.data());
+        onSnapshot(collection(db, "categories"), (snap) => {
+            categoriesData = snap.docs.map(doc => doc.data());
             renderCategories();
         });
 
-        // 3. استماع للشات (واتساب ستايل)
-        const chatQ = query(collection(db, "chats"), where("chatId", "==", userPhone));
-        onSnapshot(chatQ, (snapshot) => {
-            const chatBox = document.getElementById('chatMessages');
+        // Chat Listener
+        onSnapshot(query(collection(db, "chats"), where("chatId", "==", userPhone)), (snap) => {
+            const box = document.getElementById('chatMessages');
             let msgs = [];
-            snapshot.forEach(doc => msgs.push(doc.data()));
-            msgs.sort((a,b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
+            snap.forEach(d => msgs.push(d.data()));
+            msgs.sort((a,b) => (a.timestamp?.seconds||0)-(b.timestamp?.seconds||0));
             
-            chatBox.innerHTML = '';
+            // Keep the welcome message if empty, else clear
+            if(msgs.length > 0) box.innerHTML = '';
+            
             msgs.forEach(m => {
                 const cls = m.sender === 'customer' ? 'msg-me' : 'msg-other';
-                chatBox.innerHTML += `<div class="msg ${cls}">${m.text}</div>`;
+                box.innerHTML += `<div class="msg ${cls}">${m.text}</div>`;
             });
-            chatBox.scrollTop = chatBox.scrollHeight;
+            box.scrollTop = box.scrollHeight;
         });
 
-        // ================= RENDERING LOGIC =================
-
+        // Functions
         function renderCategories() {
             const t = document.getElementById('mainCategoriesTabs');
-            t.innerHTML = `<span class="${currentMainCat==='all'?'active-cat':''}" onclick="setMainCat('all')">الكل</span>`;
-            categoriesData.forEach(c => {
-                t.innerHTML += `<span class="${currentMainCat===c.name?'active-cat':''}" onclick="setMainCat('${c.name}')">${c.name}</span>`;
-            });
+            t.innerHTML = `<span class="${currentMainCat==='all'?'active-cat':''}" onclick="setMain('all')">الكل</span>`;
+            categoriesData.forEach(c => t.innerHTML += `<span class="${currentMainCat===c.name?'active-cat':''}" onclick="setMain('${c.name}')">${c.name}</span>`);
         }
 
-        window.setMainCat = (name) => {
-            currentMainCat = name;
-            currentSubCat = 'all'; // Reset sub
+        window.setMain = (n) => {
+            currentMainCat = n; currentSubCat = 'all';
             renderCategories();
-            
-            // Render Sub Cats based on selection
-            const s = document.getElementById('subCategoriesTabs');
-            s.innerHTML = '';
-            if(name !== 'all') {
-                const catObj = categoriesData.find(c => c.name === name);
-                if(catObj && catObj.subs) {
-                    s.innerHTML = `<span class="active-sub" onclick="setSubCat('all', this)">الكل</span>`;
-                    catObj.subs.forEach(sub => {
-                        s.innerHTML += `<span onclick="setSubCat('${sub}', this)">${sub}</span>`;
-                    });
+            const s = document.getElementById('subCategoriesTabs'); s.innerHTML = '';
+            if(n !== 'all') {
+                const cat = categoriesData.find(c => c.name === n);
+                if(cat && cat.subs) {
+                    s.innerHTML = `<span class="active-sub" onclick="setSub('all', this)">الكل</span>`;
+                    cat.subs.forEach(sb => s.innerHTML += `<span onclick="setSub('${sb}', this)">${sb}</span>`);
                 }
             }
             renderProducts();
         }
 
-        window.setSubCat = (name, el) => {
-            currentSubCat = name;
+        window.setSub = (n, el) => {
+            currentSubCat = n;
             document.querySelectorAll('#subCategoriesTabs span').forEach(e => e.classList.remove('active-sub'));
             el.classList.add('active-sub');
             renderProducts();
         }
 
         function renderProducts() {
-            const container = document.getElementById('productsContainer');
-            container.innerHTML = '';
+            const c = document.getElementById('productsContainer');
+            c.innerHTML = '';
+            let f = productsData;
+            if(currentMainCat !== 'all') f = f.filter(p => p.category === currentMainCat);
+            if(currentSubCat !== 'all') f = f.filter(p => p.subCategory === currentSubCat);
             
-            let filtered = productsData;
-            if(currentMainCat !== 'all') filtered = filtered.filter(p => p.category === currentMainCat);
-            if(currentSubCat !== 'all') filtered = filtered.filter(p => p.subCategory === currentSubCat);
+            if(f.length === 0) { c.innerHTML = '<p style="text-align:center; grid-column:1/-1;">لا توجد منتجات حالياً</p>'; return; }
 
-            if(filtered.length === 0) {
-                container.innerHTML = '<p style="grid-column:1/-1; text-align:center;">لا توجد منتجات متاحة حالياً</p>';
-                return;
-            }
-
-            filtered.forEach(p => {
-                const finalPrice = p.discount ? p.price - (p.price * p.discount / 100) : p.price;
+            f.forEach(p => {
+                const fp = p.discount ? p.price - (p.price * p.discount / 100) : p.price;
                 const pStr = encodeURIComponent(JSON.stringify(p));
-                container.innerHTML += `
-                    <div class="product-card" onclick="openProduct('${pStr}')">
+                c.innerHTML += `
+                    <div class="product-card" onclick="openP('${pStr}')">
                         <div class="img-container">
-                            ${p.discount > 0 ? `<span class="discount-badge">خصم ${p.discount}%</span>` : ''}
+                            ${p.discount > 0 ? `<span class="discount-badge">-${p.discount}%</span>` : ''}
                             <img src="${p.img}">
                         </div>
                         <div class="p-info">
                             <h3>${p.name}</h3>
-                            <div>
-                                <span class="current-price">${Math.floor(finalPrice)} ج.م</span>
-                                ${p.discount > 0 ? `<span class="old-price">${p.price}</span>` : ''}
-                            </div>
+                            <div><span class="current-price">${Math.floor(fp)} ج.م</span> ${p.discount>0?`<span class="old-price">${p.price}</span>`:''}</div>
                         </div>
                     </div>`;
             });
         }
 
-        // ================= INTERACTION LOGIC =================
-
-        window.openProduct = (str) => {
-            const p = JSON.parse(decodeURIComponent(str));
+        window.openP = (s) => {
+            const p = JSON.parse(decodeURIComponent(s));
             currentProduct = p;
             document.getElementById('mImg').src = p.img;
             document.getElementById('mTitle').innerText = p.name;
             document.getElementById('mDesc').innerText = p.desc;
-            const fp = p.discount ? p.price - (p.price * p.discount / 100) : p.price;
-            document.getElementById('mPrice').innerText = Math.floor(fp) + " ج.م";
-            document.getElementById('mOldPrice').innerText = p.discount ? p.price : "";
+            const fp = p.discount ? p.price - (p.price * p.discount/100) : p.price;
+            document.getElementById('mPrice').innerText = Math.floor(fp)+" ج.م";
+            document.getElementById('mOldPrice').innerText = p.discount ? p.price : '';
             document.getElementById('productModal').style.display = 'block';
         }
 
         window.addToCart = () => {
-            let cart = JSON.parse(localStorage.getItem('shamma_cart')) || [];
-            cart.push({
-                name: currentProduct.name,
-                price: document.getElementById('mPrice').innerText,
-                img: currentProduct.img
-            });
-            localStorage.setItem('shamma_cart', JSON.stringify(cart));
+            let c = JSON.parse(localStorage.getItem('shamma_cart')) || [];
+            c.push({name:currentProduct.name, price:document.getElementById('mPrice').innerText, img:currentProduct.img});
+            localStorage.setItem('shamma_cart', JSON.stringify(c));
             document.getElementById('productModal').style.display = 'none';
-            updateCart();
-            window.toggleCart();
+            updCart(); window.toggleCart();
         }
 
-        window.updateCart = () => {
-            const cart = JSON.parse(localStorage.getItem('shamma_cart')) || [];
-            document.getElementById('cartCount').innerText = cart.length;
-            const list = document.getElementById('cartItems');
-            list.innerHTML = '';
-            let total = 0;
-            cart.forEach((item, index) => {
-                let priceNum = parseFloat(item.price.replace(/[^0-9.]/g, ''));
-                total += priceNum;
-                list.innerHTML += `
-                    <div style="display:flex; gap:10px; margin-bottom:15px; align-items:center;">
-                        <img src="${item.img}" style="width:50px; height:50px; object-fit:cover; border-radius:5px;">
-                        <div style="flex:1;">
-                            <b>${item.name}</b><br>
-                            <span style="color:var(--accent)">${item.price}</span>
-                        </div>
-                        <i class="fa-solid fa-trash" style="color:#e74c3c; cursor:pointer;" onclick="remItem(${index})"></i>
-                    </div>`;
+        window.updCart = () => {
+            const c = JSON.parse(localStorage.getItem('shamma_cart')) || [];
+            document.getElementById('cartCount').innerText = c.length;
+            const d = document.getElementById('cartItems'); d.innerHTML = '';
+            let t = 0;
+            c.forEach((i,x) => {
+                t += parseFloat(i.price.replace(/[^0-9.]/g, ''));
+                d.innerHTML += `<div style="display:flex; gap:10px; margin-bottom:10px; align-items:center;">
+                    <img src="${i.img}" width="50" style="border-radius:5px;">
+                    <div style="flex:1"><b>${i.name}</b><br>${i.price}</div>
+                    <i class="fa-solid fa-trash" style="color:red; cursor:pointer" onclick="remItem(${x})"></i>
+                </div>`;
             });
-            document.getElementById('totalPrice').innerText = Math.floor(total) + " ج.م";
+            document.getElementById('totalPrice').innerText = Math.floor(t)+" ج.م";
         }
 
-        window.remItem = (index) => {
-            let cart = JSON.parse(localStorage.getItem('shamma_cart'));
-            cart.splice(index, 1);
-            localStorage.setItem('shamma_cart', JSON.stringify(cart));
-            updateCart();
+        window.remItem = (x) => {
+            let c = JSON.parse(localStorage.getItem('shamma_cart')); c.splice(x,1);
+            localStorage.setItem('shamma_cart', JSON.stringify(c)); updCart();
         }
-
-        window.toggleCart = () => {
-            const s = document.getElementById('cartSidebar');
-            s.classList.toggle('open');
-        }
+        window.toggleCart = () => document.getElementById('cartSidebar').classList.toggle('open');
 
         window.checkout = async () => {
-            const cart = JSON.parse(localStorage.getItem('shamma_cart')) || [];
-            if(cart.length === 0) return alert('السلة فارغة');
+            const n = prompt("الاسم:"); if(!n) return;
+            const p = prompt("الهاتف:"); if(!p) return;
+            const a = prompt("العنوان:");
+            localStorage.setItem('shamma_phone', p); // Update phone for chat
             
-            const name = prompt("الاسم بالكامل:");
-            if(!name) return;
-            const phone = prompt("رقم الهاتف:");
-            if(!phone) return;
-            const address = prompt("العنوان:");
-
-            // Save phone for chat
-            localStorage.setItem('shamma_phone', phone);
-
+            const c = JSON.parse(localStorage.getItem('shamma_cart'));
             await addDoc(collection(db, "orders"), {
-                customerName: name,
-                customerPhone: phone,
-                customerAddress: address,
-                items: cart,
-                totalPrice: document.getElementById('totalPrice').innerText,
-                date: Date.now(),
-                status: 'قيد المراجعة'
+                customerName:n, customerPhone:p, customerAddress:a, items:c,
+                totalPrice:document.getElementById('totalPrice').innerText, date:Date.now(), status:'قيد المراجعة'
             });
-
-            localStorage.removeItem('shamma_cart');
-            updateCart();
-            window.toggleCart();
-            alert("تم إرسال الطلب بنجاح! سنتواصل معك قريباً.");
+            localStorage.removeItem('shamma_cart'); updCart(); window.toggleCart(); alert("تم الطلب بنجاح");
         }
 
-        // Chat
         window.toggleChat = () => {
             const m = document.getElementById('chatModal');
-            m.style.display = m.style.display === 'flex' ? 'none' : 'flex';
+            m.style.display = m.style.display==='flex' ? 'none' : 'flex';
         }
-
         window.sendChat = async () => {
-            const inp = document.getElementById('chatInput');
-            if(!inp.value.trim()) return;
-            const txt = inp.value;
-            inp.value = '';
+            const i = document.getElementById('chatInput');
+            if(!i.value) return;
+            const t = i.value; i.value = '';
             await addDoc(collection(db, "chats"), {
-                chatId: userPhone,
-                text: txt,
-                sender: 'customer',
-                timestamp: serverTimestamp(),
-                customerName: localStorage.getItem('shamma_name') || 'عميل'
+                chatId: userPhone, text:t, sender:'customer', timestamp:serverTimestamp(), customerName: localStorage.getItem('shamma_name') || 'عميل'
             });
         }
 
-        // Profile
         window.openProfile = async () => {
             const p = localStorage.getItem('shamma_phone');
-            const list = document.getElementById('myOrdersList');
-            list.innerHTML = '<p style="text-align:center;">جاري التحميل...</p>';
-            document.getElementById('profileModal').style.display = 'block';
-
-            if(!p || p.startsWith('User_')) {
-                list.innerHTML = '<p style="text-align:center; padding:10px;">قم بإجراء طلب أولاً لتتمكن من متابعة طلباتك</p>';
-                return;
-            }
-
+            if(!p || p.startsWith('Guest')) { alert("سجل طلب أولاً"); return; }
             const q = query(collection(db, "orders"), where("customerPhone", "==", p));
             const snap = await getDocs(q);
-            list.innerHTML = '';
-            if(snap.empty) {
-                list.innerHTML = '<p style="text-align:center;">لا توجد طلبات سابقة</p>';
-                return;
-            }
+            const l = document.getElementById('myOrdersList'); l.innerHTML = '';
             snap.forEach(d => {
                 const o = d.data();
-                list.innerHTML += `
-                    <div style="background:#f4f4f4; padding:10px; margin-bottom:10px; border-radius:8px; border-right:4px solid var(--accent);">
-                        <div style="display:flex; justify-content:space-between; font-weight:bold;">
-                            <span>${new Date(o.date).toLocaleDateString()}</span>
-                            <span>${o.totalPrice}</span>
-                        </div>
-                        <div style="color:#666; font-size:0.9rem;">${o.items.length} منتجات</div>
-                        <div style="color:var(--primary); font-weight:bold; margin-top:5px;">الحالة: ${o.status}</div>
-                    </div>`;
+                l.innerHTML += `<div style="background:#f5f5f5; padding:10px; margin-bottom:10px; border-radius:8px;">${new Date(o.date).toLocaleDateString()} - ${o.status}<br><b>${o.totalPrice}</b></div>`;
             });
+            document.getElementById('profileModal').style.display = 'block';
         }
 
-        // Init
-        updateCart();
+        updCart();
     </script>
 </body>
 </html>
