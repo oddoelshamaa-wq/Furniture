@@ -13,7 +13,7 @@
             --wa-sidebar: #111b21; --wa-chat: #0b141a; --wa-green: #00a884;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
-        body { background: var(--bg); display: none; /* مخفي حتى التحقق من الدخول */ height: 100vh; overflow: hidden; color: var(--text); }
+        body { background: var(--bg); display: none; /* مخفي للحماية */ height: 100vh; overflow: hidden; color: var(--text); }
 
         /* Sidebar */
         .sidebar { width: 260px; background: var(--primary); color: white; display: flex; flex-direction: column; box-shadow: 4px 0 15px rgba(0,0,0,0.1); z-index: 100; transition: 0.3s; }
@@ -30,7 +30,7 @@
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         .page-title { font-size: 1.8rem; font-weight: bold; color: var(--primary); }
         
-        /* Sections Logic */
+        /* Sections */
         .section { display: none; animation: fadeIn 0.4s ease; }
         .section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -54,7 +54,7 @@
         .btn-edit { background: #3498db; } .btn-delete { background: var(--danger); } .btn-view { background: var(--accent); }
         .action-btn:hover { transform: scale(1.1); }
 
-        /* Product Form Modal */
+        /* Modals */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
         .modal-content { background: white; width: 95%; max-width: 700px; padding: 30px; border-radius: 20px; max-height: 90vh; overflow-y: auto; position: relative; }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
@@ -66,13 +66,13 @@
         .btn-submit:hover { background: var(--secondary); }
         .img-preview { width: 100px; height: 100px; border-radius: 10px; object-fit: cover; border: 2px solid #ddd; display: none; margin-top: 10px; }
 
-        /* Order Invoice Modal */
+        /* Invoice */
         .invoice-box { border: 1px solid #eee; padding: 20px; border-radius: 10px; margin-top: 20px; background: #fdfdfd; }
         .invoice-header { display: flex; justify-content: space-between; border-bottom: 2px solid var(--accent); padding-bottom: 10px; margin-bottom: 15px; }
         .invoice-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed #eee; }
         .invoice-total { font-size: 1.2rem; font-weight: bold; text-align: left; margin-top: 20px; color: var(--primary); }
 
-        /* WhatsApp Chat */
+        /* Chat */
         .chat-layout { display: flex; height: calc(100vh - 100px); background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 25px rgba(0,0,0,0.1); }
         .chat-list { width: 320px; background: var(--wa-sidebar); border-left: 1px solid #333; overflow-y: auto; }
         .chat-user { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; color: #e9edef; }
@@ -94,14 +94,12 @@
 </head>
 <body>
 
-    <!-- Sound Activation Overlay -->
     <div id="soundOverlay">
         <h1 style="color:var(--accent); font-size:2.5rem; margin-bottom:10px;">نظام إدارة الشماع</h1>
         <p>لبدء تلقي الطلبات والرسائل بصوت التنبيه، اضغط هنا</p>
         <button class="start-btn" onclick="initSystem()">بدء العمل الآن <i class="fa-solid fa-play"></i></button>
     </div>
 
-    <!-- Sidebar -->
     <aside class="sidebar">
         <div class="brand"><i class="fa-solid fa-couch"></i> الشماع</div>
         <div class="menu">
@@ -114,16 +112,13 @@
         </div>
     </aside>
 
-    <!-- Main Content -->
     <main class="main-content">
-        
-        <!-- Dashboard Section -->
+        <!-- Dashboard -->
         <section id="dashboard" class="section active">
             <div class="header-top">
                 <div class="page-title">لوحة القيادة</div>
                 <div><span id="dateDisplay"></span></div>
             </div>
-            
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-info"><h3>إجمالي المبيعات</h3><h1 id="totalSales" style="color:var(--success)">0 ج.م</h1></div>
@@ -138,7 +133,6 @@
                     <div class="stat-icon"><i class="fa-solid fa-couch"></i></div>
                 </div>
             </div>
-
             <div style="background: white; padding: 20px; border-radius: 15px; margin-top: 20px;">
                 <h3 style="margin-bottom: 15px; color:var(--primary);">آخر الطلبات الواصلة</h3>
                 <div class="table-container">
@@ -150,13 +144,12 @@
             </div>
         </section>
 
-        <!-- Products Management Section -->
+        <!-- Products -->
         <section id="products" class="section">
             <div class="header-top">
                 <div class="page-title">إدارة المنتجات</div>
                 <button onclick="openProductModal()" style="background:var(--primary); color:white; border:none; padding:10px 25px; border-radius:8px; cursor:pointer; font-weight:bold;"><i class="fa-solid fa-plus"></i> إضافة منتج جديد</button>
             </div>
-
             <div class="table-container">
                 <table>
                     <thead><tr><th>الصورة</th><th>اسم المنتج</th><th>القسم</th><th>السعر</th><th>الخصم</th><th>إجراءات</th></tr></thead>
@@ -165,7 +158,7 @@
             </div>
         </section>
 
-        <!-- Orders Section -->
+        <!-- Orders -->
         <section id="orders" class="section">
             <div class="page-title" style="margin-bottom:20px;">سجل الطلبات الكامل</div>
             <div class="table-container">
@@ -176,7 +169,7 @@
             </div>
         </section>
 
-        <!-- Chat Section -->
+        <!-- Chat -->
         <section id="chat" class="section">
             <div class="chat-layout">
                 <div class="chat-list" id="chatUsersList"></div>
@@ -192,7 +185,7 @@
             </div>
         </section>
 
-        <!-- Categories Section -->
+        <!-- Categories -->
         <section id="categories" class="section">
             <div class="page-title">الأقسام والفروع</div>
             <div style="background:white; padding:20px; border-radius:15px; margin-top:20px; max-width:600px;">
@@ -204,10 +197,9 @@
             </div>
             <div id="catsManager" style="margin-top:20px; display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:20px;"></div>
         </section>
-
     </main>
 
-    <!-- Product ADD/EDIT Modal -->
+    <!-- Modal: Add/Edit Product -->
     <div id="productModal" class="modal">
         <div class="modal-content">
             <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
@@ -252,7 +244,7 @@
         </div>
     </div>
 
-    <!-- Order Details Modal -->
+    <!-- Modal: Invoice -->
     <div id="orderDetailModal" class="modal">
         <div class="modal-content" style="max-width:500px;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -275,25 +267,17 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
         
-        // ---------------- AUTH CHECK ----------------
-        // هذا الجزء يمنع فتح الصفحة إلا للمسجلين دخولهم
+        // --- Security Check ---
         onAuthStateChanged(auth, (user) => {
-            if (user) {
-                document.body.style.display = 'flex'; // إظهار الموقع
-            } else {
-                window.location.href = 'login.html'; // طرد المستخدم
-            }
+            if (user) document.body.style.display = 'flex';
+            else window.location.href = 'login.html';
         });
 
-        window.logout = () => {
-            signOut(auth).then(() => window.location.href = 'login.html');
-        }
-        // --------------------------------------------
+        window.logout = () => signOut(auth).then(() => window.location.href = 'login.html');
+        // ----------------------
 
         let allProducts = [], allCategories = [], activeChatId = null;
         const audio = document.getElementById('alertSound');
-
-        // Initial Setup
         document.getElementById('dateDisplay').innerText = new Date().toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
         window.initSystem = () => {
@@ -305,7 +289,6 @@
         }
         const playAlert = () => { audio.currentTime = 0; audio.play().catch(e=>{}); }
 
-        // Navigation
         window.nav = (id, btn) => {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
@@ -313,26 +296,21 @@
             btn.classList.add('active');
         }
 
-        // ---------------- DASHBOARD & ORDERS ----------------
+        // --- Orders Logic ---
         onSnapshot(query(collection(db, "orders"), orderBy("date", "desc")), (snap) => {
             const dashTable = document.getElementById('dashOrdersBody');
             const allTable = document.getElementById('allOrdersBody');
             dashTable.innerHTML = ''; allTable.innerHTML = '';
-            
             let totalSales = 0, count = 0;
             
             snap.docChanges().forEach(c => { if(c.type === 'added' && (Date.now() - c.doc.data().date) < 60000) playAlert(); });
 
             snap.forEach(d => {
-                const o = d.data();
-                count++;
+                const o = d.data(); count++;
                 if(o.status === 'تم التوصيل') totalSales += parseFloat(o.totalPrice.replace(/[^0-9.]/g,'')) || 0;
-
                 let badgeClass = o.status === 'تم التوصيل' ? 'bg-green' : (o.status === 'قيد المراجعة' ? 'bg-orange' : 'bg-blue');
                 
-                if(count <= 5) {
-                    dashTable.innerHTML += `<tr><td>#${d.id.slice(0,5)}</td><td>${o.customerName}</td><td>${o.totalPrice}</td><td><span class="status-badge ${badgeClass}">${o.status}</span></td></tr>`;
-                }
+                if(count <= 5) dashTable.innerHTML += `<tr><td>#${d.id.slice(0,5)}</td><td>${o.customerName}</td><td>${o.totalPrice}</td><td><span class="status-badge ${badgeClass}">${o.status}</span></td></tr>`;
 
                 const orderData = encodeURIComponent(JSON.stringify(o));
                 allTable.innerHTML += `
@@ -342,7 +320,7 @@
                         <td>${o.customerPhone}</td>
                         <td style="font-weight:bold; color:var(--success)">${o.totalPrice}</td>
                         <td>
-                            <select onchange="updateStatus('${d.id}', this.value)" style="padding:5px; border-radius:5px; border:1px solid #ddd;">
+                            <select onchange="updateStatus('${d.id}', this.value)" style="padding:5px; border-radius:5px;">
                                 <option ${o.status=='قيد المراجعة'?'selected':''}>قيد المراجعة</option>
                                 <option ${o.status=='جاري التحضير'?'selected':''}>جاري التحضير</option>
                                 <option ${o.status=='خرج للشحن'?'selected':''}>خرج للشحن</option>
@@ -364,54 +342,29 @@
             const o = JSON.parse(decodeURIComponent(dataStr));
             const itemsHtml = o.items.map(i => `<div class="invoice-item"><span>${i.name}</span><span>${i.price}</span></div>`).join('');
             document.getElementById('invoiceContent').innerHTML = `
-                <div class="invoice-header">
-                    <div><strong>العميل:</strong> ${o.customerName}<br><strong>الهاتف:</strong> ${o.customerPhone}</div>
-                    <div style="text-align:left"><strong>التاريخ:</strong> ${new Date(o.date).toLocaleDateString()}</div>
-                </div>
+                <div class="invoice-header"><div><strong>العميل:</strong> ${o.customerName}<br><strong>الهاتف:</strong> ${o.customerPhone}</div><div style="text-align:left"><strong>التاريخ:</strong> ${new Date(o.date).toLocaleDateString()}</div></div>
                 <div style="background:#f9f9f9; padding:10px; margin-bottom:15px; border-radius:5px;"><strong>العنوان:</strong> ${o.customerAddress}</div>
-                <div><strong>المنتجات:</strong></div>
-                ${itemsHtml}
-                <div class="invoice-total">الإجمالي المستحق: ${o.totalPrice}</div>
-            `;
+                <div><strong>المنتجات:</strong></div>${itemsHtml}<div class="invoice-total">الإجمالي: ${o.totalPrice}</div>`;
             document.getElementById('orderDetailModal').style.display = 'flex';
         }
 
-        // ---------------- PRODUCTS ----------------
+        // --- Products Logic ---
         onSnapshot(collection(db, "products"), (snap) => {
             allProducts = snap.docs.map(d => ({id:d.id, ...d.data()}));
             document.getElementById('totalProducts').innerText = allProducts.length;
-            renderProductsTable();
-        });
-
-        function renderProductsTable() {
-            const tbody = document.getElementById('productsTableBody');
-            tbody.innerHTML = '';
+            const tbody = document.getElementById('productsTableBody'); tbody.innerHTML = '';
             allProducts.forEach(p => {
                 const pStr = encodeURIComponent(JSON.stringify(p));
-                tbody.innerHTML += `
-                    <tr>
-                        <td><img src="${p.img}" width="50" height="50" style="border-radius:5px; object-fit:cover;"></td>
-                        <td>${p.name}</td>
-                        <td>${p.category} - ${p.subCategory||'عام'}</td>
-                        <td>${p.price} ج.م</td>
-                        <td>${p.discount > 0 ? p.discount + '%' : '-'}</td>
-                        <td>
-                            <button class="action-btn btn-edit" onclick="editProduct('${pStr}')"><i class="fa-solid fa-pen"></i></button>
-                            <button class="action-btn btn-delete" onclick="deleteProduct('${p.id}')"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    </tr>`;
+                tbody.innerHTML += `<tr>
+                    <td><img src="${p.img}" width="50" height="50" style="border-radius:5px; object-fit:cover;"></td>
+                    <td>${p.name}</td><td>${p.category}</td><td>${p.price} ج.م</td><td>${p.discount > 0 ? p.discount + '%' : '-'}</td>
+                    <td><button class="action-btn btn-edit" onclick="editProduct('${pStr}')"><i class="fa-solid fa-pen"></i></button><button class="action-btn btn-delete" onclick="deleteProduct('${p.id}')"><i class="fa-solid fa-trash"></i></button></td>
+                </tr>`;
             });
-        }
+        });
 
-        window.openProductModal = () => {
-            document.getElementById('productForm').reset();
-            document.getElementById('editProductId').value = '';
-            document.getElementById('modalTitle').innerText = 'إضافة منتج جديد';
-            document.getElementById('imgPreview').style.display = 'none';
-            document.getElementById('productModal').style.display = 'flex';
-        }
+        window.openProductModal = () => { document.getElementById('productForm').reset(); document.getElementById('editProductId').value = ''; document.getElementById('modalTitle').innerText = 'إضافة منتج جديد'; document.getElementById('imgPreview').style.display = 'none'; document.getElementById('productModal').style.display = 'flex'; }
         window.closeProductModal = () => document.getElementById('productModal').style.display = 'none';
-
         window.editProduct = (pStr) => {
             const p = JSON.parse(decodeURIComponent(pStr));
             document.getElementById('editProductId').value = p.id;
@@ -423,106 +376,57 @@
             document.getElementById('pPrice').value = p.price;
             document.getElementById('pDisc').value = p.discount || 0;
             document.getElementById('pCatMain').value = p.category;
-            updateSubCats();
-            setTimeout(() => document.getElementById('pCatSub').value = p.subCategory, 100);
-            
+            updateSubCats(); setTimeout(() => document.getElementById('pCatSub').value = p.subCategory, 100);
             document.getElementById('modalTitle').innerText = 'تعديل المنتج';
             document.getElementById('productModal').style.display = 'flex';
         }
-
         window.saveProduct = async (e) => {
             e.preventDefault();
             const id = document.getElementById('editProductId').value;
-            const data = {
-                name: document.getElementById('pName').value,
-                img: document.getElementById('pImg').value,
-                desc: document.getElementById('pDesc').value,
-                price: parseFloat(document.getElementById('pPrice').value),
-                discount: parseFloat(document.getElementById('pDisc').value),
-                category: document.getElementById('pCatMain').value,
-                subCategory: document.getElementById('pCatSub').value,
-                date: Date.now()
-            };
-
-            if(id) { await updateDoc(doc(db, "products", id), data); alert('تم التعديل بنجاح'); } 
-            else { await addDoc(collection(db, "products"), data); alert('تمت الإضافة بنجاح'); }
+            const data = { name: document.getElementById('pName').value, img: document.getElementById('pImg').value, desc: document.getElementById('pDesc').value, price: parseFloat(document.getElementById('pPrice').value), discount: parseFloat(document.getElementById('pDisc').value), category: document.getElementById('pCatMain').value, subCategory: document.getElementById('pCatSub').value, date: Date.now() };
+            if(id) { await updateDoc(doc(db, "products", id), data); alert('تم التعديل بنجاح'); } else { await addDoc(collection(db, "products"), data); alert('تمت الإضافة بنجاح'); }
             closeProductModal();
         }
-
         window.deleteProduct = async (id) => { if(confirm('حذف هذا المنتج نهائياً؟')) await deleteDoc(doc(db, "products", id)); }
 
-        // ---------------- CHAT ----------------
+        // --- Chat Logic ---
         onSnapshot(collection(db, "chats"), (snap) => {
             let users = {};
             snap.docChanges().forEach(c => { if(c.type === 'added' && c.doc.data().sender === 'customer' && (Date.now() - (c.doc.data().timestamp?.seconds*1000||Date.now())) < 10000) playAlert(); });
             snap.forEach(d => { const x = d.data(); users[x.chatId] = { name: x.customerName||'عميل', id: x.chatId, last: x.text }; });
-            
-            const list = document.getElementById('chatUsersList');
-            list.innerHTML = '';
+            const list = document.getElementById('chatUsersList'); list.innerHTML = '';
             Object.values(users).forEach(u => {
-                list.innerHTML += `
-                    <div class="chat-user ${activeChatId===u.id?'active':''}" onclick="loadChat('${u.id}')">
-                        <div class="user-avatar"><i class="fa-solid fa-user"></i></div>
-                        <div><div style="font-weight:bold">${u.name}</div><div style="font-size:0.8rem; opacity:0.7">${u.last.substring(0,20)}...</div></div>
-                    </div>`;
+                list.innerHTML += `<div class="chat-user ${activeChatId===u.id?'active':''}" onclick="loadChat('${u.id}')"><div class="user-avatar"><i class="fa-solid fa-user"></i></div><div><div style="font-weight:bold">${u.name}</div><div style="font-size:0.8rem; opacity:0.7">${u.last.substring(0,20)}...</div></div></div>`;
             });
         });
-
         window.loadChat = (id) => {
-            activeChatId = id;
-            document.querySelectorAll('.chat-user').forEach(e => e.classList.remove('active'));
+            activeChatId = id; document.querySelectorAll('.chat-user').forEach(e => e.classList.remove('active'));
             onSnapshot(query(collection(db, "chats"), where("chatId", "==", id)), (snap) => {
-                const area = document.getElementById('chatMessagesArea');
-                area.innerHTML = '';
-                let msgs = [];
-                snap.forEach(d => msgs.push(d.data()));
+                const area = document.getElementById('chatMessagesArea'); area.innerHTML = '';
+                let msgs = []; snap.forEach(d => msgs.push(d.data()));
                 msgs.sort((a,b) => (a.timestamp?.seconds||0) - (b.timestamp?.seconds||0));
-                msgs.forEach(m => { area.innerHTML += `<div class="bubble ${m.sender==='admin'?'msg-out':'msg-in'}">${m.text}</div>`; });
+                msgs.forEach(m => area.innerHTML += `<div class="bubble ${m.sender==='admin'?'msg-out':'msg-in'}">${m.text}</div>`);
                 area.scrollTop = area.scrollHeight;
             });
         }
-
         window.sendAdminMsg = async () => {
-            const inp = document.getElementById('adminChatInput');
-            if(!inp.value || !activeChatId) return;
+            const inp = document.getElementById('adminChatInput'); if(!inp.value || !activeChatId) return;
             await addDoc(collection(db, "chats"), { chatId: activeChatId, sender: 'admin', text: inp.value, timestamp: serverTimestamp() });
             inp.value = '';
         }
 
-        // ---------------- CATEGORIES ----------------
+        // --- Categories Logic ---
         onSnapshot(collection(db, "categories"), (snap) => {
             allCategories = snap.docs.map(d => ({id:d.id, ...d.data()}));
-            const pSel = document.getElementById('pCatMain');
-            pSel.innerHTML = '<option value="">اختر القسم</option>';
-            const man = document.getElementById('catsManager');
-            man.innerHTML = '';
-
+            const pSel = document.getElementById('pCatMain'); pSel.innerHTML = '<option value="">اختر القسم</option>';
+            const man = document.getElementById('catsManager'); man.innerHTML = '';
             allCategories.forEach(c => {
                 pSel.innerHTML += `<option value="${c.name}">${c.name}</option>`;
                 let subsHtml = (c.subs||[]).map(s => `<span style="background:#eee; padding:5px 10px; border-radius:15px; margin:5px; font-size:0.9rem; display:inline-block;">${s} <i onclick="remSub('${c.id}','${s}')" class="fa-solid fa-xmark" style="color:red; cursor:pointer; margin-right:5px;"></i></span>`).join('');
-                man.innerHTML += `
-                    <div style="background:white; padding:20px; border-radius:15px; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
-                        <div style="display:flex; justify-content:space-between; border-bottom:1px solid #eee; padding-bottom:10px; margin-bottom:10px;">
-                            <strong>${c.name}</strong>
-                            <i class="fa-solid fa-trash" style="color:red; cursor:pointer;" onclick="delMain('${c.id}')"></i>
-                        </div>
-                        <div style="margin-bottom:15px;">${subsHtml}</div>
-                        <div style="display:flex; gap:5px;">
-                            <input id="sub_in_${c.id}" class="form-input" placeholder="اسم الفرع" style="padding:5px;">
-                            <button onclick="addSub('${c.id}')" style="background:var(--primary); color:white; border:none; padding:5px 15px; border-radius:5px; cursor:pointer;">+</button>
-                        </div>
-                    </div>`;
+                man.innerHTML += `<div style="background:white; padding:20px; border-radius:15px; box-shadow:0 2px 10px rgba(0,0,0,0.05);"><div style="display:flex; justify-content:space-between; border-bottom:1px solid #eee; padding-bottom:10px; margin-bottom:10px;"><strong>${c.name}</strong><i class="fa-solid fa-trash" style="color:red; cursor:pointer;" onclick="delMain('${c.id}')"></i></div><div style="margin-bottom:15px;">${subsHtml}</div><div style="display:flex; gap:5px;"><input id="sub_in_${c.id}" class="form-input" placeholder="اسم الفرع" style="padding:5px;"><button onclick="addSub('${c.id}')" style="background:var(--primary); color:white; border:none; padding:5px 15px; border-radius:5px; cursor:pointer;">+</button></div></div>`;
             });
         });
-
-        window.updateSubCats = () => {
-            const main = document.getElementById('pCatMain').value;
-            const sub = document.getElementById('pCatSub');
-            sub.innerHTML = '<option value="all">عام</option>';
-            const c = allCategories.find(x => x.name === main);
-            if(c && c.subs) c.subs.forEach(s => sub.innerHTML += `<option value="${s}">${s}</option>`);
-        }
-
+        window.updateSubCats = () => { const main = document.getElementById('pCatMain').value; const sub = document.getElementById('pCatSub'); sub.innerHTML = '<option value="all">عام</option>'; const c = allCategories.find(x => x.name === main); if(c && c.subs) c.subs.forEach(s => sub.innerHTML += `<option value="${s}">${s}</option>`); }
         window.addNewCat = async () => { const v = document.getElementById('newCatInput').value; if(v) await addDoc(collection(db, "categories"), {name: v, subs: []}); }
         window.delMain = async (id) => { if(confirm('حذف القسم؟')) await deleteDoc(doc(db, "categories", id)); }
         window.addSub = async (id) => { const v = document.getElementById('sub_in_'+id).value; if(v) await updateDoc(doc(db, "categories", id), {subs: arrayUnion(v)}); }
