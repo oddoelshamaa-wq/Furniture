@@ -13,9 +13,9 @@
         :root { --wa-green: #25d366; --wa-dark: #075e54; --wa-bg: #e5ddd5; }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
-        body { background-color: var(--bg-light); color: var(--text-dark); overflow-x: hidden; padding-bottom: 80px; }
+        body { background-color: var(--bg-light); color: var(--text-dark); overflow-x: hidden; }
 
-        /* ================= الشريط العلوي الجديد (Top Bar) ================= */
+        /* ================= الشريط العلوي (Top Bar) ================= */
         .top-bar {
             background-color: var(--primary);
             color: var(--white);
@@ -46,7 +46,7 @@
         .cta-btn { padding: 12px 35px; background: var(--accent); color: white; border: none; border-radius: 30px; font-size: 1rem; cursor: pointer; font-weight: bold; transition: 0.3s; }
         
         /* Products */
-        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; padding-bottom: 50px; }
         .categories-tabs { display: flex; justify-content: center; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
         .categories-tabs span { padding: 10px 25px; border: 2px solid #ddd; border-radius: 25px; cursor: pointer; background: white; transition: 0.3s; font-weight: bold; }
         .categories-tabs span.active-cat { background: var(--primary); color: white; border-color: var(--primary); }
@@ -91,16 +91,42 @@
         .cart-sidebar { position: fixed; top: 0; left: -400px; width: 350px; height: 100%; background: white; z-index: 5000; box-shadow: 5px 0 20px rgba(0,0,0,0.1); transition: 0.4s; display: flex; flex-direction: column; }
         .cart-sidebar.open { left: 0; }
 
+        /* ======================== FOOTER STYLES ======================== */
+        footer { background-color: var(--primary); color: #ccc; padding: 60px 5% 20px; margin-top: 50px; font-size: 0.9rem; }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; margin-bottom: 40px; text-align: right; }
+        .footer-col h3 { color: var(--white); margin-bottom: 20px; font-size: 1.1rem; position: relative; }
+        .footer-col ul { list-style: none; padding: 0; }
+        .footer-col ul li { margin-bottom: 12px; }
+        .footer-col ul li a { color: #ccc; text-decoration: none; transition: 0.3s; }
+        .footer-col ul li a:hover { color: var(--accent); padding-right: 5px; }
+        .footer-col ul li i { margin-left: 10px; color: var(--accent); }
+
+        .footer-bottom { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px; gap: 20px; }
+        .fb-section h4 { color: white; margin-bottom: 15px; }
+        
+        .social-links { display: flex; gap: 15px; }
+        .social-links a { width: 40px; height: 40px; background: rgba(255,255,255,0.1); color: white; display: flex; align-items: center; justify-content: center; border-radius: 5px; transition: 0.3s; font-size: 1.2rem; }
+        .social-links a:hover { background: var(--accent); transform: translateY(-3px); }
+
+        .app-badges { display: flex; gap: 10px; }
+        .app-badges img { height: 40px; cursor: pointer; }
+        
+        .payment-methods { display: flex; gap: 10px; font-size: 2rem; color: #fff; }
+
+        .copyright { text-align: center; margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px; font-size: 0.85rem; }
+
         @media(max-width: 768px) { 
             .chat-float-container { bottom: 20px; right: 20px; } 
             #chatModal { width: 90%; right: 5%; bottom: 90px; } 
             .top-bar { flex-direction: column; gap: 10px; text-align: center; }
+            .footer-bottom { flex-direction: column; text-align: center; align-items: center; }
+            .footer-grid { text-align: center; }
         }
     </style>
 </head>
 <body>
 
-    <!-- الشريط العلوي الجديد -->
+    <!-- الشريط العلوي -->
     <div class="top-bar">
         <div class="top-bar-info">
             <span><i class="fa-solid fa-phone"></i> تواصل معنا: 0100000000</span>
@@ -108,9 +134,9 @@
             <span>الشماع للأثاث - فخامة تدوم</span>
         </div>
         <div class="social-icons">
-            <a href="#" title="Facebook"><i class="fa-brands fa-facebook"></i></a>
-            <a href="#" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
-            <a href="#" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+            <a href="#"><i class="fa-brands fa-facebook"></i></a>
+            <a href="#"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
         </div>
     </div>
 
@@ -166,6 +192,84 @@
             <div class="products-grid" id="productsContainer"></div>
         </section>
     </div>
+
+    <!-- Footer (الجديد) -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h3>الشركة</h3>
+                <ul>
+                    <li><a href="#">معلومات عنا</a></li>
+                    <li><a href="#">الشروط والاحكام</a></li>
+                    <li><a href="#">وظائف</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>روابط مهمة</h3>
+                <ul>
+                    <li><a href="#">سياسة الاسترجاع</a></li>
+                    <li><a href="#">سياسة الخصوصية</a></li>
+                    <li><a href="#">الضمان</a></li>
+                    <li><a href="#">أنضم كشريك</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>تريد مساعدة؟</h3>
+                <ul>
+                    <li><a href="#">تواصل معنا</a></li>
+                    <li><a href="#">مركز المساعدة</a></li>
+                    <li><a href="#">hello@shamma.com</a></li>
+                    <li><a href="#">رقم الدعم: 15829</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>الموقع</h3>
+                <ul>
+                    <li><i class="fa-solid fa-location-dot"></i> التجمع الخامس</li>
+                    <li><i class="fa-solid fa-location-dot"></i> مدينة نصر</li>
+                    <li><i class="fa-solid fa-location-dot"></i> زهراء المعادي</li>
+                    <li><i class="fa-solid fa-location-dot"></i> الإسكندرية</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="fb-section">
+                <h4>تابعنا</h4>
+                <div class="social-links">
+                    <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                </div>
+            </div>
+
+            <div class="fb-section">
+                <h4>تحميل تطبيقاتنا</h4>
+                <div class="app-badges">
+                    <button style="background:black; color:white; border:1px solid #555; padding:5px 15px; border-radius:5px; display:flex; align-items:center; gap:5px; cursor:pointer;">
+                        <i class="fa-brands fa-google-play" style="font-size:1.5rem"></i> <div><small>Get it on</small><br><strong>Google Play</strong></div>
+                    </button>
+                    <button style="background:black; color:white; border:1px solid #555; padding:5px 15px; border-radius:5px; display:flex; align-items:center; gap:5px; cursor:pointer;">
+                        <i class="fa-brands fa-apple" style="font-size:1.5rem"></i> <div><small>Download on</small><br><strong>App Store</strong></div>
+                    </button>
+                </div>
+            </div>
+
+            <div class="fb-section">
+                <h4>نحن نقبل</h4>
+                <div class="payment-methods">
+                    <i class="fa-brands fa-cc-visa"></i>
+                    <i class="fa-brands fa-cc-mastercard"></i>
+                    <i class="fa-solid fa-money-bill-wave"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="copyright">
+            &copy; جميع الحقوق محفوظة 2025 الشماع للأثاث
+        </div>
+    </footer>
 
     <!-- Product Modal -->
     <div id="productModal" class="modal">
