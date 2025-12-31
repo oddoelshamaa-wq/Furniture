@@ -113,11 +113,8 @@
         <div class="menu">
             <button class="menu-btn active" onclick="nav('dashboard', this)"><i class="fa-solid fa-chart-pie"></i> الرئيسية</button>
             <button class="menu-btn" onclick="nav('products', this)"><i class="fa-solid fa-box-open"></i> إدارة المنتجات</button>
-            
-            <!-- تم الفصل هنا -->
             <button class="menu-btn" onclick="nav('orders', this)"><i class="fa-solid fa-bell"></i> الطلبات الجارية</button>
             <button class="menu-btn" onclick="nav('archive', this)"><i class="fa-solid fa-box-archive"></i> سجل الأرشيف</button>
-            
             <button class="menu-btn" onclick="nav('chat', this)"><i class="fa-brands fa-whatsapp"></i> المحادثات</button>
             <button class="menu-btn" onclick="nav('categories', this)"><i class="fa-solid fa-layer-group"></i> الأقسام</button>
             <button class="menu-btn logout-btn" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج</button>
@@ -297,7 +294,8 @@
         </div>
     </div>
 
-    <audio id="alertSound" src="https://assets.mixkit.co/sfx/preview/mixkit-software-interface-start-2574.mp3"></audio>
+    <!-- Alarm Sound File (Stronger Alert) -->
+    <audio id="alertSound" src="https://assets.mixkit.co/sfx/preview/mixkit-facility-alarm-sound-999.mp3"></audio>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -433,9 +431,16 @@
         window.viewOrder = (dataStr) => {
             const o = JSON.parse(decodeURIComponent(dataStr));
             const itemsHtml = o.items.map(i => `<div class="invoice-item"><span>${i.name}</span><span>${i.price}</span></div>`).join('');
+            
+            // Auto Linkify Map URLs
+            let address = o.customerAddress;
+            if(address.includes('http')) {
+                address = address.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color:blue;text-decoration:underline;">فتح الموقع (GPS) 📍</a>');
+            }
+
             document.getElementById('invoiceContent').innerHTML = `
                 <div class="invoice-header"><div><strong>العميل:</strong> ${o.customerName}<br><strong>الهاتف:</strong> ${o.customerPhone}</div><div style="text-align:left"><strong>التاريخ:</strong> ${new Date(o.date).toLocaleDateString()}</div></div>
-                <div style="background:#f9f9f9; padding:10px; margin-bottom:15px; border-radius:5px;"><strong>العنوان:</strong> ${o.customerAddress}</div>
+                <div style="background:#f9f9f9; padding:10px; margin-bottom:15px; border-radius:5px;"><strong>العنوان:</strong><br>${address}</div>
                 <div><strong>المنتجات:</strong></div>${itemsHtml}<div class="invoice-total">الإجمالي: ${o.totalPrice}</div>`;
             document.getElementById('orderDetailModal').style.display = 'flex';
         }
