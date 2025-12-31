@@ -15,7 +15,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
         body { background-color: var(--bg-light); color: var(--text-dark); overflow-x: hidden; }
 
-        /* ================= الشريط العلوي (Top Bar) ================= */
+        /* ================= Top Bar ================= */
         .top-bar {
             background-color: var(--primary);
             color: var(--white);
@@ -91,7 +91,14 @@
         .cart-sidebar { position: fixed; top: 0; left: -400px; width: 350px; height: 100%; background: white; z-index: 5000; box-shadow: 5px 0 20px rgba(0,0,0,0.1); transition: 0.4s; display: flex; flex-direction: column; }
         .cart-sidebar.open { left: 0; }
 
-        /* ======================== FOOTER STYLES ======================== */
+        /* Checkout Form */
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; outline: none; }
+        .btn-gps { background: #e74c3c; color: white; padding: 8px 15px; border: none; border-radius: 5px; margin-top: 5px; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 0.9rem; }
+        .btn-gps:hover { background: #c0392b; }
+
+        /* Footer */
         footer { background-color: var(--primary); color: #ccc; padding: 60px 5% 20px; margin-top: 50px; font-size: 0.9rem; }
         .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; margin-bottom: 40px; text-align: right; }
         .footer-col h3 { color: var(--white); margin-bottom: 20px; font-size: 1.1rem; position: relative; }
@@ -100,19 +107,14 @@
         .footer-col ul li a { color: #ccc; text-decoration: none; transition: 0.3s; }
         .footer-col ul li a:hover { color: var(--accent); padding-right: 5px; }
         .footer-col ul li i { margin-left: 10px; color: var(--accent); }
-
         .footer-bottom { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px; gap: 20px; }
         .fb-section h4 { color: white; margin-bottom: 15px; }
-        
         .social-links { display: flex; gap: 15px; }
         .social-links a { width: 40px; height: 40px; background: rgba(255,255,255,0.1); color: white; display: flex; align-items: center; justify-content: center; border-radius: 5px; transition: 0.3s; font-size: 1.2rem; }
         .social-links a:hover { background: var(--accent); transform: translateY(-3px); }
-
         .app-badges { display: flex; gap: 10px; }
         .app-badges img { height: 40px; cursor: pointer; }
-        
         .payment-methods { display: flex; gap: 10px; font-size: 2rem; color: #fff; }
-
         .copyright { text-align: center; margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px; font-size: 0.85rem; }
 
         @media(max-width: 768px) { 
@@ -126,7 +128,6 @@
 </head>
 <body>
 
-    <!-- الشريط العلوي -->
     <div class="top-bar">
         <div class="top-bar-info">
             <span><i class="fa-solid fa-phone"></i> تواصل معنا: 0100000000</span>
@@ -149,27 +150,18 @@
         </ul>
     </nav>
 
-    <!-- زر الشات -->
     <div class="chat-float-container" onclick="toggleChat()">
         <div class="chat-label">تواصل معنا</div>
         <div class="chat-btn-icon"><i class="fa-brands fa-whatsapp"></i></div>
     </div>
 
-    <!-- نافذة الشات -->
     <div id="chatModal">
         <div class="chat-header">
             <img src="https://cdn-icons-png.flaticon.com/512/4712/4712035.png" alt="Admin">
-            <div>
-                <div style="font-weight:bold;">خدمة العملاء</div>
-                <div style="font-size:0.75rem; opacity:0.9;">متصل الآن</div>
-            </div>
+            <div><div style="font-weight:bold;">خدمة العملاء</div><div style="font-size:0.75rem; opacity:0.9;">متصل الآن</div></div>
             <i class="fa-solid fa-xmark" style="margin-right:auto; cursor:pointer;" onclick="toggleChat()"></i>
         </div>
-        <div id="chatMessages">
-            <div style="text-align:center; padding:20px; background:#fff; border-radius:10px; font-size:0.85rem; color:#555; opacity:0.9;">
-                أهلاً بك في معرض الشماع! <br> كيف يمكننا مساعدتك في اختيار أثاث منزلك؟
-            </div>
-        </div>
+        <div id="chatMessages"><div style="text-align:center; padding:20px; background:#fff; border-radius:10px; font-size:0.85rem; color:#555; opacity:0.9;">أهلاً بك في معرض الشماع! <br> كيف يمكننا مساعدتك؟</div></div>
         <div class="chat-input">
             <input type="text" id="chatInput" placeholder="اكتب رسالتك..." onkeypress="if(event.key==='Enter') sendChat()">
             <button onclick="sendChat()"><i class="fa-solid fa-paper-plane"></i></button>
@@ -193,82 +185,18 @@
         </section>
     </div>
 
-    <!-- Footer (الجديد) -->
     <footer>
         <div class="footer-grid">
-            <div class="footer-col">
-                <h3>الشركة</h3>
-                <ul>
-                    <li><a href="#">معلومات عنا</a></li>
-                    <li><a href="#">الشروط والاحكام</a></li>
-                    <li><a href="#">وظائف</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h3>روابط مهمة</h3>
-                <ul>
-                    <li><a href="#">سياسة الاسترجاع</a></li>
-                    <li><a href="#">سياسة الخصوصية</a></li>
-                    <li><a href="#">الضمان</a></li>
-                    <li><a href="#">أنضم كشريك</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h3>تريد مساعدة؟</h3>
-                <ul>
-                    <li><a href="#">تواصل معنا</a></li>
-                    <li><a href="#">مركز المساعدة</a></li>
-                    <li><a href="#">hello@shamma.com</a></li>
-                    <li><a href="#">رقم الدعم: 15829</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h3>الموقع</h3>
-                <ul>
-                    <li><i class="fa-solid fa-location-dot"></i> التجمع الخامس</li>
-                    <li><i class="fa-solid fa-location-dot"></i> مدينة نصر</li>
-                    <li><i class="fa-solid fa-location-dot"></i> زهراء المعادي</li>
-                    <li><i class="fa-solid fa-location-dot"></i> الإسكندرية</li>
-                </ul>
-            </div>
+            <div class="footer-col"><h3>الشركة</h3><ul><li><a href="#">معلومات عنا</a></li><li><a href="#">الشروط والاحكام</a></li><li><a href="#">وظائف</a></li></ul></div>
+            <div class="footer-col"><h3>روابط مهمة</h3><ul><li><a href="#">سياسة الاسترجاع</a></li><li><a href="#">سياسة الخصوصية</a></li><li><a href="#">الضمان</a></li></ul></div>
+            <div class="footer-col"><h3>تريد مساعدة؟</h3><ul><li><a href="#">تواصل معنا</a></li><li><a href="#">مركز المساعدة</a></li><li><a href="#">رقم الدعم: 15829</a></li></ul></div>
+            <div class="footer-col"><h3>الموقع</h3><ul><li><i class="fa-solid fa-location-dot"></i> التجمع الخامس</li><li><i class="fa-solid fa-location-dot"></i> مدينة نصر</li><li><i class="fa-solid fa-location-dot"></i> الإسكندرية</li></ul></div>
         </div>
-
         <div class="footer-bottom">
-            <div class="fb-section">
-                <h4>تابعنا</h4>
-                <div class="social-links">
-                    <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
-                    <a href="#"><i class="fa-brands fa-twitter"></i></a>
-                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
-                </div>
-            </div>
-
-            <div class="fb-section">
-                <h4>تحميل تطبيقاتنا</h4>
-                <div class="app-badges">
-                    <button style="background:black; color:white; border:1px solid #555; padding:5px 15px; border-radius:5px; display:flex; align-items:center; gap:5px; cursor:pointer;">
-                        <i class="fa-brands fa-google-play" style="font-size:1.5rem"></i> <div><small>Get it on</small><br><strong>Google Play</strong></div>
-                    </button>
-                    <button style="background:black; color:white; border:1px solid #555; padding:5px 15px; border-radius:5px; display:flex; align-items:center; gap:5px; cursor:pointer;">
-                        <i class="fa-brands fa-apple" style="font-size:1.5rem"></i> <div><small>Download on</small><br><strong>App Store</strong></div>
-                    </button>
-                </div>
-            </div>
-
-            <div class="fb-section">
-                <h4>نحن نقبل</h4>
-                <div class="payment-methods">
-                    <i class="fa-brands fa-cc-visa"></i>
-                    <i class="fa-brands fa-cc-mastercard"></i>
-                    <i class="fa-solid fa-money-bill-wave"></i>
-                </div>
-            </div>
+            <div class="fb-section"><h4>تابعنا</h4><div class="social-links"><a href="#"><i class="fa-brands fa-linkedin-in"></i></a><a href="#"><i class="fa-brands fa-instagram"></i></a><a href="#"><i class="fa-brands fa-facebook-f"></i></a></div></div>
+            <div class="fb-section"><h4>نحن نقبل</h4><div class="payment-methods"><i class="fa-brands fa-cc-visa"></i><i class="fa-brands fa-cc-mastercard"></i><i class="fa-solid fa-money-bill-wave"></i></div></div>
         </div>
-
-        <div class="copyright">
-            &copy; جميع الحقوق محفوظة 2025 الشماع للأثاث
-        </div>
+        <div class="copyright">&copy; جميع الحقوق محفوظة 2025 الشماع للأثاث</div>
     </footer>
 
     <!-- Product Modal -->
@@ -279,12 +207,25 @@
                 <img id="mImg" src="" style="width:100%; height:280px; object-fit:cover; border-radius:10px; margin-bottom:15px;">
                 <h2 id="mTitle" style="color:var(--primary); margin-bottom:10px;"></h2>
                 <p id="mDesc" style="color:#666; line-height:1.6; margin-bottom:20px;"></p>
-                <div style="margin-bottom:20px;">
-                    <span id="mPrice" class="current-price"></span> 
-                    <span id="mOldPrice" class="old-price"></span>
-                </div>
+                <div style="margin-bottom:20px;"><span id="mPrice" class="current-price"></span> <span id="mOldPrice" class="old-price"></span></div>
                 <button class="cta-btn" style="width:100%;" onclick="addToCart()">إضافة للسلة</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal with GPS -->
+    <div id="checkoutModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <span onclick="document.getElementById('checkoutModal').style.display='none'" style="position:absolute; left:20px; top:20px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></span>
+            <h2 style="text-align:center; margin-bottom:20px; color:var(--primary)">تأكيد الطلب</h2>
+            <div class="form-group"><label>الاسم</label><input type="text" id="cName" class="form-input" placeholder="الاسم ثلاثي"></div>
+            <div class="form-group"><label>رقم الهاتف</label><input type="tel" id="cPhone" class="form-input" placeholder="رقم للتواصل"></div>
+            <div class="form-group">
+                <label>العنوان بالتفصيل</label>
+                <textarea id="cAddress" class="form-input" placeholder="اسم الشارع، رقم العمارة، الدور..." rows="3"></textarea>
+                <button type="button" class="btn-gps" onclick="getLocation()"><i class="fa-solid fa-location-crosshairs"></i> تحديد موقعي الحالي (GPS)</button>
+            </div>
+            <button class="cta-btn" style="width:100%;" onclick="finalizeOrder()">إرسال الطلب</button>
         </div>
     </div>
 
@@ -292,8 +233,13 @@
     <div id="profileModal" class="modal">
         <div class="modal-content">
             <span onclick="document.getElementById('profileModal').style.display='none'" style="position:absolute; left:20px; top:20px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></span>
-            <h3>طلباتي السابقة</h3>
-            <div id="myOrdersList" style="margin-top:20px; max-height:400px; overflow-y:auto;"></div>
+            <h3>ملفي الشخصي</h3>
+            <div style="margin:20px 0; border-bottom:1px solid #eee; padding-bottom:10px;">
+                <p><strong>الاسم:</strong> <span id="pNameDisp">-</span></p>
+                <p><strong>الهاتف:</strong> <span id="pPhoneDisp">-</span></p>
+            </div>
+            <h4>سجل الطلبات</h4>
+            <div id="myOrdersList" style="margin-top:10px; max-height:300px; overflow-y:auto;"></div>
         </div>
     </div>
 
@@ -306,7 +252,7 @@
         <div id="cartItems" style="flex:1; padding:20px; overflow-y:auto;"></div>
         <div style="padding:20px; border-top:1px solid #eee; background:#f9f9f9;">
             <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-weight:bold;"><span>المجموع:</span><span id="totalPrice" style="color:var(--accent)">0 ج.م</span></div>
-            <button class="cta-btn" style="width:100%;" onclick="checkout()">تأكيد الطلب</button>
+            <button class="cta-btn" style="width:100%;" onclick="openCheckout()">إتمام الطلب</button>
         </div>
     </div>
 
@@ -324,6 +270,41 @@
         let userPhone = localStorage.getItem('shamma_phone') || 'Guest_' + Math.floor(Math.random()*100000);
         if(!localStorage.getItem('shamma_phone')) localStorage.setItem('shamma_phone', userPhone);
 
+        // Load Saved Data
+        window.loadProfileData = () => {
+            const savedName = localStorage.getItem('shamma_cust_name');
+            const savedPhone = localStorage.getItem('shamma_cust_phone');
+            const savedAddr = localStorage.getItem('shamma_cust_addr');
+            if(savedName) document.getElementById('cName').value = savedName;
+            if(savedPhone) document.getElementById('cPhone').value = savedPhone;
+            if(savedAddr) document.getElementById('cAddress').value = savedAddr;
+        }
+
+        // GPS Function
+        window.getLocation = () => {
+            if (navigator.geolocation) {
+                const btn = document.querySelector('.btn-gps');
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري تحديد الموقع...';
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const long = position.coords.longitude;
+                        const mapLink = `https://maps.google.com/?q=${lat},${long}`;
+                        const addrBox = document.getElementById('cAddress');
+                        addrBox.value = `موقعي GPS: ${mapLink} \n` + addrBox.value;
+                        btn.innerHTML = '<i class="fa-solid fa-check"></i> تم تحديد الموقع بنجاح';
+                        btn.style.background = "#27ae60";
+                    },
+                    (error) => {
+                        alert("تعذر الحصول على الموقع. تأكد من تفعيل GPS.");
+                        document.querySelector('.btn-gps').innerHTML = '<i class="fa-solid fa-location-crosshairs"></i> تحديد موقعي الحالي (GPS)';
+                    }
+                );
+            } else {
+                alert("المتصفح لا يدعم تحديد الموقع.");
+            }
+        }
+
         // Real-time Listeners
         onSnapshot(collection(db, "products"), (snap) => {
             productsData = snap.docs.map(doc => ({id: doc.id, ...doc.data()}));
@@ -335,15 +316,12 @@
             renderCategories();
         });
 
-        // Chat Listener
         onSnapshot(query(collection(db, "chats"), where("chatId", "==", userPhone)), (snap) => {
             const box = document.getElementById('chatMessages');
             let msgs = [];
             snap.forEach(d => msgs.push(d.data()));
             msgs.sort((a,b) => (a.timestamp?.seconds||0)-(b.timestamp?.seconds||0));
-            
             if(msgs.length > 0) box.innerHTML = '';
-            
             msgs.forEach(m => {
                 const cls = m.sender === 'customer' ? 'msg-me' : 'msg-other';
                 box.innerHTML += `<div class="msg ${cls}">${m.text}</div>`;
@@ -447,18 +425,34 @@
         }
         window.toggleCart = () => document.getElementById('cartSidebar').classList.toggle('open');
 
-        window.checkout = async () => {
-            const n = prompt("الاسم:"); if(!n) return;
-            const p = prompt("الهاتف:"); if(!p) return;
-            const a = prompt("العنوان:");
-            localStorage.setItem('shamma_phone', p); // Update phone for chat
+        window.openCheckout = () => {
+            window.toggleCart();
+            document.getElementById('checkoutModal').style.display = 'block';
+            window.loadProfileData(); // Auto-fill profile
+        }
+
+        window.finalizeOrder = async () => {
+            const n = document.getElementById('cName').value;
+            const p = document.getElementById('cPhone').value;
+            const a = document.getElementById('cAddress').value;
             
+            if(!n || !p || !a) return alert("يرجى ملء جميع البيانات");
+
+            // Save Profile for next time
+            localStorage.setItem('shamma_cust_name', n);
+            localStorage.setItem('shamma_cust_phone', p);
+            localStorage.setItem('shamma_cust_addr', a);
+            localStorage.setItem('shamma_phone', p); 
+
             const c = JSON.parse(localStorage.getItem('shamma_cart'));
             await addDoc(collection(db, "orders"), {
                 customerName:n, customerPhone:p, customerAddress:a, items:c,
                 totalPrice:document.getElementById('totalPrice').innerText, date:Date.now(), status:'قيد المراجعة'
             });
-            localStorage.removeItem('shamma_cart'); updCart(); window.toggleCart(); alert("تم الطلب بنجاح");
+            localStorage.removeItem('shamma_cart'); 
+            document.getElementById('checkoutModal').style.display = 'none';
+            updCart(); 
+            alert("تم إرسال الطلب بنجاح! شكراً لثقتكم.");
         }
 
         window.toggleChat = () => {
@@ -470,20 +464,27 @@
             if(!i.value) return;
             const t = i.value; i.value = '';
             await addDoc(collection(db, "chats"), {
-                chatId: userPhone, text:t, sender:'customer', timestamp:serverTimestamp(), customerName: localStorage.getItem('shamma_name') || 'عميل'
+                chatId: userPhone, text:t, sender:'customer', timestamp:serverTimestamp(), customerName: localStorage.getItem('shamma_cust_name') || 'عميل'
             });
         }
 
         window.openProfile = async () => {
-            const p = localStorage.getItem('shamma_phone');
-            if(!p || p.startsWith('Guest')) { alert("سجل طلب أولاً"); return; }
-            const q = query(collection(db, "orders"), where("customerPhone", "==", p));
-            const snap = await getDocs(q);
-            const l = document.getElementById('myOrdersList'); l.innerHTML = '';
-            snap.forEach(d => {
-                const o = d.data();
-                l.innerHTML += `<div style="background:#f5f5f5; padding:10px; margin-bottom:10px; border-radius:8px;">${new Date(o.date).toLocaleDateString()} - ${o.status}<br><b>${o.totalPrice}</b></div>`;
-            });
+            const p = localStorage.getItem('shamma_cust_phone');
+            document.getElementById('pNameDisp').innerText = localStorage.getItem('shamma_cust_name') || 'غير مسجل';
+            document.getElementById('pPhoneDisp').innerText = p || 'غير مسجل';
+            
+            if(!p) { 
+                document.getElementById('myOrdersList').innerHTML = '<p style="text-align:center">سجل أول طلب لتظهر بياناتك هنا</p>';
+            } else {
+                const q = query(collection(db, "orders"), where("customerPhone", "==", p));
+                const snap = await getDocs(q);
+                const l = document.getElementById('myOrdersList'); l.innerHTML = '';
+                if(snap.empty) l.innerHTML = '<p style="text-align:center">لا توجد طلبات سابقة</p>';
+                snap.forEach(d => {
+                    const o = d.data();
+                    l.innerHTML += `<div style="background:#f5f5f5; padding:10px; margin-bottom:10px; border-radius:8px;">${new Date(o.date).toLocaleDateString()} - <span style="color:var(--primary)">${o.status}</span><br><b>${o.totalPrice}</b></div>`;
+                });
+            }
             document.getElementById('profileModal').style.display = 'block';
         }
 
