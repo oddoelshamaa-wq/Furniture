@@ -38,11 +38,21 @@
         .order-row { cursor: pointer; transition: 0.2s; }
         .order-row:hover { background-color: #f1f1f1; }
         
+        /* حالات الطلب */
         .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; color: white; }
         .status-pending { background-color: #f39c12; }
         .status-processing { background-color: #3498db; }
         .status-shipped { background-color: #9b59b6; }
         .status-delivered { background-color: #27ae60; }
+
+        /* تأثير وميض للطلبات المتأخرة */
+        @keyframes redFlash {
+            0% { background-color: #fff; }
+            50% { background-color: #ffebee; box-shadow: inset 0 0 10px #e57373; }
+            100% { background-color: #fff; }
+        }
+        .late-order { animation: redFlash 1.5s infinite; border-left: 5px solid #d32f2f !important; }
+        .timer-badge { background: #333; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; direction: ltr; display: inline-block; }
 
         /* النماذج وإدارة الأقسام */
         form { background: white; padding: 25px; border-radius: 8px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 15px; max-width: 600px; margin: 0 auto; }
@@ -135,7 +145,7 @@
             <h1>إدارة الطلبات الحالية</h1>
             <div style="overflow-x:auto; background:white; padding:20px; border-radius:10px;">
                 <table id="ordersTable">
-                    <thead><tr><th>العميل</th><th>الهاتف</th><th>المنتجات</th><th>الحالة</th><th>التاريخ</th></tr></thead>
+                    <thead><tr><th>العميل</th><th>المنتجات</th><th>الإجمالي</th><th>الحالة</th><th>الوقت المتبقي</th></tr></thead>
                     <tbody id="ordersBody"></tbody>
                 </table>
             </div>
@@ -160,7 +170,7 @@
             </form>
         </section>
 
-        <!-- الأقسام (تم التعديل هنا) -->
+        <!-- الأقسام -->
         <section id="categoriesSection" style="display: none;">
             <h1>إدارة الأقسام</h1>
             <div style="background:white; padding:20px; border-radius:10px; margin-bottom:20px;">
@@ -199,11 +209,13 @@
 
     <audio id="notificationSound" src="https://assets.mixkit.co/sfx/preview/mixkit-software-interface-start-2574.mp3"></audio>
 
-    <!-- البرمجة (مدمجة) -->
+    <!-- البرمجة (مدمجة ومصححة) -->
     <script type="module">
-        // استيراد الدوال اللازمة لإضافة الفروع (arrayUnion) وحذفها (arrayRemove)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot, query, where, orderBy, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { 
+            getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, 
+            onSnapshot, query, where, orderBy, arrayUnion, arrayRemove 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCE7wo3Vwzap7MnP4rv9kFZNwKlFD1myMM",
@@ -222,12 +234,17 @@
         let currentEditingOrderId = null;
         let lastOrderCount = 0;
         window.cachedCatsForSelect = [];
+        // تعريف الصوت
+        const alertAudio = document.getElementById('notificationSound');
 
         document.addEventListener('DOMContentLoaded', () => {
             initAdmin();
             document.body.addEventListener('click', () => {
-                const sound = document.getElementById('notificationSound');
-                if(sound) sound.play().then(() => { sound.pause(); sound.currentTime = 0; document.getElementById('soundStatus').innerText = "حالة الصوت: مفعل ✅"; }).catch(() => {});
+                if(alertAudio) alertAudio.play().then(() => { 
+                    alertAudio.pause(); 
+                    alertAudio.currentTime = 0; 
+                    document.getElementById('soundStatus').innerText = "حالة الصوت: مفعل ✅"; 
+                }).catch(() => {});
             }, {once: true});
         });
 
@@ -244,12 +261,20 @@
                 updateDashboardStats(orders);
                 window.filterArchive();
                 
-                const hasAdded = snapshot.docChanges().some(change => change.type === 'added');
-                if(hasAdded && document.visibilityState === 'hidden') playAlertSound();
+                // تشغيل الصوت عند وجود طلب جديد
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === "added") {
+                        // فقط إذا كان الطلب حديثاً (أقل من 10 ثواني)
+                        if ((Date.now() - change.doc.data().date) < 10000) {
+                            if(alertAudio) alertAudio.play().catch(e => console.log("Sound error:", e));
+                        }
+                    }
+                });
             });
-        }
 
-        function playAlertSound() { const audio = document.getElementById('notificationSound'); if (audio) audio.play().catch(()=>{}); }
+            // تشغيل العداد
+            setInterval(updateOrderTimers, 1000);
+        }
 
         // --- Navigation ---
         window.showAdminSection = function(id) {
@@ -280,12 +305,52 @@
             ordersBody.innerHTML = '';
             
             const activeOrders = orders.filter(o => o.status !== 'تم التوصيل');
-            if (activeOrders.length === 0) { ordersBody.innerHTML = '<tr><td colspan="5" style="text-align:center">لا توجد طلبات جارية</td></tr>'; return; }
+            if (activeOrders.length === 0) { ordersBody.innerHTML = '<tr><td colspan="6" style="text-align:center">لا توجد طلبات جارية</td></tr>'; return; }
             
             activeOrders.forEach(order => {
                 let statusClass = getStatusClass(order.status);
                 let productsNames = order.items ? order.items.map(i=>i.productName).join(' + ') : order.productName;
-                ordersBody.innerHTML += `<tr class="order-row" onclick="window.openOrderDetails('${order.id}')"><td>${order.customerName || 'ضيف'}</td><td>${order.customerPhone || '-'}</td><td>${productsNames}</td><td><span class="status-badge ${statusClass}">${order.status || 'قيد المراجعة'}</span></td><td>${new Date(order.date).toLocaleDateString('ar-EG')}</td></tr>`;
+                let price = order.totalPrice || order.price;
+                
+                // حساب وقت التسليم
+                const deliveryDays = parseInt(order.deliveryDays) || 3; 
+                const deadline = order.date + (deliveryDays * 24 * 60 * 60 * 1000);
+
+                ordersBody.innerHTML += `
+                    <tr class="order-row" id="row-${order.id}" data-deadline="${deadline}" onclick="window.openOrderDetails('${order.id}')">
+                        <td>${order.customerName || 'ضيف'}</td>
+                        <td>${productsNames}</td>
+                        <td>${price}</td>
+                        <td><span class="status-badge ${statusClass}">${order.status || 'قيد المراجعة'}</span></td>
+                        <td><span class="timer-badge">جاري الحساب...</span></td>
+                    </tr>`;
+            });
+        }
+
+        // تحديث العدادات والتنبيه الأحمر
+        function updateOrderTimers() {
+            const rows = document.querySelectorAll('.order-row');
+            const now = Date.now();
+
+            rows.forEach(row => {
+                const deadline = parseInt(row.getAttribute('data-deadline'));
+                const timerSpan = row.querySelector('.timer-badge');
+                
+                if (!deadline || !timerSpan) return;
+
+                const distance = deadline - now;
+
+                if (distance < 0) {
+                    timerSpan.innerHTML = "متأخر! ⚠️";
+                    timerSpan.style.background = "red";
+                    row.classList.add('late-order'); // الوميض الأحمر
+                } else {
+                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    timerSpan.innerHTML = `${days}ي ${hours}س ${minutes}د`;
+                    row.classList.remove('late-order');
+                }
             });
         }
 
@@ -336,7 +401,7 @@
             
             content.innerHTML = `<p><strong>العميل:</strong> ${order.customerName}</p><p><strong>رقم الهاتف:</strong> ${order.customerPhone}</p><p><strong>العنوان:</strong> ${order.customerAddress}</p><p><strong>تاريخ الطلب:</strong> ${new Date(order.date).toLocaleString('ar-EG')}</p><hr><p><strong>المنتجات:</strong></p><ul>${productsHtml}</ul><p><strong>الإجمالي:</strong> ${order.totalPrice || order.price}</p>`;
             document.getElementById('updateStatusSelect').value = order.status || 'قيد المراجعة';
-            document.getElementById('updateDaysInput').value = order.deliveryDays || '';
+            document.getElementById('updateDaysInput').value = order.deliveryDays || '3';
             modal.style.display = 'block';
         }
 
@@ -350,26 +415,25 @@
         }
         window.closeOrderModal = function() { document.getElementById('orderDetailsModal').style.display = 'none'; }
 
-        // --- Categories Logic (Fixed for Adding Sub-Categories) ---
+        // --- Categories Logic (Fixed - Using arrayUnion) ---
         async function loadCategoriesManager() {
             const container = document.getElementById('categoriesManagerContainer');
             if(!container) return;
-            container.innerHTML = 'جاري التحميل...';
             
-            // استخدام onSnapshot للتحديث التلقائي
+            // استخدام onSnapshot للتحديث الفوري عند الإضافة
             onSnapshot(collection(db, "categories"), (snapshot) => {
-                let cats = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 container.innerHTML = '';
-                cats.forEach((cat) => {
+                snapshot.forEach((doc) => {
+                    let cat = doc.data();
                     let subsHtml = '';
-                    if(cat.subs) cat.subs.forEach((sub) => subsHtml += `<span class="sub-cat-badge">${sub} <i class="fa-solid fa-xmark delete-btn" onclick="window.deleteSubCategory('${cat.id}', '${sub}')"></i></span>`);
+                    if(cat.subs) cat.subs.forEach((sub) => subsHtml += `<span class="sub-cat-badge">${sub} <i class="fa-solid fa-xmark delete-btn" onclick="window.deleteSubCategory('${doc.id}', '${sub}')"></i></span>`);
                     
                     container.innerHTML += `
                         <div class="cat-manager-item">
-                            <div class="main-cat-header"><span class="main-cat-title">${cat.name}</span> <button class="delete-btn" style="background:none; border:none;" onclick="window.deleteMainCategory('${cat.id}')">حذف</button></div>
+                            <div class="main-cat-header"><span class="main-cat-title">${cat.name}</span> <button class="delete-btn" style="background:none; border:none;" onclick="window.deleteMainCategory('${doc.id}')">حذف</button></div>
                             <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
                                 <div>${subsHtml}</div>
-                                <div style="display:flex; gap:5px;"><input type="text" id="newSub_${cat.id}" placeholder="فرع جديد" style="padding:5px;"><button onclick="window.addSubCategory('${cat.id}')" style="padding:5px;">+</button></div>
+                                <div style="display:flex; gap:5px;"><input type="text" id="newSub_${doc.id}" placeholder="فرع جديد" style="padding:5px;"><button onclick="window.addSubCategory('${doc.id}')" style="padding:5px;">+</button></div>
                             </div>
                         </div>`;
                 });
@@ -389,17 +453,11 @@
             const input = document.getElementById('newSub_'+id);
             const val = input.value.trim();
             if(val){
-                try {
-                    const catRef = doc(db, "categories", id);
-                    // استخدام arrayUnion لإضافة العنصر للمصفوفة في فايربيس
-                    await updateDoc(catRef, {
-                        subs: arrayUnion(val)
-                    });
-                    input.value = '';
-                } catch(error) {
-                    console.error("Error adding subcategory: ", error);
-                    alert("حدث خطأ، تأكد من قواعد الأمان في فايربيس");
-                }
+                const catRef = doc(db, "categories", id);
+                await updateDoc(catRef, {
+                    subs: arrayUnion(val) // استخدام دالة فايربيس الصحيحة
+                });
+                input.value = ''; // UI will update via onSnapshot
             }
         }
 
