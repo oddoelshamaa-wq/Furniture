@@ -87,8 +87,9 @@
         
         <form id="loginForm">
             <div class="input-group">
-                <i class="fa-solid fa-envelope"></i>
-                <input type="email" id="email" placeholder="البريد الإلكتروني" required>
+                <i class="fa-solid fa-user"></i>
+                <!-- هنا جعلته يقبل text بدلاً من email لكي نكتب admin فقط -->
+                <input type="text" id="email" placeholder="اسم المستخدم (admin)" required>
             </div>
             <div class="input-group">
                 <i class="fa-solid fa-lock"></i>
@@ -103,31 +104,43 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const firebaseConfig = { apiKey: "AIzaSyCE7wo3Vwzap7MnP4rv9kFZNwKlFD1myMM", authDomain: "furniture-416b8.firebaseapp.com", projectId: "furniture-416b8", storageBucket: "furniture-416b8.firebasestorage.app", messagingSenderId: "827913239758", appId: "1:827913239758:web:2fef185ebcf07d80e5e49f" };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
+        // --- كود الإنشاء التلقائي للحساب ---
+        // سيحاول إنشاء الحساب، إذا كان موجوداً سيتجاهل الأمر
+        createUserWithEmailAndPassword(auth, "admin@shamma.com", "123456")
+        .then(() => console.log("Account Created: admin / 123456"))
+        .catch((e) => console.log("Account exists or error:", e.code));
+        // ----------------------------------
+
         document.getElementById('loginForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            const email = document.getElementById('email').value;
+            let emailVal = document.getElementById('email').value.trim();
             const pass = document.getElementById('password').value;
             const btn = document.querySelector('.btn-login');
             const err = document.getElementById('errorMsg');
 
+            // إذا كتب المستخدم admin فقط، نقوم بتحويلها لإيميل حقيقي في الخلفية
+            if(emailVal.toLowerCase() === 'admin') {
+                emailVal = "admin@shamma.com";
+            }
+
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> جاري التحقق...';
             
-            signInWithEmailAndPassword(auth, email, pass)
+            signInWithEmailAndPassword(auth, emailVal, pass)
                 .then((userCredential) => {
                     // نجاح الدخول
-                    window.location.href = 'admin.html'; // توجيه للوحة التحكم
+                    window.location.href = 'admin.html';
                 })
                 .catch((error) => {
                     // فشل الدخول
                     console.error(error);
                     err.style.display = 'block';
-                    err.innerText = "البريد الإلكتروني أو كلمة المرور خطأ";
+                    err.innerText = "اسم المستخدم أو كلمة المرور خطأ";
                     btn.innerHTML = 'تسجيل الدخول';
                 });
         });
