@@ -18,41 +18,31 @@
         .sidebar button:hover, .sidebar button.active { background: rgba(255,255,255,0.1); color: var(--accent); }
         
         .main-admin { margin-right: 250px; flex: 1; padding: 30px; width: calc(100% - 250px); transition: 0.3s; }
-        
         .dashboard-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
         .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: space-between; }
         .card-icon { width: 50px; height: 50px; background: #e3f2fd; color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; }
         
-        .archive-controls { display: flex; gap: 10px; background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .archive-controls input, .archive-controls select { flex: 1; min-width: 200px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
-        .total-filtered-box { background: var(--primary); color: white; padding: 10px 20px; border-radius: 5px; display: flex; align-items: center; gap: 10px; }
-        
-        table { width: 100%; border-collapse: collapse; background: white; margin-top: 20px; box-shadow: var(--shadow); border-radius: 10px; overflow: hidden; }
-        th, td { padding: 15px; border-bottom: 1px solid #eee; text-align: right; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; margin-top:20px; }
+        th, td { padding: 15px; text-align: right; border-bottom: 1px solid #eee; }
         th { background: var(--primary); color: white; }
-        .order-row { cursor: pointer; transition: 0.2s; }
-        .order-row:hover { background-color: #f1f1f1; }
-        
-        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; color: white; }
-        .status-pending { background-color: #f39c12; }
-        .status-processing { background-color: #3498db; }
-        .status-shipped { background-color: #9b59b6; }
-        .status-delivered { background-color: #27ae60; }
+        .order-row:hover { background: #f9f9f9; cursor: pointer; }
 
-        @keyframes redFlash { 0% { background-color: #fff; } 50% { background-color: #ffebee; box-shadow: inset 0 0 10px #e57373; } 100% { background-color: #fff; } }
-        .late-order { animation: redFlash 1.5s infinite; border-left: 5px solid #d32f2f !important; }
-        .timer-badge { background: #333; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; direction: ltr; display: inline-block; }
-
-        form { background: white; padding: 25px; border-radius: 8px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 15px; max-width: 600px; margin: 0 auto; }
-        input, textarea, select { padding: 12px; border: 1px solid #ddd; border-radius: 5px; outline: none; }
-        .btn-buy { background: var(--primary); color: white; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem; }
+        @keyframes redFlash { 0% { background: #fff; } 50% { background: #ffebee; box-shadow: inset 0 0 10px red; } 100% { background: #fff; } }
+        .late-order { animation: redFlash 1.5s infinite; border-left: 5px solid red !important; }
+        .timer-badge { background: #333; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; direction: ltr; display: inline-block; }
         
+        .status-badge { padding: 4px 8px; border-radius: 4px; color: white; font-size: 0.85rem; }
+        .status-pending { background: #f39c12; }
+        .status-delivered { background: #27ae60; }
+
+        .cat-manager-item { background: white; padding: 20px; margin-bottom: 15px; border-radius: 10px; }
+        .sub-cat-badge { background: #eee; padding: 5px 12px; border-radius: 15px; margin: 5px; display: inline-flex; align-items: center; gap: 5px; }
+        .delete-btn { color: red; cursor: pointer; }
+
         .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
-        .modal-content { background: var(--white); margin: 5% auto; width: 90%; max-width: 600px; border-radius: 15px; overflow: hidden; position: relative; animation: zoomIn 0.3s; }
-        .close-btn { position: absolute; left: 20px; top: 20px; font-size: 20px; cursor: pointer; background: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 10; color: #333; }
-        @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        .modal-content { background: white; margin: 5% auto; width: 90%; max-width: 600px; border-radius: 15px; padding: 25px; position: relative; }
 
-        @media(max-width: 768px) { .sidebar { width: 60px; padding: 10px; } .sidebar h2, .sidebar button span { display: none; } .sidebar button { justify-content: center; } .main-admin { margin-right: 60px; width: calc(100% - 60px); } }
+        @media(max-width: 768px) { .sidebar { width: 60px; } .sidebar h2, .sidebar button span { display: none; } .main-admin { margin-right: 60px; width: calc(100%-60px); } }
     </style>
 </head>
 <body>
@@ -61,11 +51,11 @@
         <h2><i class="fa-solid fa-couch"></i> <span>الشماع</span></h2>
         <button onclick="window.showAdminSection('dashboard')" class="active"><i class="fa-solid fa-chart-line"></i> <span>التقارير</span></button>
         <button onclick="window.showAdminSection('orders')"><i class="fa-solid fa-clipboard-list"></i> <span>الطلبات</span></button>
-        <button onclick="window.showAdminSection('messages')"><i class="fa-solid fa-comment-dots"></i> <span>الرسائل</span></button>
+        <button onclick="window.showAdminSection('messages')"><i class="fa-solid fa-comments"></i> <span>الرسائل</span></button>
         <button onclick="window.showAdminSection('archive')"><i class="fa-solid fa-box-archive"></i> <span>سجل المبيعات</span></button>
         <button onclick="window.showAdminSection('addProduct')"><i class="fa-solid fa-plus-circle"></i> <span>إضافة منتج</span></button>
         <button onclick="window.showAdminSection('categories')"><i class="fa-solid fa-layer-group"></i> <span>الأقسام</span></button>
-        <a href="index.html" target="_blank" style="text-decoration: none;"><button><i class="fa-solid fa-eye"></i> <span>الموقع</span></button></a>
+        <a href="index.html" target="_blank" style="text-decoration:none;"><button><i class="fa-solid fa-eye"></i> <span>الموقع</span></button></a>
     </aside>
 
     <main class="main-admin">
@@ -73,71 +63,79 @@
             <h1>لوحة القيادة</h1>
             <div class="dashboard-cards">
                 <div class="card"><div><h3>الطلبات</h3><p id="totalOrdersCount">0</p></div><div class="card-icon"><i class="fa-solid fa-box-open"></i></div></div>
-                <div class="card"><div><h3>الأكثر طلباً</h3><p id="mostPopularItem">-</p></div><div class="card-icon" style="background:#fff3e0; color:orange"><i class="fa-solid fa-star"></i></div></div>
+                <div class="card"><div><h3>الأكثر طلباً</h3><p id="mostPopularItem">-</p></div><div class="card-icon" style="color:orange"><i class="fa-solid fa-star"></i></div></div>
             </div>
             <div style="background:white; padding:20px; border-radius:10px;">
                 <h3><i class="fa-solid fa-bell"></i> التنبيه الصوتي</h3>
-                <p style="color: green; font-weight: bold;" id="soundStatus">حالة الصوت: في الانتظار...</p>
+                <p id="soundStatus">حالة الصوت: في الانتظار... (اضغط في أي مكان للتفعيل)</p>
             </div>
         </section>
 
-        <!-- قسم الرسائل -->
-        <section id="messagesSection" style="display: none;">
-            <h1>محادثات العملاء</h1>
-            <div style="display: grid; grid-template-columns: 250px 1fr; gap: 20px; background: white; border-radius: 10px; height: 70vh; overflow: hidden;">
-                <div id="chatUsersList" style="border-left: 1px solid #eee; overflow-y: auto; background: #f8f9fa;"></div>
-                <div style="display: flex; flex-direction: column;">
-                    <div id="adminChatHeader" style="padding: 15px; background: var(--primary); color: white;">اختر عميل للدردشة</div>
-                    <div id="adminChatMessages" style="flex: 1; padding: 20px; overflow-y: auto; background: #f0f2f5; display: flex; flex-direction: column; gap: 10px;"></div>
-                    <div id="adminChatInputArea" style="padding: 15px; border-top: 1px solid #eee; display: none; gap: 10px;">
-                        <input type="text" id="adminReplyInput" placeholder="اكتب ردك..." style="flex: 1;">
-                        <button onclick="window.sendAdminReply()" class="btn-buy" style="padding: 10px 20px;">إرسال</button>
+        <section id="messagesSection" style="display:none;">
+            <h1>الرسائل</h1>
+            <div style="display:grid; grid-template-columns: 280px 1fr; gap:20px; background:white; height:70vh; border-radius:10px; overflow:hidden;">
+                <div id="chatUsersList" style="border-left:1px solid #eee; overflow-y:auto; background:#f8f9fa;"></div>
+                <div style="display:flex; flex-direction:column;">
+                    <div id="adminChatHeader" style="padding:15px; background:var(--primary); color:white;">اختر محادثة</div>
+                    <div id="adminChatMessages" style="flex:1; padding:20px; overflow-y:auto; background:#f0f2f5; display:flex; flex-direction:column; gap:10px;"></div>
+                    <div id="adminChatInputArea" style="padding:15px; border-top:1px solid #eee; display:none; gap:10px;">
+                        <input type="text" id="adminReplyInput" placeholder="اكتب ردك..." style="flex:1; padding:10px; border:1px solid #ddd; border-radius:5px;">
+                        <button onclick="window.sendAdminReply()" style="background:var(--primary); color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer;">إرسال</button>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="archiveSection" style="display: none;">
-            <h1>سجل المبيعات</h1>
-            <div class="archive-controls">
-                <input type="text" id="archiveSearch" placeholder="بحث..." onkeyup="window.filterArchive()">
-                <select id="archiveStatusFilter" onchange="window.filterArchive()"><option value="all">الكل</option><option value="تم التوصيل">تم التوصيل</option></select>
-                <div class="total-filtered-box"><span>الإجمالي:</span><strong id="filteredTotalMoney">0 ج.م</strong></div>
+        <section id="ordersSection" style="display:none;">
+            <h1>الطلبات الجارية</h1>
+            <table><thead><tr><th>العميل</th><th>المنتجات</th><th>الإجمالي</th><th>الحالة</th><th>الوقت المتبقي</th></tr></thead><tbody id="ordersBody"></tbody></table>
+        </section>
+
+        <section id="archiveSection" style="display:none;">
+            <h1>سجل المبيعات والأرشيف</h1>
+            <div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
+                <input type="text" id="archiveSearch" placeholder="بحث بالاسم أو الهاتف..." onkeyup="window.filterArchive()" style="flex:1; padding:10px; border-radius:5px; border:1px solid #ddd;">
+                <select id="archiveStatusFilter" onchange="window.filterArchive()" style="padding:10px; border-radius:5px;"><option value="all">كل الحالات</option><option value="تم التوصيل">تم التوصيل</option><option value="قيد المراجعة">قيد المراجعة</option></select>
+                <div style="background:var(--primary); color:white; padding:10px 20px; border-radius:5px;">الإجمالي: <strong id="filteredTotalMoney">0 ج.م</strong></div>
             </div>
-            <table id="archiveTable"><thead><tr><th>العميل</th><th>المنتجات</th><th>الإجمالي</th><th>الحالة</th><th>التاريخ</th></tr></thead><tbody id="archiveBody"></tbody></table>
+            <table><thead><tr><th>العميل</th><th>المنتجات</th><th>الإجمالي</th><th>الحالة</th><th>التاريخ</th></tr></thead><tbody id="archiveBody"></tbody></table>
         </section>
 
-        <section id="ordersSection" style="display: none;">
-            <h1>الطلبات الحالية</h1>
-            <table id="ordersTable"><thead><tr><th>العميل</th><th>المنتجات</th><th>الإجمالي</th><th>الحالة</th><th>الوقت</th></tr></thead><tbody id="ordersBody"></tbody></table>
-        </section>
-
-        <section id="addProductSection" style="display: none;">
-            <h1>إضافة منتج</h1>
-            <form id="productForm">
+        <section id="addProductSection" style="display:none;">
+            <h1>إضافة منتج جديد</h1>
+            <form id="productForm" style="background:white; padding:25px; border-radius:10px; display:flex; flex-direction:column; gap:15px; max-width:600px;">
                 <input type="text" id="pName" placeholder="اسم المنتج" required>
                 <input type="text" id="pImg" placeholder="رابط الصورة" required>
-                <textarea id="pDesc" placeholder="الوصف"></textarea>
-                <input type="number" id="pPrice" placeholder="السعر" required>
-                <input type="number" id="pDiscount" placeholder="الخصم %">
-                <select id="pCategory" onchange="window.updateSubCatsSelect()" required></select>
-                <select id="pSubCategory" required><option value="عام">عام</option></select>
-                <button type="submit" class="btn-buy">نشر المنتج</button>
+                <textarea id="pDesc" placeholder="الوصف" required></textarea>
+                <div style="display:flex; gap:10px;"><input type="number" id="pPrice" placeholder="السعر" style="flex:1" required><input type="number" id="pDiscount" placeholder="الخصم %" style="flex:1"></div>
+                <label>القسم الرئيسي:</label><select id="pCategory" onchange="window.updateSubCatsSelect()" required></select>
+                <label>الفرع:</label><select id="pSubCategory" required></select>
+                <button type="submit" style="background:var(--primary); color:white; padding:15px; border:none; border-radius:5px; cursor:pointer;">نشر المنتج</button>
             </form>
         </section>
 
-        <section id="categoriesSection" style="display: none;">
-            <h1>إدارة الأقسام</h1>
-            <div style="background:white; padding:20px; border-radius:10px; margin-bottom:20px;">
-                <input type="text" id="newMainCatName" placeholder="اسم قسم جديد">
-                <button onclick="window.addNewMainCategory()" class="btn-buy">إضافة</button>
+        <section id="categoriesSection" style="display:none;">
+            <h1>إدارة الأقسام والفروع</h1>
+            <div style="background:white; padding:20px; border-radius:10px; margin-bottom:20px; display:flex; gap:10px;">
+                <input type="text" id="newMainCatName" placeholder="اسم قسم رئيسي جديد" style="flex:1; padding:10px;">
+                <button onclick="window.addNewMainCategory()" style="background:var(--primary); color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer;">إضافة</button>
             </div>
             <div id="categoriesManagerContainer"></div>
         </section>
     </main>
 
     <div id="orderDetailsModal" class="modal">
-        <div class="modal-content"><span class="close-btn" onclick="window.closeOrderModal()"><i class="fa-solid fa-xmark"></i></span><div id="orderDetailsContent" style="padding: 20px;"></div></div>
+        <div class="modal-content">
+            <span onclick="window.closeOrderModal()" style="position:absolute; left:20px; top:20px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></span>
+            <div id="orderDetailsContent"></div>
+            <hr style="margin:20px 0;">
+            <h3>تحديث الطلب</h3>
+            <div style="display:flex; gap:10px; margin-top:10px;">
+                <select id="updateStatusSelect" style="flex:1; padding:10px;"><option value="قيد المراجعة">قيد المراجعة</option><option value="جاري التحضير">جاري التحضير</option><option value="خرج للشحن">خرج للشحن</option><option value="تم التوصيل">تم التوصيل</option></select>
+                <input type="number" id="updateDaysInput" placeholder="أيام التوصيل" style="flex:1; padding:10px;">
+            </div>
+            <button onclick="window.saveOrderUpdates()" style="width:100%; background:var(--primary); color:white; padding:12px; border:none; border-radius:5px; margin-top:15px; cursor:pointer;">حفظ</button>
+        </div>
     </div>
 
     <audio id="notificationSound" src="https://assets.mixkit.co/sfx/preview/mixkit-software-interface-start-2574.mp3"></audio>
@@ -152,11 +150,15 @@
 
         let globalOrders = [];
         let currentChatId = null;
+        let currentEditingOrderId = null;
+        window.cachedCatsForSelect = [];
         const alertAudio = document.getElementById('notificationSound');
 
         document.addEventListener('DOMContentLoaded', () => {
             initAdmin();
-            document.body.addEventListener('click', () => { if(alertAudio) { alertAudio.play().then(()=>alertAudio.pause()); document.getElementById('soundStatus').innerText = "حالة الصوت: مفعل ✅"; } }, {once: true});
+            document.body.addEventListener('click', () => { 
+                if(alertAudio) alertAudio.play().then(()=>{ alertAudio.pause(); document.getElementById('soundStatus').innerText="حالة الصوت: مفعل ✅"; }).catch(()=>{});
+            }, {once:true});
         });
 
         async function initAdmin() {
@@ -168,69 +170,88 @@
                 renderOrdersAdmin(globalOrders);
                 updateDashboardStats(globalOrders);
                 window.filterArchive();
+                snapshot.docChanges().forEach(change => {
+                    if (change.type === "added" && (Date.now() - change.doc.data().date) < 10000) alertAudio.play().catch(()=>{});
+                });
             });
             setInterval(updateOrderTimers, 1000);
             loadChatUsers();
         }
 
         window.showAdminSection = function(id) {
-            ['dashboardSection', 'ordersSection', 'addProductSection', 'categoriesSection', 'archiveSection', 'messagesSection'].forEach(s => document.getElementById(s).style.display = 'none');
-            document.getElementById(id + 'Section').style.display = 'block';
+            ['dashboardSection', 'ordersSection', 'addProductSection', 'categoriesSection', 'archiveSection', 'messagesSection'].forEach(s => document.getElementById(s).style.display='none');
+            document.getElementById(id + 'Section').style.display='block';
             document.querySelectorAll('.sidebar button').forEach(b => b.classList.remove('active'));
             event.currentTarget.classList.add('active');
         }
 
-        // شات الأدمن
-        async function loadChatUsers() {
-            const listDiv = document.getElementById('chatUsersList');
-            onSnapshot(collection(db, "chats"), (snapshot) => {
+        // الشات
+        function loadChatUsers() {
+            onSnapshot(collection(db, "chats"), (snap) => {
                 const users = {};
-                snapshot.forEach(doc => { const d = doc.data(); users[d.chatId] = { name: d.customerName || d.chatId, last: d.text }; });
-                listDiv.innerHTML = '';
-                Object.keys(users).forEach(phone => {
-                    listDiv.innerHTML += `<div onclick="window.openAdminChat('${phone}', '${users[phone].name}')" style="padding:15px; border-bottom:1px solid #ddd; cursor:pointer;"><strong>${users[phone].name}</strong><br><small>${phone}</small></div>`;
+                snap.forEach(d => { const data=d.data(); users[data.chatId] = data.customerName || data.chatId; });
+                const list = document.getElementById('chatUsersList'); list.innerHTML = '';
+                Object.keys(users).forEach(id => {
+                    list.innerHTML += `<div onclick="window.openAdminChat('${id}', '${users[id]}')" style="padding:15px; border-bottom:1px solid #eee; cursor:pointer;"><b>${users[id]}</b><br><small>${id}</small></div>`;
                 });
             });
         }
 
-        window.openAdminChat = function(phone, name) {
-            currentChatId = phone;
-            document.getElementById('adminChatHeader').innerText = "دردشة مع: " + name;
+        window.openAdminChat = (id, name) => {
+            currentChatId = id;
+            document.getElementById('adminChatHeader').innerText = "محادثة: " + name;
             document.getElementById('adminChatInputArea').style.display = 'flex';
-            const q = query(collection(db, "chats"), where("chatId", "==", phone), orderBy("timestamp", "asc"));
-            onSnapshot(q, (snapshot) => {
-                const box = document.getElementById('adminChatMessages');
-                box.innerHTML = '';
-                snapshot.forEach(doc => {
-                    const m = doc.data();
-                    const align = m.sender === 'admin' ? 'align-self:flex-end; background:var(--primary); color:white;' : 'align-self:flex-start; background:#eee;';
+            const q = query(collection(db, "chats"), where("chatId", "==", id), orderBy("timestamp", "asc"));
+            onSnapshot(q, (snap) => {
+                const box = document.getElementById('adminChatMessages'); box.innerHTML = '';
+                snap.forEach(d => {
+                    const m = d.data(); const align = m.sender === 'admin' ? 'align-self:flex-end; background:var(--primary); color:white;' : 'align-self:flex-start; background:#eee;';
                     box.innerHTML += `<div style="padding:8px 12px; border-radius:10px; max-width:80%; ${align}">${m.text}</div>`;
                 });
                 box.scrollTop = box.scrollHeight;
             });
         }
 
-        window.sendAdminReply = async function() {
-            const input = document.getElementById('adminReplyInput');
-            if(!input.value.trim() || !currentChatId) return;
-            await addDoc(collection(db, "chats"), { chatId: currentChatId, sender: 'admin', text: input.value, timestamp: serverTimestamp() });
-            input.value = '';
+        window.sendAdminReply = async () => {
+            const inp = document.getElementById('adminReplyInput');
+            if(!inp.value.trim() || !currentChatId) return;
+            await addDoc(collection(db, "chats"), { chatId: currentChatId, sender: 'admin', text: inp.value, timestamp: serverTimestamp() });
+            inp.value = '';
         }
 
-        // بقية الوظائف الأصلية (الطلبات، الأرشيف، الأقسام)
-        function updateDashboardStats(orders) {
-            document.getElementById('totalOrdersCount').innerText = orders.length;
-            let counts = {};
-            orders.forEach(o => { (o.items || []).forEach(i => counts[i.productName] = (counts[i.productName] || 0) + 1); });
-            document.getElementById('mostPopularItem').innerText = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b, '-');
+        // الأقسام والفروع
+        async function loadCategoriesManager() {
+            onSnapshot(collection(db, "categories"), (snap) => {
+                const cont = document.getElementById('categoriesManagerContainer'); cont.innerHTML = '';
+                snap.forEach(d => {
+                    const c = d.data(); let subs = '';
+                    (c.subs||[]).forEach(s => subs += `<span class="sub-cat-badge">${s} <i class="fa-solid fa-xmark delete-btn" onclick="window.deleteSubCategory('${d.id}', '${s}')"></i></span>`);
+                    cont.innerHTML += `
+                        <div class="cat-manager-item">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><b>${c.name}</b> <button onclick="window.deleteMainCategory('${d.id}')" style="color:red; border:none; background:none; cursor:pointer;">حذف القسم</button></div>
+                            <div style="display:flex; gap:5px; flex-wrap:wrap;">${subs} <input type="text" id="in_${d.id}" placeholder="فرع جديد" style="padding:5px; width:100px;"> <button onclick="window.addSubCategory('${d.id}')">+</button></div>
+                        </div>`;
+                });
+            });
         }
 
+        window.addNewMainCategory = async () => {
+            const v = document.getElementById('newMainCatName').value;
+            if(v) { await addDoc(collection(db, "categories"), {name:v, subs:[]}); document.getElementById('newMainCatName').value=''; }
+        }
+        window.deleteMainCategory = async (id) => { if(confirm('حذف القسم؟')) await deleteDoc(doc(db, "categories", id)); }
+        window.addSubCategory = async (id) => {
+            const val = document.getElementById('in_'+id).value;
+            if(val) await updateDoc(doc(db, "categories", id), { subs: arrayUnion(val) });
+        }
+        window.deleteSubCategory = async (id, name) => { await updateDoc(doc(db, "categories", id), { subs: arrayRemove(name) }); }
+
+        // الطلبات والأرشيف
         function renderOrdersAdmin(orders) {
-            const body = document.getElementById('ordersBody');
-            body.innerHTML = '';
+            const body = document.getElementById('ordersBody'); body.innerHTML = '';
             orders.filter(o => o.status !== 'تم التوصيل').forEach(o => {
-                const deadline = o.date + ((parseInt(o.deliveryDays) || 3) * 86400000);
-                body.innerHTML += `<tr class="order-row" data-deadline="${deadline}" onclick="window.openOrderDetails('${o.id}')"><td>${o.customerName}</td><td>${(o.items||[]).map(i=>i.productName).join(', ')}</td><td>${o.totalPrice}</td><td><span class="status-badge status-pending">${o.status}</span></td><td><span class="timer-badge">...</span></td></tr>`;
+                const deadline = o.date + ((parseInt(o.deliveryDays)||3) * 86400000);
+                body.innerHTML += `<tr class="order-row" data-deadline="${deadline}" onclick="window.openOrderDetails('${o.id}')"><td>${o.customerName}</td><td>${(o.items||[]).map(i=>i.productName).join(' + ')}</td><td>${o.totalPrice}</td><td><span class="status-badge status-pending">${o.status}</span></td><td><span class="timer-badge">--</span></td></tr>`;
             });
         }
 
@@ -238,50 +259,76 @@
             document.querySelectorAll('.order-row').forEach(row => {
                 const diff = row.getAttribute('data-deadline') - Date.now();
                 const timer = row.querySelector('.timer-badge');
-                if(diff < 0) { timer.innerText = "متأخر!"; row.classList.add('late-order'); }
-                else { 
-                    const h = Math.floor(diff / 3600000);
-                    const m = Math.floor((diff % 3600000) / 60000);
-                    timer.innerText = `${h}س ${m}د`;
+                if(diff < 0) { timer.innerText="متأخر!"; row.classList.add('late-order'); }
+                else {
+                    const d = Math.floor(diff/86400000), h = Math.floor((diff%86400000)/3600000), m = Math.floor((diff%3600000)/60000);
+                    timer.innerText = `${d}ي ${h}س ${m}د`; row.classList.remove('late-order');
                 }
             });
         }
 
-        window.filterArchive = function() {
-            const body = document.getElementById('archiveBody');
-            let sum = 0;
-            body.innerHTML = '';
-            globalOrders.forEach(o => {
-                body.innerHTML += `<tr><td>${o.customerName}</td><td>${o.totalPrice}</td><td>${o.status}</td><td>${new Date(o.date).toLocaleDateString()}</td></tr>`;
-                sum += parseFloat(o.totalPrice) || 0;
+        window.openOrderDetails = (id) => {
+            const o = globalOrders.find(x => x.id === id); if(!o) return;
+            currentEditingOrderId = id;
+            document.getElementById('orderDetailsContent').innerHTML = `
+                <p><b>العميل:</b> ${o.customerName}</p><p><b>الهاتف:</b> ${o.customerPhone}</p><p><b>العنوان:</b> ${o.customerAddress}</p>
+                <hr><p><b>المنتجات:</b></p><ul>${(o.items||[]).map(i=>`<li>${i.productName} (${i.type}) - ${i.price}</li>`).join('')}</ul>`;
+            document.getElementById('updateStatusSelect').value = o.status;
+            document.getElementById('updateDaysInput').value = o.deliveryDays || 3;
+            document.getElementById('orderDetailsModal').style.display = 'block';
+        }
+
+        window.saveOrderUpdates = async () => {
+            const s = document.getElementById('updateStatusSelect').value, d = document.getElementById('updateDaysInput').value;
+            await updateDoc(doc(db, "orders", currentEditingOrderId), { status: s, deliveryDays: d });
+            window.closeOrderModal();
+        }
+        window.closeOrderModal = () => document.getElementById('orderDetailsModal').style.display = 'none';
+
+        window.filterArchive = () => {
+            const s = document.getElementById('archiveSearch').value.toLowerCase(), st = document.getElementById('archiveStatusFilter').value;
+            const body = document.getElementById('archiveBody'); body.innerHTML = ''; let sum = 0;
+            globalOrders.filter(o => (o.customerName.toLowerCase().includes(s) || o.customerPhone.includes(s)) && (st === 'all' || o.status === st)).forEach(o => {
+                body.innerHTML += `<tr><td>${o.customerName}</td><td>${(o.items||[]).map(i=>i.productName).join(', ')}</td><td>${o.totalPrice}</td><td>${o.status}</td><td>${new Date(o.date).toLocaleDateString()}</td></tr>`;
+                sum += parseFloat(o.totalPrice.replace(/[^0-9.]/g,'')) || 0;
             });
-            document.getElementById('filteredTotalMoney').innerText = sum + " ج.م";
+            document.getElementById('filteredTotalMoney').innerText = Math.floor(sum) + " ج.م";
         }
 
-        async function loadCategoriesManager() {
-            onSnapshot(collection(db, "categories"), (snap) => {
-                const cont = document.getElementById('categoriesManagerContainer');
-                cont.innerHTML = '';
-                snap.forEach(d => {
-                    const c = d.data();
-                    cont.innerHTML += `<div style="background:white; padding:15px; margin-top:10px;"><strong>${c.name}</strong> <button onclick="window.deleteMainCategory('${d.id}')">حذف</button></div>`;
-                });
-            });
-        }
-
-        window.addNewMainCategory = async function() {
-            const name = document.getElementById('newMainCatName').value;
-            if(name) await addDoc(collection(db, "categories"), { name, subs: [] });
-        }
-
+        // المنتجات
         async function populateCategorySelects() {
-            const snap = await getDocs(collection(db, "categories"));
-            const sel = document.getElementById('pCategory');
-            sel.innerHTML = '';
-            snap.forEach(d => sel.innerHTML += `<option value="${d.id}">${d.data().name}</option>`);
+            onSnapshot(collection(db, "categories"), (snap) => {
+                window.cachedCatsForSelect = snap.docs.map(d => ({id:d.id, ...d.data()}));
+                const sel = document.getElementById('pCategory'); sel.innerHTML = '<option disabled selected>اختر القسم</option>';
+                window.cachedCatsForSelect.forEach(c => sel.innerHTML += `<option value="${c.id}">${c.name}</option>`);
+            });
         }
-        
-        window.closeOrderModal = () => document.getElementById('orderDetailsModal').style.display='none';
+        window.updateSubCatsSelect = () => {
+            const id = document.getElementById('pCategory').value;
+            const subSel = document.getElementById('pSubCategory'); subSel.innerHTML = '';
+            const cat = window.cachedCatsForSelect.find(x => x.id === id);
+            (cat.subs||['عام']).forEach(s => subSel.innerHTML += `<option value="${s}">${s}</option>`);
+        }
+
+        document.getElementById('productForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const catId = document.getElementById('pCategory').value;
+            const catName = window.cachedCatsForSelect.find(x => x.id === catId).name;
+            await addDoc(collection(db, "products"), {
+                name: document.getElementById('pName').value, img: document.getElementById('pImg').value, desc: document.getElementById('pDesc').value,
+                price: parseFloat(document.getElementById('pPrice').value), discount: parseFloat(document.getElementById('pDiscount').value)||0,
+                category: catName, subCategory: document.getElementById('pSubCategory').value, date: Date.now()
+            });
+            alert('تم النشر'); e.target.reset();
+        }
+
+        function updateDashboardStats(orders) {
+            document.getElementById('totalOrdersCount').innerText = orders.length;
+            let counts = {};
+            orders.forEach(o => (o.items||[]).forEach(i => counts[i.productName] = (counts[i.productName]||0)+1));
+            const popular = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b, '-');
+            document.getElementById('mostPopularItem').innerText = popular;
+        }
     </script>
 </body>
 </html>
