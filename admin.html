@@ -6,8 +6,12 @@
     <title>لوحة تحكم الشماع</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    
+    <!-- أهم سطر: ربط التصميم -->
+    <link rel="stylesheet" href="./style.css">
+    
     <style>
+        /* تنسيقات خاصة بالأدمن */
         body { background: #f0f2f5; display: flex; min-height: 100vh; overflow-x: hidden; }
         .sidebar { width: 250px; background: var(--primary); color: white; padding: 20px; display: flex; flex-direction: column; gap: 20px; position: fixed; height: 100%; right: 0; top: 0; z-index: 1000; }
         .sidebar h2 { text-align: center; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 15px; }
@@ -134,6 +138,6 @@
         </div>
     </div>
     <audio id="notificationSound" src="https://assets.mixkit.co/sfx/preview/mixkit-software-interface-start-2574.mp3"></audio>
-    <script type="module" src="script.js"></script>
+    <script type="module" src="./script.js"></script>
 </body>
 </html>
