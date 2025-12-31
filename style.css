@@ -28,7 +28,7 @@ body { background-color: var(--bg-light); color: var(--text-dark); overflow-x: h
 .cta-btn { padding: 12px 35px; background: var(--accent); color: white; border: none; border-radius: 30px; font-size: 1rem; cursor: pointer; transition: var(--transition); }
 .cta-btn:hover { background: #b88e46; transform: translateY(-3px); }
 
-/* Layout & Products */
+/* Products Layout */
 .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; min-height: 60vh; }
 .section-title { text-align: center; margin-bottom: 40px; }
 .section-title h2 { color: var(--primary); font-size: 2rem; }
@@ -64,9 +64,38 @@ body { background-color: var(--bg-light); color: var(--text-dark); overflow-x: h
 .total-row { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 15px; font-size: 1.1rem; }
 .checkout-btn { width: 100%; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem; }
 
-/* Profile & Admin Layout */
+/* Profile & Admin */
 .profile-content { max-width: 600px !important; text-align: right; padding: 0 !important; }
 .profile-header-modal { background: var(--primary); color: white; padding: 30px 20px; text-align: center; }
 .avatar-circle-small { width: 60px; height: 60px; background: white; color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 25px; }
 .profile-body-container { padding: 20px; }
-.profile-info-
+.profile-info-row { margin-bottom: 10px; color: #555; display: flex; align-items: center; gap: 10px; }
+.profile-info-row i { color: var(--accent); width: 20px; text-align: center; }
+.edit-btn-small { background: #eee; border: none; padding: 5px 10px; cursor: pointer; border-radius: 5px; font-size: 0.8rem; }
+.save-btn-small { background: var(--primary); color: white; border: none; padding: 8px 15px; cursor: pointer; border-radius: 5px; flex: 1; }
+.cancel-btn-small { background: #ccc; color: #333; border: none; padding: 8px 15px; cursor: pointer; border-radius: 5px; }
+.user-log-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+.user-log-table th, .user-log-table td { padding: 10px; border-bottom: 1px solid #eee; text-align: right; font-size: 0.9rem; }
+.user-log-table th { color: var(--primary); background: #f9f9f9; }
+
+.modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
+.modal-content { background: var(--white); margin: 5% auto; width: 90%; max-width: 900px; border-radius: 15px; overflow: hidden; position: relative; animation: zoomIn 0.3s; }
+.modal-body { display: flex; flex-wrap: wrap; }
+.modal-img-wrapper { flex: 1; min-width: 300px; height: 450px; }
+.modal-img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+.m-details { flex: 1; padding: 40px; display: flex; flex-direction: column; justify-content: center; }
+.category-tag { background: #eee; color: #666; padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; }
+.category-tag.sub-tag { background: var(--accent); color: white; margin-right: 5px; }
+.action-buttons { display: flex; gap: 15px; margin-top: 20px; }
+.action-buttons button { flex: 1; padding: 15px; border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.btn-buy { background: var(--primary); color: white; }
+.btn-reserve { background: white; border: 2px solid var(--accent); color: var(--accent); }
+.close-btn { position: absolute; left: 20px; top: 20px; font-size: 20px; cursor: pointer; background: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 10; color: #333; }
+
+form { background: white; padding: 25px; border-radius: 8px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 15px; max-width: 600px; margin: 0 auto; }
+input, textarea, select { padding: 12px; border: 1px solid #ddd; border-radius: 5px; outline: none; }
+table { width: 100%; border-collapse: collapse; background: white; margin-top: 20px; box-shadow: var(--shadow); }
+th, td { padding: 15px; border-bottom: 1px solid #eee; text-align: right; }
+th { background: var(--primary); color: white; }
+footer { background: var(--primary); color: white; padding: 20px; text-align: center; margin-top: 50px; }
+@keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
