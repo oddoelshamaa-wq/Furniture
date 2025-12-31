@@ -13,8 +13,6 @@
             --wa-sidebar: #111b21; --wa-chat: #0b141a; --wa-green: #00a884;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
-        
-        /* تحسين: جعل الجسم مخفي بمرونة لتجنب الاختفاء الدائم */
         body { background: var(--bg); display: none; height: 100vh; overflow: hidden; color: var(--text); }
 
         /* Sidebar */
@@ -124,7 +122,7 @@
     </aside>
 
     <main class="main-content">
-        <!-- Dashboard -->
+        <!-- Dashboard Section -->
         <section id="dashboard" class="section active">
             <div class="header-top">
                 <div class="page-title">لوحة القيادة</div>
@@ -155,7 +153,7 @@
             </div>
         </section>
 
-        <!-- Products -->
+        <!-- Products Section -->
         <section id="products" class="section">
             <div class="header-top">
                 <div class="page-title">إدارة المنتجات</div>
@@ -186,7 +184,7 @@
             <div class="filters-bar">
                 <div style="flex:1; display:flex; gap:10px; align-items:center;">
                     <i class="fa-solid fa-search" style="color:#888;"></i>
-                    <input id="searchOrder" class="filter-input" placeholder="بحث في الأرشيف..." onkeyup="applyFilters()">
+                    <input id="searchOrder" class="filter-input" placeholder="بحث باسم العميل أو الهاتف..." onkeyup="applyFilters()">
                 </div>
                 <div style="display:flex; gap:5px; align-items:center;">
                     <span style="font-size:0.9rem;">من:</span>
@@ -209,7 +207,7 @@
             </div>
         </section>
 
-        <!-- Chat -->
+        <!-- Chat Section -->
         <section id="chat" class="section">
             <div class="chat-layout">
                 <div class="chat-list" id="chatUsersList"></div>
@@ -225,13 +223,13 @@
             </div>
         </section>
 
-        <!-- Categories -->
+        <!-- Categories Section -->
         <section id="categories" class="section">
             <div class="page-title">الأقسام والفروع</div>
             <div style="background:white; padding:20px; border-radius:15px; margin-top:20px; max-width:600px;">
                 <h3 style="margin-bottom:15px;">إضافة قسم رئيسي</h3>
                 <div style="display:flex; gap:10px;">
-                    <input id="newCatInput" class="form-input" placeholder="اسم القسم">
+                    <input id="newCatInput" class="form-input" placeholder="اسم القسم الجديد">
                     <button onclick="addNewCat()" style="background:var(--accent); color:white; border:none; padding:0 20px; border-radius:8px; cursor:pointer;">إضافة</button>
                 </div>
             </div>
@@ -279,12 +277,12 @@
                         <input type="number" id="pDisc" class="form-input" value="0">
                     </div>
                 </div>
-                <button type="submit" class="btn-submit">حفظ البيانات</button>
+                <button type="submit" class="btn-submit">حفظ بيانات المنتج</button>
             </form>
         </div>
     </div>
 
-    <!-- Modal: Invoice -->
+    <!-- Modal: Invoice Details -->
     <div id="orderDetailModal" class="modal">
         <div class="modal-content" style="max-width:500px;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -292,11 +290,11 @@
                 <i class="fa-solid fa-xmark" onclick="document.getElementById('orderDetailModal').style.display='none'" style="cursor:pointer; font-size:1.5rem;"></i>
             </div>
             <div id="invoiceContent" class="invoice-box"></div>
-            <button onclick="window.print()" style="margin-top:15px; width:100%; padding:10px; background:#333; color:white; border:none; border-radius:8px; cursor:pointer;"><i class="fa-solid fa-print"></i> طباعة</button>
+            <button onclick="window.print()" style="margin-top:15px; width:100%; padding:10px; background:#333; color:white; border:none; border-radius:8px; cursor:pointer;"><i class="fa-solid fa-print"></i> طباعة الفاتورة</button>
         </div>
     </div>
 
-    <!-- Alarm Sound -->
+    <!-- Audio Element for Alarm -->
     <audio id="alertSound" src="https://assets.mixkit.co/sfx/preview/mixkit-facility-alarm-sound-999.mp3" preload="auto"></audio>
 
     <script type="module">
@@ -304,19 +302,16 @@
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, where, orderBy, deleteDoc, doc, updateDoc, arrayUnion, arrayRemove, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Firebase Config
+        // Firebase Configuration
         const firebaseConfig = { apiKey: "AIzaSyCE7wo3Vwzap7MnP4rv9kFZNwKlFD1myMM", authDomain: "furniture-416b8.firebaseapp.com", projectId: "furniture-416b8", storageBucket: "furniture-416b8.firebasestorage.app", messagingSenderId: "827913239758", appId: "1:827913239758:web:2fef185ebcf07d80e5e49f" };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
         
-        // Security & Display Check
+        // Login Check
         onAuthStateChanged(auth, (user) => { 
-            if (user) {
-                document.body.style.display = 'flex'; 
-            } else {
-                window.location.href = 'login.html'; 
-            }
+            if (user) { document.body.style.display = 'flex'; } 
+            else { window.location.href = 'login.html'; }
         });
 
         window.logout = () => signOut(auth).then(() => window.location.href = 'login.html');
@@ -325,19 +320,17 @@
         const audio = document.getElementById('alertSound');
         document.getElementById('dateDisplay').innerText = new Date().toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
+        // Initialize Audio System
         window.initSystem = () => {
             audio.play().then(() => { 
-                audio.pause(); 
-                audio.currentTime = 0; 
+                audio.pause(); audio.currentTime = 0; 
                 document.getElementById('soundOverlay').style.opacity = '0'; 
                 setTimeout(() => document.getElementById('soundOverlay').style.display = 'none', 500); 
-            }).catch(e => {
-                document.getElementById('soundOverlay').style.display = 'none';
-            });
+            }).catch(e => { document.getElementById('soundOverlay').style.display = 'none'; });
         }
 
         const playAlert = () => { 
-            try { audio.currentTime = 0; audio.play(); } catch(e){} 
+            try { audio.currentTime = 0; audio.play(); } catch(e){ console.log("Sound block:", e); } 
         }
 
         window.nav = (id, btn) => {
@@ -347,28 +340,29 @@
             btn.classList.add('active');
         }
 
-        // --- Orders Management ---
+        // --- Orders Real-time Listener ---
         onSnapshot(query(collection(db, "orders"), orderBy("date", "desc")), (snap) => {
             const dashTable = document.getElementById('dashOrdersBody');
             const activeTable = document.getElementById('activeOrdersBody');
-            
-            // تنظيف الجداول قبل إعادة البناء
-            dashTable.innerHTML = ''; 
-            activeTable.innerHTML = '';
+            dashTable.innerHTML = ''; activeTable.innerHTML = '';
             
             globalArchivedOrders = []; 
             let totalSales = 0, totalCount = 0;
             
-            // التنبيه للطلبات الجديدة فقط
+            // Notification Logic for New Orders
             snap.docChanges().forEach(c => { 
-                if(c.type === 'added' && c.doc.data() && (Date.now() - c.doc.data().date) < 15000) {
-                    playAlert(); 
+                if(c.type === 'added') {
+                    const orderDate = c.doc.data().date;
+                    // تفعيل التنبيه إذا كان الطلب في آخر 60 ثانية
+                    if(orderDate && (Date.now() - orderDate) < 60000) {
+                        playAlert(); 
+                    }
                 }
             });
 
             snap.forEach(d => {
                 const o = d.data();
-                if(!o) return; // حماية ضد البيانات الفارغة
+                if(!o) return;
                 o.id = d.id;
                 totalCount++;
 
@@ -409,7 +403,7 @@
             applyFilters(); 
         });
 
-        // Archive Filter
+        // Archive Filter Logic
         window.applyFilters = () => {
             const searchText = document.getElementById('searchOrder').value.toLowerCase();
             const dateFrom = document.getElementById('filterDateFrom').value;
@@ -421,11 +415,18 @@
             let filteredMoney = 0;
 
             globalArchivedOrders.forEach(o => {
-                const matchesText = (o.customerName || '').toLowerCase().includes(searchText) || (o.customerPhone || '').includes(searchText);
+                const name = (o.customerName || '').toLowerCase();
+                const phone = (o.customerPhone || '');
+                const matchesText = name.includes(searchText) || phone.includes(searchText);
+                
                 let matchesDate = true;
                 const orderDate = new Date(o.date);
                 if(dateFrom) matchesDate = matchesDate && (orderDate >= new Date(dateFrom));
-                if(dateTo) { const to = new Date(dateTo); to.setHours(23,59,59); matchesDate = matchesDate && (orderDate <= to); }
+                if(dateTo) { 
+                    const to = new Date(dateTo); 
+                    to.setHours(23,59,59); 
+                    matchesDate = matchesDate && (orderDate <= to); 
+                }
 
                 if(matchesText && matchesDate) {
                     filteredCount++;
@@ -466,10 +467,10 @@
                     <div style="background:#f9f9f9; padding:10px; margin-bottom:15px; border-radius:5px;"><strong>العنوان:</strong><br>${address}</div>
                     <div><strong>المنتجات:</strong></div>${itemsHtml}<div class="invoice-total">الإجمالي: ${o.totalPrice}</div>`;
                 document.getElementById('orderDetailModal').style.display = 'flex';
-            } catch(e) { console.error("Error viewing order", e); }
+            } catch(e) { console.log(e); }
         }
 
-        // --- Products Management ---
+        // --- Products Listener ---
         onSnapshot(collection(db, "products"), (snap) => {
             allProducts = snap.docs.map(d => ({id:d.id, ...d.data()}));
             document.getElementById('totalProducts').innerText = allProducts.length;
@@ -524,19 +525,17 @@
                 subCategory: document.getElementById('pCatSub').value, 
                 date: Date.now() 
             };
-            try {
-                if(id) { await updateDoc(doc(db, "products", id), data); } 
-                else { await addDoc(collection(db, "products"), data); }
-                closeProductModal();
-            } catch(err) { alert("حدث خطأ أثناء الحفظ"); }
+            if(id) { await updateDoc(doc(db, "products", id), data); } 
+            else { await addDoc(collection(db, "products"), data); }
+            closeProductModal();
         }
         window.deleteProduct = async (id) => { if(confirm('حذف هذا المنتج نهائياً؟')) await deleteDoc(doc(db, "products", id)); }
 
-        // --- Chat Management ---
+        // --- Chat Listener ---
         onSnapshot(collection(db, "chats"), (snap) => {
             let users = {};
             snap.docChanges().forEach(c => { 
-                if(c.type === 'added' && c.doc.data().sender === 'customer' && (Date.now() - (c.doc.data().timestamp?.seconds*1000||Date.now())) < 10000) playAlert(); 
+                if(c.type === 'added' && c.doc.data().sender === 'customer' && (Date.now() - (c.doc.data().timestamp?.seconds*1000||Date.now())) < 15000) playAlert(); 
             });
             snap.forEach(d => { 
                 const x = d.data(); 
@@ -567,7 +566,7 @@
             inp.value = '';
         }
 
-        // --- Categories Management ---
+        // --- Categories Listener ---
         onSnapshot(collection(db, "categories"), (snap) => {
             allCategories = snap.docs.map(d => ({id:d.id, ...d.data()}));
             const pSel = document.getElementById('pCatMain'); pSel.innerHTML = '<option value="">اختر القسم</option>';
