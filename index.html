@@ -14,7 +14,8 @@
         body { background-color: var(--bg-light); color: var(--text-dark); overflow-x: hidden; }
 
         .navbar { background-color: var(--white); padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 15px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; height: 70px; }
-        .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+        /* تعديل: اللوجو والروابط تعمل ريفريش */
+        .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary); cursor: pointer; }
         .logo i { color: var(--accent); margin-left: 5px; }
         .nav-links { list-style: none; display: flex; gap: 30px; }
         .nav-links a { color: var(--text-dark); text-decoration: none; font-weight: 600; transition: var(--transition); cursor: pointer; }
@@ -115,10 +116,10 @@
 <body>
     
     <nav class="navbar">
-        <div class="logo"><i class="fa-solid fa-couch"></i> الشماع</div>
+        <div class="logo" onclick="location.reload()"><i class="fa-solid fa-couch"></i> الشماع</div>
         <div class="menu-toggle" id="mobile-menu"><i class="fa-solid fa-bars"></i></div>
         <ul class="nav-links" id="nav-list">
-            <li><a href="#" class="active">الرئيسية</a></li>
+            <li><a href="#" class="active" onclick="location.reload()">الرئيسية</a></li>
             <li><a href="#" onclick="window.toggleCart()">السلة <span id="cartCount" class="badge">0</span></a></li>
             <li><a href="#" onclick="window.openProfileModal()">حسابي</a></li>
         </ul>
@@ -167,7 +168,7 @@
         </div>
     </footer>
 
-    <!-- بقية النوافذ (السلة، البروفايل، الخ) -->
+    <!-- بقية النوافذ -->
     <div class="cart-overlay" id="cartOverlay" onclick="window.toggleCart()"></div>
     <div class="cart-sidebar" id="cartSidebar">
         <div class="cart-header"><h3>سلة المشتريات</h3><span class="close-cart" onclick="window.toggleCart()"><i class="fa-solid fa-xmark"></i></span></div>
@@ -208,6 +209,19 @@
                     <textarea id="cAddress" placeholder="العنوان بالتفصيل" required></textarea>
                     <button type="submit" class="checkout-btn">إرسال الطلب</button>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة حسابي -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <span class="close-btn" onclick="document.getElementById('profileModal').style.display='none'"><i class="fa-solid fa-xmark"></i></span>
+            <div style="padding: 20px;">
+                <h2 style="text-align: center; color: var(--primary); margin-bottom: 20px;">ملفي الشخصي</h2>
+                <div id="profileInfo" style="background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 20px;"></div>
+                <h3>طلباتي السابقة:</h3>
+                <div id="myOrdersList" style="max-height: 300px; overflow-y: auto; margin-top: 10px;"></div>
             </div>
         </div>
     </div>
@@ -281,6 +295,36 @@
                 customerName: p.name
             });
             input.value = '';
+        }
+
+        // الحساب الشخصي
+        window.openProfileModal = async function() {
+            const p = JSON.parse(localStorage.getItem('shamma_user_profile'));
+            const infoBox = document.getElementById('profileInfo');
+            const ordersBox = document.getElementById('myOrdersList');
+            
+            if(!p) {
+                infoBox.innerHTML = '<p style="text-align:center;">لم يتم تسجيل بيانات بعد. قم بإجراء أول طلب لك ليتم إنشاء ملفك.</p>';
+                document.getElementById('profileModal').style.display = 'block';
+                return;
+            }
+
+            infoBox.innerHTML = `<p><strong>الاسم:</strong> ${p.name}</p><p><strong>الهاتف:</strong> ${p.phone}</p><p><strong>العنوان:</strong> ${p.address}</p>`;
+            document.getElementById('profileModal').style.display = 'block';
+            ordersBox.innerHTML = 'جاري تحميل الطلبات...';
+
+            const q = query(collection(db, "orders"), where("customerPhone", "==", p.phone), orderBy("date", "desc"));
+            const snapshot = await getDocs(q);
+            
+            if(snapshot.empty) {
+                ordersBox.innerHTML = '<p style="text-align:center;">لا توجد طلبات مسجلة.</p>';
+            } else {
+                ordersBox.innerHTML = '';
+                snapshot.forEach(doc => {
+                    const order = doc.data();
+                    ordersBox.innerHTML += `<div style="border-bottom:1px solid #eee; padding:10px 0;"><div style="display:flex; justify-content:space-between;"><strong>طلب رقم: ${doc.id.substring(0,6)}</strong><span style="color:var(--accent)">${order.status}</span></div><p style="font-size:0.9rem;">الإجمالي: ${order.totalPrice}</p></div>`;
+                });
+            }
         }
 
         // الوظائف الأصلية
