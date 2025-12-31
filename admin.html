@@ -294,8 +294,8 @@
         </div>
     </div>
 
-    <!-- Alarm Sound File (Stronger Alert) -->
-    <audio id="alertSound" src="https://assets.mixkit.co/sfx/preview/mixkit-facility-alarm-sound-999.mp3"></audio>
+    <!-- Updated Alarm Sound -->
+    <audio id="alertSound" src="https://assets.mixkit.co/sfx/preview/mixkit-software-interface-start-2574.mp3"></audio>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -315,6 +315,7 @@
         document.getElementById('dateDisplay').innerText = new Date().toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
         window.initSystem = () => {
+            audio.load(); // Preload sound
             audio.play().then(() => { audio.pause(); audio.currentTime = 0; document.getElementById('soundOverlay').style.opacity = '0'; setTimeout(() => document.getElementById('soundOverlay').style.display = 'none', 500); }).catch(e => document.getElementById('soundOverlay').style.display = 'none');
         }
         const playAlert = () => { audio.currentTime = 0; audio.play().catch(e=>{}); }
@@ -348,11 +349,9 @@
                 totalCount++;
 
                 if(o.status === 'تم التوصيل') {
-                    // Add to Archive Logic
                     totalSales += parseFloat(o.totalPrice.replace(/[^0-9.]/g,'')) || 0;
                     globalArchivedOrders.push(o);
                 } else {
-                    // Add to Active Table
                     let badgeClass = o.status === 'قيد المراجعة' ? 'bg-orange' : 'bg-blue';
                     const orderData = encodeURIComponent(JSON.stringify(o));
                     
@@ -374,18 +373,15 @@
                     </tr>`;
                     activeTable.innerHTML += row;
 
-                    // Dash Table (Limit 5)
                     if(dashTable.rows.length < 5) dashTable.innerHTML += `<tr><td>#${d.id.slice(0,5)}</td><td>${o.customerName}</td><td>${o.totalPrice}</td><td><span class="status-badge ${badgeClass}">${o.status}</span></td></tr>`;
                 }
             });
 
             document.getElementById('totalSales').innerText = Math.floor(totalSales) + " ج.م";
             document.getElementById('totalOrders').innerText = totalCount;
-            
-            applyFilters(); // Render Archive
+            applyFilters();
         });
 
-        // Filter Logic for Archive
         window.applyFilters = () => {
             const searchText = document.getElementById('searchOrder').value.toLowerCase();
             const dateFrom = document.getElementById('filterDateFrom').value;
@@ -407,17 +403,7 @@
                     filteredCount++;
                     filteredMoney += parseFloat(o.totalPrice.replace(/[^0-9.]/g,'')) || 0;
                     const orderData = encodeURIComponent(JSON.stringify(o));
-                    
-                    tableBody.innerHTML += `
-                        <tr>
-                            <td>${new Date(o.date).toLocaleDateString()}</td>
-                            <td>${o.customerName}</td>
-                            <td>${o.customerPhone}</td>
-                            <td style="font-weight:bold;">${o.totalPrice}</td>
-                            <td><span class="status-badge bg-green">تم التوصيل</span></td>
-                            <td><button class="action-btn btn-view" onclick="viewOrder('${orderData}')"><i class="fa-solid fa-eye"></i></button></td>
-                            <td><button class="action-btn btn-delete" onclick="deleteOrder('${o.id}')"><i class="fa-solid fa-trash"></i></button></td>
-                        </tr>`;
+                    tableBody.innerHTML += `<tr><td>${new Date(o.date).toLocaleDateString()}</td><td>${o.customerName}</td><td>${o.customerPhone}</td><td style="font-weight:bold;">${o.totalPrice}</td><td><span class="status-badge bg-green">تم التوصيل</span></td><td><button class="action-btn btn-view" onclick="viewOrder('${orderData}')"><i class="fa-solid fa-eye"></i></button></td><td><button class="action-btn btn-delete" onclick="deleteOrder('${o.id}')"><i class="fa-solid fa-trash"></i></button></td></tr>`;
                 }
             });
 
