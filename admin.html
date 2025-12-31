@@ -104,7 +104,7 @@
 
     <div id="soundOverlay">
         <h1 style="color:var(--accent); font-size:2.5rem; margin-bottom:10px;">نظام إدارة الشماع</h1>
-        <p>لبدء تلقي الطلبات والرسائل بصوت التنبيه، اضغط هنا</p>
+        <p>يجب الضغط هنا لبدء العمل وتفعيل جرس التنبيهات</p>
         <button class="start-btn" onclick="initSystem()">بدء العمل الآن <i class="fa-solid fa-play"></i></button>
     </div>
 
@@ -294,8 +294,8 @@
         </div>
     </div>
 
-    <!-- Updated Alarm Sound -->
-    <audio id="alertSound" src="https://assets.mixkit.co/sfx/preview/mixkit-software-interface-start-2574.mp3"></audio>
+    <!-- Powerful Alarm Sound Link -->
+    <audio id="alertSound" src="https://assets.mixkit.co/sfx/preview/mixkit-facility-alarm-sound-999.mp3"></audio>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -315,10 +315,24 @@
         document.getElementById('dateDisplay').innerText = new Date().toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
         window.initSystem = () => {
-            audio.load(); // Preload sound
-            audio.play().then(() => { audio.pause(); audio.currentTime = 0; document.getElementById('soundOverlay').style.opacity = '0'; setTimeout(() => document.getElementById('soundOverlay').style.display = 'none', 500); }).catch(e => document.getElementById('soundOverlay').style.display = 'none');
+            // Load and play sound silently to unlock audio context
+            audio.load();
+            audio.play().then(() => {
+                audio.pause();
+                audio.currentTime = 0;
+                document.getElementById('soundOverlay').style.opacity = '0';
+                setTimeout(() => document.getElementById('soundOverlay').style.display = 'none', 500);
+            }).catch(e => {
+                console.error("Audio unlock failed:", e);
+                // Even if audio fails, unlock screen
+                document.getElementById('soundOverlay').style.display = 'none';
+            });
         }
-        const playAlert = () => { audio.currentTime = 0; audio.play().catch(e=>{}); }
+
+        const playAlert = () => {
+            audio.currentTime = 0;
+            audio.play().catch(e => console.error("Play failed:", e));
+        }
 
         window.nav = (id, btn) => {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -327,17 +341,18 @@
             btn.classList.add('active');
         }
 
-        // --- Orders Logic (SPLIT TABLES) ---
+        // --- Orders Logic (SPLIT TABLES + 10 MIN ALERT) ---
         onSnapshot(query(collection(db, "orders"), orderBy("date", "desc")), (snap) => {
             const dashTable = document.getElementById('dashOrdersBody');
             const activeTable = document.getElementById('activeOrdersBody');
             dashTable.innerHTML = ''; activeTable.innerHTML = '';
             
-            globalArchivedOrders = []; // Reset Archive
+            globalArchivedOrders = [];
             let totalSales = 0, totalCount = 0;
             
             snap.docChanges().forEach(c => { 
-                if(c.type === 'added' && (Date.now() - c.doc.data().date) < 60000) {
+                // Alert if order is less than 10 minutes old (600,000 ms)
+                if(c.type === 'added' && (Date.now() - c.doc.data().date) < 600000) {
                     playAlert(); 
                     viewOrder(encodeURIComponent(JSON.stringify(c.doc.data())));
                 }
@@ -474,7 +489,11 @@
         // --- Chat ---
         onSnapshot(collection(db, "chats"), (snap) => {
             let users = {};
-            snap.docChanges().forEach(c => { if(c.type === 'added' && c.doc.data().sender === 'customer' && (Date.now() - (c.doc.data().timestamp?.seconds*1000||Date.now())) < 10000) playAlert(); });
+            snap.docChanges().forEach(c => { 
+                if(c.type === 'added' && c.doc.data().sender === 'customer' && (Date.now() - (c.doc.data().timestamp?.seconds*1000||Date.now())) < 600000) {
+                    playAlert();
+                }
+            });
             snap.forEach(d => { const x = d.data(); users[x.chatId] = { name: x.customerName||'عميل', id: x.chatId, last: x.text }; });
             const list = document.getElementById('chatUsersList'); list.innerHTML = '';
             Object.values(users).forEach(u => {
