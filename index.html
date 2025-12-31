@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>الشماع | أثاث عصري فاخر</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -14,6 +14,51 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
         body { background-color: var(--bg-light); color: var(--text-dark); overflow-x: hidden; }
+
+        /* ================= LOAD SCREEN (New Feature) ================= */
+        #loader-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary);
+            z-index: 99999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: opacity 0.8s ease-out, visibility 0.8s ease-out;
+        }
+        
+        .loader-logo {
+            font-size: 3rem;
+            color: var(--accent);
+            font-weight: 900;
+            margin-bottom: 20px;
+            animation: pulse 1.5s infinite;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: var(--accent);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.8; } 100% { transform: scale(1); opacity: 1; } }
+
+        body.loaded #loader-wrapper {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        body.loaded .hero-content {
+            animation: slideUp 1s ease forwards;
+        }
 
         /* ================= Top Bar ================= */
         .top-bar {
@@ -33,7 +78,7 @@
         .social-icons a:hover { color: var(--accent); transform: translateY(-2px); }
 
         /* Navbar */
-        .navbar { background-color: var(--white); padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 15px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; height: 70px; }
+        .navbar { background-color: var(--white); padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 15px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; height: 70px; transition: 0.3s; }
         .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary); cursor: pointer; }
         .logo i { color: var(--accent); margin-left: 5px; }
         .nav-links { list-style: none; display: flex; gap: 30px; }
@@ -41,9 +86,13 @@
         .nav-links a:hover { color: var(--accent); }
         .badge { background: var(--accent); color: white; padding: 2px 6px; border-radius: 50%; font-size: 0.7rem; vertical-align: top; }
 
-        /* Hero */
-        .hero-section { height: 60vh; background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=2000') no-repeat center center/cover; display: flex; align-items: center; justify-content: center; text-align: center; color: white; }
+        /* Hero - Enhanced Animation */
+        .hero-section { height: 70vh; background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=2000') no-repeat center center/cover; display: flex; align-items: center; justify-content: center; text-align: center; color: white; position: relative; }
+        .hero-content { opacity: 0; transform: translateY(30px); }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+
         .cta-btn { padding: 12px 35px; background: var(--accent); color: white; border: none; border-radius: 30px; font-size: 1rem; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .cta-btn:hover { background: #b38b45; transform: scale(1.05); }
         
         /* Products */
         .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; padding-bottom: 50px; }
@@ -55,11 +104,14 @@
         .sub-categories-tabs span.active-sub { background: var(--accent); color: white; }
 
         .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
-        .product-card { background: var(--white); border-radius: 15px; overflow: hidden; box-shadow: var(--shadow); transition: var(--transition); cursor: pointer; position: relative; }
-        .product-card:hover { transform: translateY(-10px); }
+        .product-card { background: var(--white); border-radius: 15px; overflow: hidden; box-shadow: var(--shadow); transition: var(--transition); cursor: pointer; position: relative; opacity: 0; animation: fadeInItem 0.5s ease forwards; }
+        @keyframes fadeInItem { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .product-card:hover { transform: translateY(-10px); box-shadow: 0 15px 40px rgba(0,0,0,0.12); }
         .img-container { height: 250px; overflow: hidden; position: relative; }
-        .product-card img { width: 100%; height: 100%; object-fit: cover; }
-        .discount-badge { position: absolute; top: 15px; right: 15px; background: #e74c3c; color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; }
+        .product-card img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .product-card:hover img { transform: scale(1.1); }
+        .discount-badge { position: absolute; top: 15px; right: 15px; background: #e74c3c; color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; z-index: 2; }
         .p-info { padding: 20px; }
         .current-price { font-size: 1.3rem; font-weight: 700; color: var(--accent); }
         .old-price { text-decoration: line-through; color: #999; margin-right: 10px; font-size: 0.9rem; }
@@ -85,7 +137,7 @@
 
         /* Modals & Cart */
         .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); }
-        /* === Fix Scrolling Issue in Modal === */
+        
         .modal-content { 
             background: white; 
             margin: 2% auto; 
@@ -95,8 +147,8 @@
             padding: 25px; 
             position: relative; 
             animation: zoomIn 0.3s;
-            max-height: 90vh; /* تحديد أقصى ارتفاع */
-            overflow-y: auto; /* تفعيل السكرول */
+            max-height: 90vh; 
+            overflow-y: auto; 
             display: flex;
             flex-direction: column;
         }
@@ -132,7 +184,7 @@
         .payment-methods { display: flex; gap: 10px; font-size: 2rem; color: #fff; }
         .copyright { text-align: center; margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px; font-size: 0.85rem; }
 
-        /* Auth Styles - Fixed for Scrolling */
+        /* Auth Styles */
         .auth-container-flex { display: flex; border-radius: 15px; overflow: hidden; min-height: 500px; background: white; flex-wrap: wrap; }
         .auth-side-img { flex: 1; background: url('https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=2070&auto=format&fit=crop') center/cover; position: relative; display: flex; align-items: center; justify-content: center; color: white; text-align: center; padding: 20px; min-width: 250px; }
         .auth-side-img::before { content:''; position:absolute; inset:0; background: rgba(26, 42, 58, 0.7); }
@@ -160,7 +212,7 @@
 
         @media(max-width: 768px) { 
             .auth-container-flex { flex-direction: column; height: auto; }
-            .auth-side-img { display: none; } /* Hide image on small screens to save space */
+            .auth-side-img { display: none; }
             .auth-side-form { padding: 20px; max-height: 85vh; }
             #profileModal .modal-content { max-width: 95%; margin: 10px auto; }
             .chat-float-container { bottom: 20px; right: 20px; } 
@@ -172,6 +224,14 @@
     </style>
 </head>
 <body>
+
+    <!-- Loading Screen (Added Feature) -->
+    <div id="loader-wrapper">
+        <div class="loader-logo">
+            <i class="fa-solid fa-couch"></i> الشماع
+        </div>
+        <div class="spinner"></div>
+    </div>
 
     <div class="top-bar">
         <div class="top-bar-info">
@@ -215,8 +275,8 @@
 
     <header class="hero-section">
         <div class="hero-content">
-            <h1>فخامة منزلك تبدأ من هنا</h1>
-            <p style="margin-bottom:20px;">تصاميم عصرية تجمع بين الراحة والأناقة</p>
+            <h1 style="font-size: 3rem; margin-bottom: 10px;">فخامة منزلك تبدأ من هنا</h1>
+            <p style="margin-bottom:20px; font-size: 1.2rem;">تصاميم عصرية تجمع بين الراحة والأناقة</p>
             <button class="cta-btn" onclick="document.getElementById('homeSection').scrollIntoView({behavior:'smooth'})">تسوق الآن</button>
         </div>
     </header>
@@ -338,7 +398,15 @@
         </div>
     </div>
 
+    <!-- Firebase Script (Maintained Original Logic) -->
     <script type="module">
+        // Loading Screen Logic
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.body.classList.add('loaded');
+            }, 1500); // 1.5 Seconds delay to show the logo like Bazooka
+        });
+
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, where, orderBy, serverTimestamp, getDocs, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -545,6 +613,7 @@
             f.forEach(p => {
                 const fp = p.discount ? p.price - (p.price * p.discount / 100) : p.price;
                 const pStr = encodeURIComponent(JSON.stringify(p));
+                // Enhanced animation for items
                 c.innerHTML += `
                     <div class="product-card" onclick="openP('${pStr}')">
                         <div class="img-container">
