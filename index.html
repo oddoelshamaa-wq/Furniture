@@ -94,9 +94,10 @@
         /* Checkout Form */
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-        .form-input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; outline: none; }
-        .btn-gps { background: #e74c3c; color: white; padding: 8px 15px; border: none; border-radius: 5px; margin-top: 5px; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 0.9rem; }
-        .btn-gps:hover { background: #c0392b; }
+        .form-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; outline: none; transition:0.3s; }
+        .form-input:focus { border-color: var(--accent); box-shadow: 0 0 5px rgba(205,164,94,0.3); }
+        .btn-gps { background: #e74c3c; color: white; padding: 10px 15px; border: none; border-radius: 8px; margin-top: 5px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; font-weight: bold; transition:0.3s; width: 100%; justify-content: center; }
+        .btn-gps:hover { background: #c0392b; transform:translateY(-2px); }
 
         /* Footer */
         footer { background-color: var(--primary); color: #ccc; padding: 60px 5% 20px; margin-top: 50px; font-size: 0.9rem; }
@@ -117,20 +118,37 @@
         .payment-methods { display: flex; gap: 10px; font-size: 2rem; color: #fff; }
         .copyright { text-align: center; margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px; font-size: 0.85rem; }
 
-        /* ======================== NEW PROFILE STYLES ======================== */
-        .auth-tabs { display: flex; margin-bottom: 20px; border-bottom: 1px solid #ddd; }
-        .auth-tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; font-weight: bold; color: #777; transition: 0.3s; }
+        /* ======================== NEW AUTH/PROFILE STYLES (FURNITURE THEME) ======================== */
+        .auth-container-flex { display: flex; border-radius: 15px; overflow: hidden; height: 500px; background: white; }
+        .auth-side-img { flex: 1; background: url('https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=2070&auto=format&fit=crop') center/cover; position: relative; display: flex; align-items: center; justify-content: center; color: white; text-align: center; padding: 20px; }
+        .auth-side-img::before { content:''; position:absolute; inset:0; background: rgba(26, 42, 58, 0.7); }
+        .auth-side-content { position: relative; z-index: 1; }
+        
+        .auth-side-form { flex: 1; padding: 30px; display: flex; flex-direction: column; justify-content: center; }
+        
+        .auth-tabs { display: flex; margin-bottom: 25px; border-bottom: 2px solid #f0f0f0; }
+        .auth-tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; font-weight: bold; color: #999; transition: 0.3s; padding-bottom: 15px; }
         .auth-tab.active { color: var(--primary); border-bottom: 3px solid var(--accent); }
-        .auth-form { display: none; animation: fadeIn 0.3s; }
+        
+        .auth-form { display: none; animation: fadeIn 0.4s; }
         .auth-form.active { display: block; }
         
-        .profile-header-new { background: linear-gradient(135deg, var(--primary), #2c3e50); padding: 20px; border-radius: 12px; color: white; display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
-        .profile-avatar { width: 60px; height: 60px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; color: white; font-weight: bold; }
-        .logout-btn { background: #e74c3c; color: white; border: none; padding: 5px 15px; border-radius: 20px; cursor: pointer; font-size: 0.8rem; margin-top: 5px; }
+        .profile-header-new { background: linear-gradient(135deg, var(--primary), #2c3e50); padding: 25px; border-radius: 12px; color: white; display: flex; align-items: center; gap: 20px; margin-bottom: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .profile-avatar { width: 70px; height: 70px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; color: white; font-weight: bold; border: 3px solid rgba(255,255,255,0.3); }
+        .logout-btn { background: rgba(231, 76, 60, 0.2); color: #ffcccc; border: 1px solid rgba(231, 76, 60, 0.5); padding: 5px 15px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; margin-top: 8px; transition: 0.3s; }
+        .logout-btn:hover { background: #e74c3c; color: white; }
 
-        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+        /* تعديل المودال ليكون أعرض في حالة التسجيل */
+        #profileModal .modal-content { max-width: 800px; padding: 0; }
+        #profileView { padding: 30px; }
+
+        @keyframes fadeIn { from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
 
         @media(max-width: 768px) { 
+            .auth-container-flex { flex-direction: column; height: auto; }
+            .auth-side-img { display: none; }
+            .auth-side-form { padding: 20px; }
+            #profileModal .modal-content { max-width: 95%; margin: 10px auto; }
             .chat-float-container { bottom: 20px; right: 20px; } 
             #chatModal { width: 90%; right: 5%; bottom: 90px; } 
             .top-bar { flex-direction: column; gap: 10px; text-align: center; }
@@ -217,7 +235,7 @@
 
     <!-- Product Modal -->
     <div id="productModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 600px; padding: 30px;">
             <span onclick="document.getElementById('productModal').style.display='none'" style="position:absolute; left:20px; top:20px; cursor:pointer; font-size:1.5rem;"><i class="fa-solid fa-xmark"></i></span>
             <div style="text-align:center;">
                 <img id="mImg" src="" style="width:100%; height:280px; object-fit:cover; border-radius:10px; margin-bottom:15px;">
@@ -231,7 +249,7 @@
 
     <!-- Checkout Modal -->
     <div id="checkoutModal" class="modal">
-        <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-content" style="max-width: 500px; padding: 30px;">
             <span onclick="document.getElementById('checkoutModal').style.display='none'" style="position:absolute; left:20px; top:20px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></span>
             <h2 style="text-align:center; margin-bottom:20px; color:var(--primary)">تأكيد الطلب</h2>
             <div class="form-group"><label>الاسم</label><input type="text" id="cName" class="form-input" placeholder="الاسم ثلاثي"></div>
@@ -239,40 +257,48 @@
             <div class="form-group">
                 <label>العنوان بالتفصيل</label>
                 <textarea id="cAddress" class="form-input" placeholder="اسم الشارع، رقم العمارة، الدور..." rows="3"></textarea>
-                <button type="button" class="btn-gps" onclick="getLocation()"><i class="fa-solid fa-location-crosshairs"></i> تحديد موقعي الحالي (GPS)</button>
+                <button type="button" class="btn-gps" onclick="getLocation()"><i class="fa-solid fa-location-dot"></i> تحديد موقعي الحالي بدقة (GPS)</button>
             </div>
             <button class="cta-btn" style="width:100%;" onclick="finalizeOrder()">إرسال الطلب</button>
         </div>
     </div>
 
-    <!-- Profile & Auth Modal (New) -->
+    <!-- Profile & Auth Modal (NEW DESIGN) -->
     <div id="profileModal" class="modal">
-        <div class="modal-content" style="max-width: 450px;">
-            <span onclick="document.getElementById('profileModal').style.display='none'" style="position:absolute; left:20px; top:20px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></span>
+        <div class="modal-content">
+            <span onclick="document.getElementById('profileModal').style.display='none'" style="position:absolute; left:20px; top:20px; cursor:pointer; z-index:100; color:#333;"><i class="fa-solid fa-xmark"></i></span>
             
-            <!-- Auth Container -->
-            <div id="authContainer">
-                <div class="auth-tabs">
-                    <div class="auth-tab active" onclick="switchAuth('login', this)">تسجيل دخول</div>
-                    <div class="auth-tab" onclick="switchAuth('signup', this)">إنشاء حساب</div>
+            <!-- Auth Layout -->
+            <div id="authContainer" class="auth-container-flex">
+                <div class="auth-side-img">
+                    <div class="auth-side-content">
+                        <h2>مرحباً بك في الشماع</h2>
+                        <p>سجل دخولك الآن لتستمتع بتجربة تسوق فريدة ومتابعة طلباتك.</p>
+                    </div>
                 </div>
+                <div class="auth-side-form">
+                    <div class="auth-tabs">
+                        <div class="auth-tab active" onclick="switchAuth('login', this)">تسجيل دخول</div>
+                        <div class="auth-tab" onclick="switchAuth('signup', this)">إنشاء حساب</div>
+                    </div>
 
-                <!-- Login Form -->
-                <form id="loginForm" class="auth-form active" onsubmit="handleLogin(event)">
-                    <div class="form-group"><label>البريد الإلكتروني</label><input type="email" id="lEmail" class="form-input" required></div>
-                    <div class="form-group"><label>كلمة المرور</label><input type="password" id="lPass" class="form-input" required></div>
-                    <button type="submit" class="cta-btn" style="width:100%">دخول</button>
-                </form>
+                    <!-- Login Form -->
+                    <form id="loginForm" class="auth-form active" onsubmit="handleLogin(event)">
+                        <div class="form-group"><label>البريد الإلكتروني</label><input type="email" id="lEmail" class="form-input" required></div>
+                        <div class="form-group"><label>كلمة المرور</label><input type="password" id="lPass" class="form-input" required></div>
+                        <button type="submit" class="cta-btn" style="width:100%; margin-top:10px;">دخول</button>
+                    </form>
 
-                <!-- Signup Form -->
-                <form id="signupForm" class="auth-form" onsubmit="handleSignup(event)">
-                    <div class="form-group"><label>الاسم بالكامل</label><input type="text" id="sName" class="form-input" required></div>
-                    <div class="form-group"><label>رقم الهاتف</label><input type="tel" id="sPhone" class="form-input" required></div>
-                    <div class="form-group"><label>العنوان</label><input type="text" id="sAddr" class="form-input" required></div>
-                    <div class="form-group"><label>البريد الإلكتروني</label><input type="email" id="sEmail" class="form-input" required></div>
-                    <div class="form-group"><label>كلمة المرور</label><input type="password" id="sPass" class="form-input" required></div>
-                    <button type="submit" class="cta-btn" style="width:100%">تسجيل</button>
-                </form>
+                    <!-- Signup Form -->
+                    <form id="signupForm" class="auth-form" onsubmit="handleSignup(event)">
+                        <div class="form-group"><label>الاسم بالكامل</label><input type="text" id="sName" class="form-input" required></div>
+                        <div class="form-group"><label>رقم الهاتف</label><input type="tel" id="sPhone" class="form-input" required></div>
+                        <div class="form-group"><label>العنوان</label><input type="text" id="sAddr" class="form-input" required></div>
+                        <div class="form-group"><label>البريد الإلكتروني</label><input type="email" id="sEmail" class="form-input" required></div>
+                        <div class="form-group"><label>كلمة المرور</label><input type="password" id="sPass" class="form-input" required></div>
+                        <button type="submit" class="cta-btn" style="width:100%; margin-top:10px;">تسجيل</button>
+                    </form>
+                </div>
             </div>
 
             <!-- Profile View (Hidden by default) -->
@@ -318,17 +344,15 @@
         let productsData = [], categoriesData = [];
         let currentMainCat = 'all', currentSubCat = 'all';
         let currentProduct = null;
-        let currentUserData = null; // Store logged in user data
+        let currentUserData = null;
 
         // Auth Logic
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // User is signed in
                 const docSnap = await getDoc(doc(db, "customers", user.uid));
                 if (docSnap.exists()) {
                     currentUserData = docSnap.data();
                     currentUserData.uid = user.uid;
-                    // Auto-set phone for chat
                     localStorage.setItem('shamma_phone', currentUserData.phone);
                 }
             } else {
@@ -355,7 +379,6 @@
 
             try {
                 const cred = await createUserWithEmailAndPassword(auth, email, pass);
-                // Save extra data
                 await setDoc(doc(db, "customers", cred.user.uid), {
                     name: name, phone: phone, address: addr, email: email
                 });
@@ -407,7 +430,7 @@
 
             } else {
                 // Show Auth Forms
-                document.getElementById('authContainer').style.display = 'block';
+                document.getElementById('authContainer').style.display = 'flex';
                 document.getElementById('profileView').style.display = 'none';
             }
         }
@@ -423,25 +446,34 @@
             }
         }
 
-        // GPS Function
+        // GPS Function with High Accuracy
         window.getLocation = () => {
             if (navigator.geolocation) {
                 const btn = document.querySelector('.btn-gps');
-                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري تحديد الموقع...';
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري تحديد الموقع بدقة...';
+                
+                // High Accuracy Options
+                const options = {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                };
+
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
                         const lat = position.coords.latitude;
                         const long = position.coords.longitude;
                         const mapLink = `https://maps.google.com/?q=${lat},${long}`;
                         const addrBox = document.getElementById('cAddress');
-                        addrBox.value = `موقعي GPS: ${mapLink} \n` + addrBox.value;
+                        addrBox.value = `📍 موقع GPS دقيق: ${mapLink} \n` + addrBox.value;
                         btn.innerHTML = '<i class="fa-solid fa-check"></i> تم تحديد الموقع بنجاح';
                         btn.style.background = "#27ae60";
                     },
                     (error) => {
-                        alert("تعذر الحصول على الموقع.");
-                        document.querySelector('.btn-gps').innerHTML = '<i class="fa-solid fa-location-crosshairs"></i> تحديد موقعي الحالي (GPS)';
-                    }
+                        alert("تعذر الحصول على الموقع. تأكد من تفعيل GPS والسماح للموقع.");
+                        document.querySelector('.btn-gps').innerHTML = '<i class="fa-solid fa-location-dot"></i> تحديد موقعي الحالي (GPS)';
+                    },
+                    options
                 );
             } else {
                 alert("المتصفح لا يدعم تحديد الموقع.");
