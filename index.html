@@ -14,10 +14,8 @@
         body { background-color: var(--bg-light); color: var(--text-dark); overflow-x: hidden; }
 
         .navbar { background-color: var(--white); padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 15px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; height: 70px; }
-        /* تعديل اللوجو ليكون رابط */
-        .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary); text-decoration: none; display: flex; align-items: center; }
-        .logo i { color: var(--accent); margin-left: 10px; }
-        
+        .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+        .logo i { color: var(--accent); margin-left: 5px; }
         .nav-links { list-style: none; display: flex; gap: 30px; }
         .nav-links a { color: var(--text-dark); text-decoration: none; font-weight: 600; transition: var(--transition); cursor: pointer; }
         .nav-links a:hover, .nav-links a.active { color: var(--accent); }
@@ -79,18 +77,34 @@
         .chat-input-area input { flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 20px; }
         .chat-input-area button { background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 50%; cursor: pointer; }
 
-        /* General Modal */
+        /* Sidebar Cart */
+        .cart-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1100; display: none; backdrop-filter: blur(2px); }
+        .cart-sidebar { position: fixed; top: 0; left: -400px; width: 350px; height: 100%; background: white; z-index: 1200; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: left 0.4s ease; display: flex; flex-direction: column; }
+        .cart-sidebar.open { left: 0; }
+        .cart-header { padding: 20px; background: var(--primary); color: white; display: flex; justify-content: space-between; align-items: center; }
+        .close-cart { cursor: pointer; font-size: 1.2rem; }
+        .cart-items-container { flex: 1; overflow-y: auto; padding: 20px; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .cart-footer { padding: 20px; background: #f9f9f9; border-top: 1px solid #eee; }
+        .total-row { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 15px; font-size: 1.1rem; }
+        .checkout-btn { width: 100%; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem; }
+
         .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
         .modal-content { background: var(--white); margin: 5% auto; width: 90%; max-width: 900px; border-radius: 15px; overflow: hidden; position: relative; animation: zoomIn 0.3s; }
+        .modal-body { display: flex; flex-wrap: wrap; }
+        .modal-img-wrapper { flex: 1; min-width: 300px; height: 450px; }
+        .modal-img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        .m-details { flex: 1; padding: 40px; display: flex; flex-direction: column; justify-content: center; }
+        .category-tag { background: #eee; color: #666; padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; }
+        .category-tag.sub-tag { background: var(--accent); color: white; margin-right: 5px; }
+        .action-buttons { display: flex; gap: 15px; margin-top: 20px; }
+        .action-buttons button { flex: 1; padding: 15px; border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-buy { background: var(--primary); color: white; }
+        .btn-reserve { background: white; border: 2px solid var(--accent); color: var(--accent); }
         .close-btn { position: absolute; left: 20px; top: 20px; font-size: 20px; cursor: pointer; background: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 10; color: #333; }
-        
-        /* Profile Modal Styles */
-        .profile-header { background: var(--primary); color: white; padding: 30px; text-align: center; }
-        .profile-body { padding: 25px; }
-        .profile-row { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; color: #555; }
-        .profile-row i { color: var(--accent); width: 20px; }
-        .edit-btn { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
 
+        form { background: white; padding: 25px; border-radius: 8px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 15px; max-width: 600px; margin: 0 auto; }
+        input, textarea, select { padding: 12px; border: 1px solid #ddd; border-radius: 5px; outline: none; }
         footer { background: var(--primary); color: white; padding: 30px; text-align: center; margin-top: 50px; }
         .socials { display: flex; justify-content: center; gap: 20px; margin-top: 15px; font-size: 24px; }
         .socials a { color: white; transition: 0.3s; }
@@ -101,10 +115,7 @@
 <body>
     
     <nav class="navbar">
-        <!-- تم تعديل الشماع ليكون رابط خارجي -->
-        <a href="https://www.google.com" class="logo">
-            <i class="fa-solid fa-couch"></i> الشماع
-        </a>
+        <div class="logo"><i class="fa-solid fa-couch"></i> الشماع</div>
         <div class="menu-toggle" id="mobile-menu"><i class="fa-solid fa-bars"></i></div>
         <ul class="nav-links" id="nav-list">
             <li><a href="#" class="active">الرئيسية</a></li>
@@ -114,7 +125,6 @@
     </nav>
 
     <div class="floating-container">
-        <!-- واتساب بالرقم المطلوب -->
         <a href="https://wa.me/201122884885" target="_blank" class="float-btn whatsapp-btn"><i class="fa-brands fa-whatsapp"></i></a>
         <div class="float-btn chat-btn" onclick="window.toggleChatModal()"><i class="fa-solid fa-comments"></i></div>
     </div>
@@ -126,32 +136,6 @@
         <div class="chat-input-area">
             <input type="text" id="chatInput" placeholder="اكتب رسالتك...">
             <button onclick="window.sendChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
-        </div>
-    </div>
-
-    <!-- نافذة حسابي (التي كانت ناقصة) -->
-    <div id="profileModal" class="modal">
-        <div class="modal-content" style="max-width: 500px;">
-            <span class="close-btn" onclick="window.closeProfileModal()"><i class="fa-solid fa-xmark"></i></span>
-            <div class="profile-header">
-                <i class="fa-solid fa-user-circle fa-4x"></i>
-                <h3 id="profileNameDisplay" style="margin-top: 10px;">ضيف</h3>
-            </div>
-            <div class="profile-body">
-                <div id="profileView">
-                    <div class="profile-row"><i class="fa-solid fa-user"></i> <span id="viewName">لم يتم التسجيل</span></div>
-                    <div class="profile-row"><i class="fa-solid fa-phone"></i> <span id="viewPhone">--</span></div>
-                    <div class="profile-row"><i class="fa-solid fa-location-dot"></i> <span id="viewAddress">--</span></div>
-                    <button class="edit-btn" onclick="window.showEditForm()">تعديل البيانات</button>
-                </div>
-                <form id="profileEditForm" style="display: none;" onsubmit="window.saveProfileData(event)">
-                    <input type="text" id="editName" placeholder="الاسم" required style="width:100%; padding:10px; margin-bottom:10px;">
-                    <input type="tel" id="editPhone" placeholder="الهاتف" required style="width:100%; padding:10px; margin-bottom:10px;">
-                    <input type="text" id="editAddress" placeholder="العنوان" required style="width:100%; padding:10px; margin-bottom:10px;">
-                    <button type="submit" class="edit-btn">حفظ</button>
-                    <button type="button" onclick="window.hideEditForm()" style="background:#ccc; border:none; padding:10px; width:100%; margin-top:5px; border-radius:8px;">إلغاء</button>
-                </form>
-            </div>
         </div>
     </div>
 
@@ -183,10 +167,55 @@
         </div>
     </footer>
 
+    <!-- بقية النوافذ (السلة، البروفايل، الخ) -->
+    <div class="cart-overlay" id="cartOverlay" onclick="window.toggleCart()"></div>
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header"><h3>سلة المشتريات</h3><span class="close-cart" onclick="window.toggleCart()"><i class="fa-solid fa-xmark"></i></span></div>
+        <div id="cartItems" class="cart-items-container"></div>
+        <div class="cart-footer">
+            <div class="total-row"><span>المجموع:</span><span id="totalPrice">0 ج.م</span></div>
+            <button class="checkout-btn" onclick="window.openCheckoutModal()">إتمام الطلب</button>
+        </div>
+    </div>
+
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="window.closeModal()"><i class="fa-solid fa-xmark"></i></span>
+            <div class="modal-body">
+                <div class="modal-img-wrapper"><img id="mImg" src="" alt=""></div>
+                <div class="m-details">
+                    <h2 id="mTitle"></h2>
+                    <div style="margin-bottom: 15px;"><span class="category-tag" id="mCatTag"></span><span class="category-tag sub-tag" id="mSubCatTag"></span></div>
+                    <p id="mDesc"></p>
+                    <div class="price-wrapper"><span id="mPrice" class="current-price"></span><span id="mOldPrice" class="old-price"></span></div>
+                    <div class="action-buttons">
+                        <button class="btn-buy" onclick="window.addToCart('buy')"><i class="fa-solid fa-cart-shopping"></i> إضافة للسلة</button>
+                        <button class="btn-reserve" onclick="window.prepareDirectOrder('reserve')"><i class="fa-regular fa-calendar-check"></i> حجز مباشر</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="checkoutModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <span class="close-btn" onclick="window.closeCheckoutModal()"><i class="fa-solid fa-xmark"></i></span>
+            <div style="padding: 20px;">
+                <h2 style="text-align: center; color: var(--primary); margin-bottom: 20px;">تأكيد الطلب</h2>
+                <form id="customerDetailsForm" onsubmit="window.finalizeOrder(event)">
+                    <input type="text" id="cName" placeholder="الاسم بالكامل" required>
+                    <input type="tel" id="cPhone" placeholder="رقم الهاتف" required>
+                    <textarea id="cAddress" placeholder="العنوان بالتفصيل" required></textarea>
+                    <button type="submit" class="checkout-btn">إرسال الطلب</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- سكريبت البرمجة -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, onSnapshot, query, where, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, onSnapshot, query, where, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCE7wo3Vwzap7MnP4rv9kFZNwKlFD1myMM",
@@ -210,42 +239,9 @@
             await loadMainCategoriesUser();
             await loadProductsUser('all', 'all');
             window.updateCartCount();
-            window.loadProfileData(); // تحميل بيانات حسابي
         });
 
-        // --- وظائف حسابي ---
-        window.openProfileModal = () => document.getElementById('profileModal').style.display = 'block';
-        window.closeProfileModal = () => document.getElementById('profileModal').style.display = 'none';
-        window.showEditForm = () => { document.getElementById('profileView').style.display='none'; document.getElementById('profileEditForm').style.display='block'; }
-        window.hideEditForm = () => { document.getElementById('profileView').style.display='block'; document.getElementById('profileEditForm').style.display='none'; }
-        
-        window.loadProfileData = () => {
-            let p = JSON.parse(localStorage.getItem('shamma_user_profile'));
-            if(p) {
-                document.getElementById('profileNameDisplay').innerText = p.name;
-                document.getElementById('viewName').innerText = p.name;
-                document.getElementById('viewPhone').innerText = p.phone;
-                document.getElementById('viewAddress').innerText = p.address;
-                document.getElementById('editName').value = p.name;
-                document.getElementById('editPhone').value = p.phone;
-                document.getElementById('editAddress').value = p.address;
-            }
-        };
-
-        window.saveProfileData = (e) => {
-            e.preventDefault();
-            const p = {
-                name: document.getElementById('editName').value,
-                phone: document.getElementById('editPhone').value,
-                address: document.getElementById('editAddress').value
-            };
-            localStorage.setItem('shamma_user_profile', JSON.stringify(p));
-            window.loadProfileData();
-            window.hideEditForm();
-            alert('تم حفظ البيانات');
-        };
-
-        // --- وظائف الشات ---
+        // الشات
         window.toggleChatModal = function() {
             const m = document.getElementById('chatModal');
             m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
@@ -255,7 +251,7 @@
         async function loadMessages() {
             const p = JSON.parse(localStorage.getItem('shamma_user_profile'));
             if(!p || !p.phone) { 
-                document.getElementById('chatMessages').innerHTML = '<p style="text-align:center; padding:20px;">يرجى حفظ بياناتك في "حسابي" أولاً للبدء.</p>';
+                document.getElementById('chatMessages').innerHTML = '<p style="text-align:center; padding:20px;">يرجى إتمام طلب أولاً ليتم التعرف على حسابك وبدء المحادثة.</p>';
                 return;
             }
             const q = query(collection(db, "chats"), where("chatId", "==", p.phone), orderBy("timestamp", "asc"));
@@ -274,16 +270,20 @@
         window.sendChatMessage = async function() {
             const input = document.getElementById('chatInput');
             const p = JSON.parse(localStorage.getItem('shamma_user_profile'));
-            if(!p || !p.phone) { alert('احفظ بياناتك في حسابي أولاً'); return; }
+            if(!p || !p.phone) { alert('سجل بياناتك عبر إرسال طلب أولاً'); return; }
             if(!input.value.trim()) return;
 
             await addDoc(collection(db, "chats"), {
-                chatId: p.phone, sender: 'customer', text: input.value, timestamp: serverTimestamp(), customerName: p.name
+                chatId: p.phone,
+                sender: 'customer',
+                text: input.value,
+                timestamp: serverTimestamp(),
+                customerName: p.name
             });
             input.value = '';
         }
 
-        // --- بقية الوظائف الأساسية (دون حذف) ---
+        // الوظائف الأصلية
         function initMobileMenu() { 
             const m=document.getElementById('mobile-menu'); const n=document.getElementById('nav-list'); 
             if(m&&n){ m.addEventListener('click',()=>{ n.classList.toggle('active'); });}
@@ -308,13 +308,64 @@
             c.innerHTML=''; 
             f.forEach(x=>{ 
                 let fp=x.discount>0?x.price-(x.price*(x.discount/100)):x.price; 
-                c.innerHTML+=`<div class="product-card"><div class="img-container"><img src="${x.img}"></div><div class="p-info"><h3>${x.name}</h3><span class="current-price">${Math.floor(fp)} ج.م</span></div></div>`; 
+                const prodString = encodeURIComponent(JSON.stringify(x));
+                c.innerHTML+=`<div class="product-card" onclick="window.openProductModalDecode('${prodString}')"><div class="img-container">${x.discount>0?`<span class="discount-badge">-${x.discount}%</span>`:''}<img src="${x.img}"></div><div class="p-info"><h3>${x.name}</h3><div class="price-row"><span class="current-price">${Math.floor(fp)} ج.م</span>${x.discount>0?`<span class="old-price">${x.price}</span>`:''}</div></div></div>`; 
             });
         }
 
-        window.selectMainCategory = (n,el) => { /* logic here */ loadProductsUser(n,'all'); }
-        window.scrollToProducts = () => document.getElementById('homeSection').scrollIntoView({behavior:'smooth'});
-        window.updateCartCount = () => { /* logic */ };
+        window.selectMainCategory = function(n,el){ 
+            currentMainCat=n; 
+            document.querySelectorAll('#mainCategoriesTabs span').forEach(s=>s.classList.remove('active-cat')); 
+            el.classList.add('active-cat'); 
+            const sc=document.getElementById('subCategoriesTabs'); sc.innerHTML='';
+            if(n!=='all' && window.cachedCats){ 
+                let t=window.cachedCats.find(c=>c.name===n); 
+                if(t&&t.subs){ 
+                    sc.innerHTML='<span class="active-sub" onclick="window.filterBySub(\'all\',this)">الكل</span>'; 
+                    t.subs.forEach(s=>sc.innerHTML+=`<span onclick="window.filterBySub('${s}',this)">${s}</span>`); 
+                } 
+            } 
+            loadProductsUser(n,'all');
+        }
+        window.filterBySub = function(s,el){ document.querySelectorAll('#subCategoriesTabs span').forEach(x=>x.classList.remove('active-sub')); el.classList.add('active-sub'); loadProductsUser(currentMainCat,s); }
+
+        window.openProductModalDecode = function(str) {
+            const p = JSON.parse(decodeURIComponent(str));
+            currentProduct = p;
+            document.getElementById('mImg').src=p.img; document.getElementById('mTitle').innerText=p.name; document.getElementById('mCatTag').innerText=p.category; document.getElementById('mSubCatTag').innerText=p.subCategory||''; document.getElementById('mDesc').innerText=p.desc; let fp=p.discount>0?p.price-(p.price*(p.discount/100)):p.price; document.getElementById('mPrice').innerText=Math.floor(fp)+" ج.م"; let old=document.getElementById('mOldPrice'); if(p.discount>0){old.innerText=p.price;old.style.display='inline';}else{old.style.display='none';} document.getElementById('productModal').style.display='block';
+        }
+        window.closeModal = function() { document.getElementById('productModal').style.display='none'; }
+        window.addToCart = function(type) { if(!currentProduct)return; let cart=JSON.parse(localStorage.getItem('shamma_cart'))||[]; cart.push({id:Date.now(), productId:currentProduct.id, productName:currentProduct.name, price:document.getElementById('mPrice').innerText, type:type==='buy'?'شراء':'حجز'}); localStorage.setItem('shamma_cart',JSON.stringify(cart)); window.closeModal(); window.updateCartCount(); window.toggleCart(); }
+        window.prepareDirectOrder = function(type) { currentProduct.tempType = type; window.closeModal(); window.openCheckoutModal(); }
+
+        window.toggleCart = function(){ let s=document.getElementById('cartSidebar'); let o=document.getElementById('cartOverlay'); if(s.classList.contains('open')){s.classList.remove('open');o.style.display='none';}else{s.classList.add('open');o.style.display='block'; window.loadCart();}}
+        window.loadCart = function(){ let c=JSON.parse(localStorage.getItem('shamma_cart'))||[]; let d=document.getElementById('cartItems'); let t=document.getElementById('totalPrice'); d.innerHTML=''; let sum=0; if(c.length===0){d.innerHTML='<p>فارغة</p>';t.innerText='0';return;} c.forEach(i=>{ let p=parseFloat(i.price.replace(/[^0-9.]/g,'')); if(!isNaN(p))sum+=p; d.innerHTML+=`<div class="cart-item"><div><b>${i.productName}</b><br><small>${i.type}</small></div><b>${i.price}</b></div>`;}); t.innerText=Math.floor(sum)+" ج.م"; }
+        window.updateCartCount = function(){ let c=JSON.parse(localStorage.getItem('shamma_cart'))||[]; document.getElementById('cartCount').innerText=c.length;}
+        window.scrollToProducts = function() { document.getElementById('homeSection').scrollIntoView({ behavior: 'smooth' }); }
+
+        window.openCheckoutModal = function() { document.getElementById('checkoutModal').style.display='block'; }
+        window.closeCheckoutModal = function() { document.getElementById('checkoutModal').style.display='none'; }
+
+        window.finalizeOrder = async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('cName').value;
+            const phone = document.getElementById('cPhone').value;
+            const addr = document.getElementById('cAddress').value;
+            localStorage.setItem('shamma_user_profile', JSON.stringify({name, phone, address: addr}));
+            
+            let items = JSON.parse(localStorage.getItem('shamma_cart')) || [];
+            let total = document.getElementById('totalPrice').innerText;
+            
+            if(currentProduct && currentProduct.tempType) {
+                items = [{ productName: currentProduct.name, price: document.getElementById('mPrice').innerText, type: 'حجز مباشر' }];
+                total = document.getElementById('mPrice').innerText;
+            }
+
+            await addDoc(collection(db, "orders"), { customerName: name, customerPhone: phone, customerAddress: addr, items: items, totalPrice: total, date: Date.now(), status: 'قيد المراجعة' });
+            localStorage.removeItem('shamma_cart');
+            alert('تم الطلب بنجاح');
+            location.reload();
+        }
     </script>
 </body>
 </html>
