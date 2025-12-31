@@ -69,7 +69,9 @@
         .full-width { grid-column: span 2; }
         .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--primary); }
         .form-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; outline: none; transition: 0.3s; }
+        .form-input:focus { border-color: var(--accent); }
         .btn-submit { background: var(--primary); color: white; padding: 15px; border: none; border-radius: 8px; cursor: pointer; width: 100%; margin-top: 20px; }
+        .btn-submit:hover { background: var(--secondary); }
         .img-preview { width: 100px; height: 100px; border-radius: 10px; object-fit: cover; display: none; margin-top: 10px; }
 
         /* Invoice */
@@ -96,8 +98,6 @@
         /* Sound Overlay */
         #soundOverlay { position: fixed; inset: 0; background: rgba(26, 42, 58, 0.98); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center; color: white; }
         .start-btn { background: var(--success); color: white; border: none; padding: 15px 50px; font-size: 1.2rem; border-radius: 50px; margin-top: 20px; cursor: pointer; box-shadow: 0 0 20px rgba(39, 174, 96, 0.4); font-weight: bold; }
-        
-        .section-header { border-bottom: 2px solid var(--accent); padding-bottom: 10px; margin-bottom: 20px; color: var(--primary); font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
     </style>
 </head>
 <body>
@@ -113,7 +113,11 @@
         <div class="menu">
             <button class="menu-btn active" onclick="nav('dashboard', this)"><i class="fa-solid fa-chart-pie"></i> الرئيسية</button>
             <button class="menu-btn" onclick="nav('products', this)"><i class="fa-solid fa-box-open"></i> إدارة المنتجات</button>
-            <button class="menu-btn" onclick="nav('orders', this)"><i class="fa-solid fa-clipboard-list"></i> إدارة الطلبات</button>
+            
+            <!-- تم الفصل هنا -->
+            <button class="menu-btn" onclick="nav('orders', this)"><i class="fa-solid fa-bell"></i> الطلبات الجارية</button>
+            <button class="menu-btn" onclick="nav('archive', this)"><i class="fa-solid fa-box-archive"></i> سجل الأرشيف</button>
+            
             <button class="menu-btn" onclick="nav('chat', this)"><i class="fa-brands fa-whatsapp"></i> المحادثات</button>
             <button class="menu-btn" onclick="nav('categories', this)"><i class="fa-solid fa-layer-group"></i> الأقسام</button>
             <button class="menu-btn logout-btn" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج</button>
@@ -166,27 +170,20 @@
             </div>
         </section>
 
-        <!-- Orders Section (SPLIT INTO ACTIVE AND ARCHIVE) -->
+        <!-- Active Orders Section -->
         <section id="orders" class="section">
-            <div class="page-title" style="margin-bottom:30px;">إدارة الطلبات والسجلات</div>
-            
-            <!-- TABLE 1: ACTIVE ORDERS -->
-            <div class="section-header">
-                <span><i class="fa-solid fa-bolt" style="color:#f39c12;"></i> الطلبات الحالية (تحتاج إجراء)</span>
-            </div>
+            <div class="page-title" style="margin-bottom:30px;">الطلبات الجارية (النشطة)</div>
             <div class="table-container">
                 <table>
                     <thead><tr><th>التاريخ</th><th>العميل</th><th>الهاتف</th><th>الإجمالي</th><th>تحديث الحالة</th><th>طباعة/عرض</th><th>حذف</th></tr></thead>
                     <tbody id="activeOrdersBody"></tbody>
                 </table>
             </div>
+        </section>
 
-            <!-- TABLE 2: ARCHIVE -->
-            <div class="section-header" style="margin-top:40px;">
-                <span><i class="fa-solid fa-box-archive" style="color:var(--success);"></i> سجل المبيعات والأرشيف (تم التوصيل)</span>
-            </div>
-            
-            <!-- Filters For Archive -->
+        <!-- Archive Records Section -->
+        <section id="archive" class="section">
+            <div class="page-title" style="margin-bottom:30px;">سجل المبيعات والأرشيف</div>
             <div class="filters-bar">
                 <div style="flex:1; display:flex; gap:10px; align-items:center;">
                     <i class="fa-solid fa-search" style="color:#888;"></i>
@@ -200,13 +197,11 @@
                     <span style="font-size:0.9rem;">إلى:</span>
                     <input type="date" id="filterDateTo" class="filter-select" onchange="applyFilters()">
                 </div>
-
                 <div class="filter-summary">
                     <span id="filterCount">عدد الطلبات: 0</span>
                     <span id="filterTotal">إجمالي الأرشيف: 0 ج.م</span>
                 </div>
             </div>
-
             <div class="table-container">
                 <table>
                     <thead><tr><th>التاريخ</th><th>العميل</th><th>الهاتف</th><th>الإجمالي</th><th>الحالة</th><th>التفاصيل</th><th>حذف</th></tr></thead>
