@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل دخول الإدارة | الشماع</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary: #1a2a3a; --accent: #cda45e; --white: #ffffff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+        
+        body { 
+            height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            background: linear-gradient(rgba(26, 42, 58, 0.85), rgba(26, 42, 58, 0.9)), url('https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=2000');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            border-top: 5px solid var(--accent);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .logo { font-size: 2rem; color: var(--primary); font-weight: bold; margin-bottom: 10px; }
+        .logo i { color: var(--accent); }
+        .subtitle { color: #666; margin-bottom: 30px; font-size: 0.9rem; }
+
+        .input-group { margin-bottom: 20px; position: relative; }
+        .input-group i { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--primary); }
+        .input-group input { 
+            width: 100%; 
+            padding: 12px 45px 12px 15px; 
+            border: 1px solid #ddd; 
+            border-radius: 30px; 
+            outline: none; 
+            transition: 0.3s;
+            background: #f9f9f9;
+        }
+        .input-group input:focus { border-color: var(--accent); background: white; box-shadow: 0 0 10px rgba(205, 164, 94, 0.2); }
+
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(26, 42, 58, 0.3);
+        }
+        .btn-login:hover { background: var(--accent); transform: translateY(-2px); }
+
+        .error-msg { 
+            color: #e74c3c; 
+            font-size: 0.85rem; 
+            margin-top: 15px; 
+            display: none; 
+            background: #fadbd8; 
+            padding: 8px; 
+            border-radius: 5px; 
+        }
+
+        .footer-text { margin-top: 25px; color: #888; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <div class="logo"><i class="fa-solid fa-couch"></i> الشماع</div>
+        <p class="subtitle">لوحة تحكم الإدارة والمبيعات</p>
+        
+        <form id="loginForm">
+            <div class="input-group">
+                <i class="fa-solid fa-envelope"></i>
+                <input type="email" id="email" placeholder="البريد الإلكتروني" required>
+            </div>
+            <div class="input-group">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="password" placeholder="كلمة المرور" required>
+            </div>
+            <button type="submit" class="btn-login">تسجيل الدخول</button>
+        </form>
+        
+        <div id="errorMsg" class="error-msg">بيانات الدخول غير صحيحة</div>
+        <div class="footer-text">© 2025 نظام الشماع للأثاث</div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyCE7wo3Vwzap7MnP4rv9kFZNwKlFD1myMM", authDomain: "furniture-416b8.firebaseapp.com", projectId: "furniture-416b8", storageBucket: "furniture-416b8.firebasestorage.app", messagingSenderId: "827913239758", appId: "1:827913239758:web:2fef185ebcf07d80e5e49f" };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+            const btn = document.querySelector('.btn-login');
+            const err = document.getElementById('errorMsg');
+
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> جاري التحقق...';
+            
+            signInWithEmailAndPassword(auth, email, pass)
+                .then((userCredential) => {
+                    // نجاح الدخول
+                    window.location.href = 'admin.html'; // توجيه للوحة التحكم
+                })
+                .catch((error) => {
+                    // فشل الدخول
+                    console.error(error);
+                    err.style.display = 'block';
+                    err.innerText = "البريد الإلكتروني أو كلمة المرور خطأ";
+                    btn.innerHTML = 'تسجيل الدخول';
+                });
+        });
+    </script>
+</body>
+</html>
