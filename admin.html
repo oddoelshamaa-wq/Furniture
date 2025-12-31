@@ -13,7 +13,9 @@
             --wa-sidebar: #111b21; --wa-chat: #0b141a; --wa-green: #00a884;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
-        body { background: var(--bg); display: none; /* مخفي للحماية */ height: 100vh; overflow: hidden; color: var(--text); }
+        
+        /* تحسين: جعل الجسم مخفي بمرونة لتجنب الاختفاء الدائم */
+        body { background: var(--bg); display: none; height: 100vh; overflow: hidden; color: var(--text); }
 
         /* Sidebar */
         .sidebar { width: 260px; background: var(--primary); color: white; display: flex; flex-direction: column; box-shadow: 4px 0 15px rgba(0,0,0,0.1); z-index: 100; transition: 0.3s; }
@@ -96,7 +98,7 @@
         .chat-controls button { background: none; border: none; color: #8696a0; font-size: 1.5rem; cursor: pointer; }
 
         /* Sound Overlay */
-        #soundOverlay { position: fixed; inset: 0; background: rgba(26, 42, 58, 0.98); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center; color: white; }
+        #soundOverlay { position: fixed; inset: 0; background: rgba(26, 42, 58, 0.98); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center; color: white; transition: 0.5s; }
         .start-btn { background: var(--success); color: white; border: none; padding: 15px 50px; font-size: 1.2rem; border-radius: 50px; margin-top: 20px; cursor: pointer; box-shadow: 0 0 20px rgba(39, 174, 96, 0.4); font-weight: bold; }
     </style>
 </head>
@@ -294,20 +296,29 @@
         </div>
     </div>
 
-    <!-- Alarm Sound File (Stronger Alert) -->
-    <audio id="alertSound" src="https://assets.mixkit.co/sfx/preview/mixkit-facility-alarm-sound-999.mp3"></audio>
+    <!-- Alarm Sound -->
+    <audio id="alertSound" src="https://assets.mixkit.co/sfx/preview/mixkit-facility-alarm-sound-999.mp3" preload="auto"></audio>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, where, orderBy, deleteDoc, doc, updateDoc, arrayUnion, arrayRemove, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const app = initializeApp({ apiKey: "AIzaSyCE7wo3Vwzap7MnP4rv9kFZNwKlFD1myMM", authDomain: "furniture-416b8.firebaseapp.com", projectId: "furniture-416b8", storageBucket: "furniture-416b8.firebasestorage.app", messagingSenderId: "827913239758", appId: "1:827913239758:web:2fef185ebcf07d80e5e49f" });
+        // Firebase Config
+        const firebaseConfig = { apiKey: "AIzaSyCE7wo3Vwzap7MnP4rv9kFZNwKlFD1myMM", authDomain: "furniture-416b8.firebaseapp.com", projectId: "furniture-416b8", storageBucket: "furniture-416b8.firebasestorage.app", messagingSenderId: "827913239758", appId: "1:827913239758:web:2fef185ebcf07d80e5e49f" };
+        const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
         
-        // Security
-        onAuthStateChanged(auth, (user) => { if (user) document.body.style.display = 'flex'; else window.location.href = 'login.html'; });
+        // Security & Display Check
+        onAuthStateChanged(auth, (user) => { 
+            if (user) {
+                document.body.style.display = 'flex'; 
+            } else {
+                window.location.href = 'login.html'; 
+            }
+        });
+
         window.logout = () => signOut(auth).then(() => window.location.href = 'login.html');
 
         let allProducts = [], allCategories = [], globalArchivedOrders = [], activeChatId = null;
@@ -315,9 +326,19 @@
         document.getElementById('dateDisplay').innerText = new Date().toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
         window.initSystem = () => {
-            audio.play().then(() => { audio.pause(); audio.currentTime = 0; document.getElementById('soundOverlay').style.opacity = '0'; setTimeout(() => document.getElementById('soundOverlay').style.display = 'none', 500); }).catch(e => document.getElementById('soundOverlay').style.display = 'none');
+            audio.play().then(() => { 
+                audio.pause(); 
+                audio.currentTime = 0; 
+                document.getElementById('soundOverlay').style.opacity = '0'; 
+                setTimeout(() => document.getElementById('soundOverlay').style.display = 'none', 500); 
+            }).catch(e => {
+                document.getElementById('soundOverlay').style.display = 'none';
+            });
         }
-        const playAlert = () => { audio.currentTime = 0; audio.play().catch(e=>{}); }
+
+        const playAlert = () => { 
+            try { audio.currentTime = 0; audio.play(); } catch(e){} 
+        }
 
         window.nav = (id, btn) => {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -326,41 +347,44 @@
             btn.classList.add('active');
         }
 
-        // --- Orders Logic (SPLIT TABLES) ---
+        // --- Orders Management ---
         onSnapshot(query(collection(db, "orders"), orderBy("date", "desc")), (snap) => {
             const dashTable = document.getElementById('dashOrdersBody');
             const activeTable = document.getElementById('activeOrdersBody');
-            dashTable.innerHTML = ''; activeTable.innerHTML = '';
             
-            globalArchivedOrders = []; // Reset Archive
+            // تنظيف الجداول قبل إعادة البناء
+            dashTable.innerHTML = ''; 
+            activeTable.innerHTML = '';
+            
+            globalArchivedOrders = []; 
             let totalSales = 0, totalCount = 0;
             
+            // التنبيه للطلبات الجديدة فقط
             snap.docChanges().forEach(c => { 
-                if(c.type === 'added' && (Date.now() - c.doc.data().date) < 60000) {
+                if(c.type === 'added' && c.doc.data() && (Date.now() - c.doc.data().date) < 15000) {
                     playAlert(); 
-                    viewOrder(encodeURIComponent(JSON.stringify(c.doc.data())));
                 }
             });
 
             snap.forEach(d => {
                 const o = d.data();
+                if(!o) return; // حماية ضد البيانات الفارغة
                 o.id = d.id;
                 totalCount++;
 
                 if(o.status === 'تم التوصيل') {
-                    // Add to Archive Logic
-                    totalSales += parseFloat(o.totalPrice.replace(/[^0-9.]/g,'')) || 0;
+                    const priceValue = typeof o.totalPrice === 'string' ? parseFloat(o.totalPrice.replace(/[^0-9.]/g,'')) : (o.totalPrice || 0);
+                    totalSales += priceValue;
                     globalArchivedOrders.push(o);
                 } else {
-                    // Add to Active Table
                     let badgeClass = o.status === 'قيد المراجعة' ? 'bg-orange' : 'bg-blue';
                     const orderData = encodeURIComponent(JSON.stringify(o));
                     
                     const row = `<tr>
                         <td>${new Date(o.date).toLocaleDateString()}</td>
-                        <td>${o.customerName}</td>
-                        <td>${o.customerPhone}</td>
-                        <td style="font-weight:bold; color:var(--success)">${o.totalPrice}</td>
+                        <td>${o.customerName || 'بدون اسم'}</td>
+                        <td>${o.customerPhone || '-'}</td>
+                        <td style="font-weight:bold; color:var(--success)">${o.totalPrice || 0}</td>
                         <td>
                             <select onchange="updateStatus('${d.id}', this.value)" style="padding:5px; border-radius:5px; border:1px solid #ddd; background:${o.status==='قيد المراجعة'?'#fff3cd':'#e3f2fd'}">
                                 <option ${o.status=='قيد المراجعة'?'selected':''}>قيد المراجعة</option>
@@ -374,18 +398,18 @@
                     </tr>`;
                     activeTable.innerHTML += row;
 
-                    // Dash Table (Limit 5)
-                    if(dashTable.rows.length < 5) dashTable.innerHTML += `<tr><td>#${d.id.slice(0,5)}</td><td>${o.customerName}</td><td>${o.totalPrice}</td><td><span class="status-badge ${badgeClass}">${o.status}</span></td></tr>`;
+                    if(dashTable.rows.length < 5) {
+                        dashTable.innerHTML += `<tr><td>#${d.id.slice(0,5)}</td><td>${o.customerName}</td><td>${o.totalPrice}</td><td><span class="status-badge ${badgeClass}">${o.status}</span></td></tr>`;
+                    }
                 }
             });
 
-            document.getElementById('totalSales').innerText = Math.floor(totalSales) + " ج.م";
+            document.getElementById('totalSales').innerText = Math.floor(totalSales).toLocaleString() + " ج.م";
             document.getElementById('totalOrders').innerText = totalCount;
-            
-            applyFilters(); // Render Archive
+            applyFilters(); 
         });
 
-        // Filter Logic for Archive
+        // Archive Filter
         window.applyFilters = () => {
             const searchText = document.getElementById('searchOrder').value.toLowerCase();
             const dateFrom = document.getElementById('filterDateFrom').value;
@@ -397,7 +421,7 @@
             let filteredMoney = 0;
 
             globalArchivedOrders.forEach(o => {
-                const matchesText = o.customerName.toLowerCase().includes(searchText) || o.customerPhone.includes(searchText);
+                const matchesText = (o.customerName || '').toLowerCase().includes(searchText) || (o.customerPhone || '').includes(searchText);
                 let matchesDate = true;
                 const orderDate = new Date(o.date);
                 if(dateFrom) matchesDate = matchesDate && (orderDate >= new Date(dateFrom));
@@ -405,7 +429,8 @@
 
                 if(matchesText && matchesDate) {
                     filteredCount++;
-                    filteredMoney += parseFloat(o.totalPrice.replace(/[^0-9.]/g,'')) || 0;
+                    const priceValue = typeof o.totalPrice === 'string' ? parseFloat(o.totalPrice.replace(/[^0-9.]/g,'')) : (o.totalPrice || 0);
+                    filteredMoney += priceValue;
                     const orderData = encodeURIComponent(JSON.stringify(o));
                     
                     tableBody.innerHTML += `
@@ -422,34 +447,34 @@
             });
 
             document.getElementById('filterCount').innerText = `عدد الطلبات: ${filteredCount}`;
-            document.getElementById('filterTotal').innerText = `إجمالي الأرشيف: ${Math.floor(filteredMoney)} ج.م`;
+            document.getElementById('filterTotal').innerText = `إجمالي الأرشيف: ${Math.floor(filteredMoney).toLocaleString()} ج.م`;
         };
 
         window.updateStatus = async (id, val) => await updateDoc(doc(db, "orders", id), { status: val });
         window.deleteOrder = async (id) => { if(confirm('هل أنت متأكد من حذف الطلب؟')) await deleteDoc(doc(db, "orders", id)); }
         
         window.viewOrder = (dataStr) => {
-            const o = JSON.parse(decodeURIComponent(dataStr));
-            const itemsHtml = o.items.map(i => `<div class="invoice-item"><span>${i.name}</span><span>${i.price}</span></div>`).join('');
-            
-            // Auto Linkify Map URLs
-            let address = o.customerAddress;
-            if(address.includes('http')) {
-                address = address.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color:blue;text-decoration:underline;">فتح الموقع (GPS) 📍</a>');
-            }
-
-            document.getElementById('invoiceContent').innerHTML = `
-                <div class="invoice-header"><div><strong>العميل:</strong> ${o.customerName}<br><strong>الهاتف:</strong> ${o.customerPhone}</div><div style="text-align:left"><strong>التاريخ:</strong> ${new Date(o.date).toLocaleDateString()}</div></div>
-                <div style="background:#f9f9f9; padding:10px; margin-bottom:15px; border-radius:5px;"><strong>العنوان:</strong><br>${address}</div>
-                <div><strong>المنتجات:</strong></div>${itemsHtml}<div class="invoice-total">الإجمالي: ${o.totalPrice}</div>`;
-            document.getElementById('orderDetailModal').style.display = 'flex';
+            try {
+                const o = JSON.parse(decodeURIComponent(dataStr));
+                const itemsHtml = (o.items || []).map(i => `<div class="invoice-item"><span>${i.name}</span><span>${i.price}</span></div>`).join('');
+                let address = o.customerAddress || 'غير محدد';
+                if(address.includes('http')) {
+                    address = address.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color:blue;text-decoration:underline;">فتح الموقع (GPS) 📍</a>');
+                }
+                document.getElementById('invoiceContent').innerHTML = `
+                    <div class="invoice-header"><div><strong>العميل:</strong> ${o.customerName}<br><strong>الهاتف:</strong> ${o.customerPhone}</div><div style="text-align:left"><strong>التاريخ:</strong> ${new Date(o.date).toLocaleDateString()}</div></div>
+                    <div style="background:#f9f9f9; padding:10px; margin-bottom:15px; border-radius:5px;"><strong>العنوان:</strong><br>${address}</div>
+                    <div><strong>المنتجات:</strong></div>${itemsHtml}<div class="invoice-total">الإجمالي: ${o.totalPrice}</div>`;
+                document.getElementById('orderDetailModal').style.display = 'flex';
+            } catch(e) { console.error("Error viewing order", e); }
         }
 
-        // --- Products ---
+        // --- Products Management ---
         onSnapshot(collection(db, "products"), (snap) => {
             allProducts = snap.docs.map(d => ({id:d.id, ...d.data()}));
             document.getElementById('totalProducts').innerText = allProducts.length;
-            const tbody = document.getElementById('productsTableBody'); tbody.innerHTML = '';
+            const tbody = document.getElementById('productsTableBody'); 
+            tbody.innerHTML = '';
             allProducts.forEach(p => {
                 const pStr = encodeURIComponent(JSON.stringify(p));
                 tbody.innerHTML += `<tr>
@@ -459,8 +484,16 @@
                 </tr>`;
             });
         });
-        window.openProductModal = () => { document.getElementById('productForm').reset(); document.getElementById('editProductId').value = ''; document.getElementById('modalTitle').innerText = 'إضافة منتج جديد'; document.getElementById('imgPreview').style.display = 'none'; document.getElementById('productModal').style.display = 'flex'; }
+
+        window.openProductModal = () => { 
+            document.getElementById('productForm').reset(); 
+            document.getElementById('editProductId').value = ''; 
+            document.getElementById('modalTitle').innerText = 'إضافة منتج جديد'; 
+            document.getElementById('imgPreview').style.display = 'none'; 
+            document.getElementById('productModal').style.display = 'flex'; 
+        }
         window.closeProductModal = () => document.getElementById('productModal').style.display = 'none';
+
         window.editProduct = (pStr) => {
             const p = JSON.parse(decodeURIComponent(pStr));
             document.getElementById('editProductId').value = p.id;
@@ -472,31 +505,52 @@
             document.getElementById('pPrice').value = p.price;
             document.getElementById('pDisc').value = p.discount || 0;
             document.getElementById('pCatMain').value = p.category;
-            updateSubCats(); setTimeout(() => document.getElementById('pCatSub').value = p.subCategory, 100);
+            updateSubCats(); 
+            setTimeout(() => document.getElementById('pCatSub').value = p.subCategory, 100);
             document.getElementById('modalTitle').innerText = 'تعديل المنتج';
             document.getElementById('productModal').style.display = 'flex';
         }
+
         window.saveProduct = async (e) => {
             e.preventDefault();
             const id = document.getElementById('editProductId').value;
-            const data = { name: document.getElementById('pName').value, img: document.getElementById('pImg').value, desc: document.getElementById('pDesc').value, price: parseFloat(document.getElementById('pPrice').value), discount: parseFloat(document.getElementById('pDisc').value), category: document.getElementById('pCatMain').value, subCategory: document.getElementById('pCatSub').value, date: Date.now() };
-            if(id) { await updateDoc(doc(db, "products", id), data); alert('تم التعديل بنجاح'); } else { await addDoc(collection(db, "products"), data); alert('تمت الإضافة بنجاح'); }
-            closeProductModal();
+            const data = { 
+                name: document.getElementById('pName').value, 
+                img: document.getElementById('pImg').value, 
+                desc: document.getElementById('pDesc').value, 
+                price: parseFloat(document.getElementById('pPrice').value), 
+                discount: parseFloat(document.getElementById('pDisc').value), 
+                category: document.getElementById('pCatMain').value, 
+                subCategory: document.getElementById('pCatSub').value, 
+                date: Date.now() 
+            };
+            try {
+                if(id) { await updateDoc(doc(db, "products", id), data); } 
+                else { await addDoc(collection(db, "products"), data); }
+                closeProductModal();
+            } catch(err) { alert("حدث خطأ أثناء الحفظ"); }
         }
         window.deleteProduct = async (id) => { if(confirm('حذف هذا المنتج نهائياً؟')) await deleteDoc(doc(db, "products", id)); }
 
-        // --- Chat ---
+        // --- Chat Management ---
         onSnapshot(collection(db, "chats"), (snap) => {
             let users = {};
-            snap.docChanges().forEach(c => { if(c.type === 'added' && c.doc.data().sender === 'customer' && (Date.now() - (c.doc.data().timestamp?.seconds*1000||Date.now())) < 10000) playAlert(); });
-            snap.forEach(d => { const x = d.data(); users[x.chatId] = { name: x.customerName||'عميل', id: x.chatId, last: x.text }; });
+            snap.docChanges().forEach(c => { 
+                if(c.type === 'added' && c.doc.data().sender === 'customer' && (Date.now() - (c.doc.data().timestamp?.seconds*1000||Date.now())) < 10000) playAlert(); 
+            });
+            snap.forEach(d => { 
+                const x = d.data(); 
+                if(x.chatId) users[x.chatId] = { name: x.customerName||'عميل', id: x.chatId, last: x.text || '' }; 
+            });
             const list = document.getElementById('chatUsersList'); list.innerHTML = '';
             Object.values(users).forEach(u => {
                 list.innerHTML += `<div class="chat-user ${activeChatId===u.id?'active':''}" onclick="loadChat('${u.id}')"><div class="user-avatar"><i class="fa-solid fa-user"></i></div><div><div style="font-weight:bold">${u.name}</div><div style="font-size:0.8rem; opacity:0.7">${u.last.substring(0,20)}...</div></div></div>`;
             });
         });
+
         window.loadChat = (id) => {
-            activeChatId = id; document.querySelectorAll('.chat-user').forEach(e => e.classList.remove('active'));
+            activeChatId = id; 
+            document.querySelectorAll('.chat-user').forEach(e => e.classList.remove('active'));
             onSnapshot(query(collection(db, "chats"), where("chatId", "==", id)), (snap) => {
                 const area = document.getElementById('chatMessagesArea'); area.innerHTML = '';
                 let msgs = []; snap.forEach(d => msgs.push(d.data()));
@@ -505,13 +559,15 @@
                 area.scrollTop = area.scrollHeight;
             });
         }
+
         window.sendAdminMsg = async () => {
-            const inp = document.getElementById('adminChatInput'); if(!inp.value || !activeChatId) return;
+            const inp = document.getElementById('adminChatInput'); 
+            if(!inp.value || !activeChatId) return;
             await addDoc(collection(db, "chats"), { chatId: activeChatId, sender: 'admin', text: inp.value, timestamp: serverTimestamp() });
             inp.value = '';
         }
 
-        // --- Categories ---
+        // --- Categories Management ---
         onSnapshot(collection(db, "categories"), (snap) => {
             allCategories = snap.docs.map(d => ({id:d.id, ...d.data()}));
             const pSel = document.getElementById('pCatMain'); pSel.innerHTML = '<option value="">اختر القسم</option>';
@@ -522,10 +578,17 @@
                 man.innerHTML += `<div style="background:white; padding:20px; border-radius:15px; box-shadow:0 2px 10px rgba(0,0,0,0.05);"><div style="display:flex; justify-content:space-between; border-bottom:1px solid #eee; padding-bottom:10px; margin-bottom:10px;"><strong>${c.name}</strong><i class="fa-solid fa-trash" style="color:red; cursor:pointer;" onclick="delMain('${c.id}')"></i></div><div style="margin-bottom:15px;">${subsHtml}</div><div style="display:flex; gap:5px;"><input id="sub_in_${c.id}" class="form-input" placeholder="اسم الفرع" style="padding:5px;"><button onclick="addSub('${c.id}')" style="background:var(--primary); color:white; border:none; padding:5px 15px; border-radius:5px; cursor:pointer;">+</button></div></div>`;
             });
         });
-        window.updateSubCats = () => { const main = document.getElementById('pCatMain').value; const sub = document.getElementById('pCatSub'); sub.innerHTML = '<option value="all">عام</option>'; const c = allCategories.find(x => x.name === main); if(c && c.subs) c.subs.forEach(s => sub.innerHTML += `<option value="${s}">${s}</option>`); }
-        window.addNewCat = async () => { const v = document.getElementById('newCatInput').value; if(v) await addDoc(collection(db, "categories"), {name: v, subs: []}); }
+
+        window.updateSubCats = () => { 
+            const main = document.getElementById('pCatMain').value; 
+            const sub = document.getElementById('pCatSub'); 
+            sub.innerHTML = '<option value="all">عام</option>'; 
+            const c = allCategories.find(x => x.name === main); 
+            if(c && c.subs) c.subs.forEach(s => sub.innerHTML += `<option value="${s}">${s}</option>`); 
+        }
+        window.addNewCat = async () => { const v = document.getElementById('newCatInput').value; if(v) await addDoc(collection(db, "categories"), {name: v, subs: []}); document.getElementById('newCatInput').value=''; }
         window.delMain = async (id) => { if(confirm('حذف القسم؟')) await deleteDoc(doc(db, "categories", id)); }
-        window.addSub = async (id) => { const v = document.getElementById('sub_in_'+id).value; if(v) await updateDoc(doc(db, "categories", id), {subs: arrayUnion(v)}); }
+        window.addSub = async (id) => { const v = document.getElementById('sub_in_'+id).value; if(v) await updateDoc(doc(db, "categories", id), {subs: arrayUnion(v)}); document.getElementById('sub_in_'+id).value=''; }
         window.remSub = async (id, v) => await updateDoc(doc(db, "categories", id), {subs: arrayRemove(v)});
 
     </script>
