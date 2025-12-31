@@ -11,6 +11,7 @@
             --primary: #1a2a3a; --secondary: #2c3e50; --accent: #cda45e; 
             --bg: #f3f4f6; --white: #ffffff; --text: #333; --danger: #e74c3c; --success: #27ae60;
             --wa-sidebar: #111b21; --wa-chat: #0b141a; --wa-green: #00a884;
+            --res-gold: #b8860b; /* لون خاص للحجوزات */
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
         body { background: var(--bg); display: none; height: 100vh; overflow: hidden; color: var(--text); }
@@ -22,245 +23,183 @@
         .menu { flex: 1; padding: 20px 0; overflow-y: auto; }
         .menu-btn { width: 100%; padding: 15px 25px; background: transparent; border: none; color: rgba(255,255,255,0.8); text-align: right; cursor: pointer; display: flex; align-items: center; gap: 15px; font-size: 1rem; transition: 0.3s; border-right: 4px solid transparent; }
         .menu-btn:hover, .menu-btn.active { background: rgba(255,255,255,0.05); color: var(--white); border-right-color: var(--accent); }
-        .logout-btn { margin-top: auto; background: rgba(231, 76, 60, 0.1); color: #e74c3c !important; }
-        .logout-btn:hover { background: #e74c3c; color: white !important; }
+        .res-btn { color: var(--accent) !important; font-weight: bold; } /* تمييز زر الحجوزات */
 
         /* Main Content */
-        .main-content { flex: 1; overflow-y: auto; position: relative; padding: 30px; }
-        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .page-title { font-size: 1.8rem; font-weight: bold; color: var(--primary); }
-        
+        .main-content { flex: 1; overflow-y: auto; padding: 30px; position: relative; }
+        .page-title { font-size: 1.8rem; font-weight: bold; color: var(--primary); margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
+
         /* Sections */
         .section { display: none; animation: fadeIn 0.4s ease; }
         .section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Stats Card */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .stat-card { background: var(--white); padding: 25px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
-        .stat-info h3 { font-size: 0.9rem; color: #777; margin-bottom: 5px; }
-        .stat-info h1 { font-size: 2rem; color: var(--primary); font-weight: bold; }
-        .stat-icon { width: 60px; height: 60px; background: #eef2f5; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--accent); }
+        /* Dashboard Stats */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: var(--white); padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
+        .stat-info h1 { font-size: 1.8rem; color: var(--primary); }
+
+        /* Reservations Cards - التصميم الجديد للحجوزات */
+        .res-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .res-card { background: white; border-right: 8px solid var(--res-gold); border-radius: 12px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); position: relative; transition: 0.3s; }
+        .res-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+        .res-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+        .res-name { font-weight: bold; font-size: 1.2rem; color: var(--primary); }
+        .res-date { font-size: 0.85rem; color: #777; }
+        .res-body { margin-bottom: 15px; }
+        .res-item { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 0.95rem; }
+        .res-footer { display: flex; gap: 10px; border-top: 1px solid #eee; padding-top: 15px; }
+        .res-badge { background: #fff8e1; color: var(--res-gold); padding: 4px 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold; }
 
         /* Tables */
-        .table-container { background: var(--white); border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); overflow: hidden; margin-bottom: 30px; }
+        .table-container { background: var(--white); border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); overflow: hidden; }
         table { width: 100%; border-collapse: collapse; }
-        thead { background: var(--primary); color: white; }
         th, td { padding: 15px 20px; text-align: right; border-bottom: 1px solid #eee; }
-        tr:hover { background: #f9f9f9; }
-        .status-badge { padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; color: white; }
-        .bg-green { background: var(--success); } .bg-orange { background: #f39c12; } .bg-blue { background: #3498db; }
-        
-        /* Action Buttons */
-        .action-btn { width: 35px; height: 35px; border-radius: 8px; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; margin-left: 5px; transition: 0.2s; color: white; }
-        .btn-edit { background: #3498db; } .btn-delete { background: var(--danger); } .btn-view { background: var(--accent); }
+        thead { background: var(--primary); color: white; }
 
-        /* Modals */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .modal-content { background: white; width: 95%; max-width: 700px; padding: 30px; border-radius: 20px; max-height: 90vh; overflow-y: auto; animation: zoomIn 0.3s; }
-        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        /* Actions */
+        .btn { padding: 8px 15px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .btn-main { background: var(--primary); color: white; }
+        .btn-gold { background: var(--res-gold); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-outline { background: transparent; border: 1px solid #ddd; }
 
-        /* Invoice */
-        .invoice-box { border: 1px solid #eee; padding: 20px; border-radius: 10px; background: #fdfdfd; }
-        .invoice-header { display: flex; justify-content: space-between; border-bottom: 2px solid var(--accent); padding-bottom: 10px; margin-bottom: 15px; }
+        /* Overlay */
+        #soundOverlay { position: fixed; inset: 0; background: var(--primary); z-index: 9999; display: flex; align-items: center; justify-content: center; color: white; text-align: center; }
 
-        /* Chat Layout */
-        .chat-layout { display: flex; height: calc(100vh - 100px); background: white; border-radius: 15px; overflow: hidden; }
-        .chat-list { width: 300px; background: var(--wa-sidebar); overflow-y: auto; border-left: 1px solid #333; }
-        .chat-window { flex: 1; background: var(--wa-chat); display: flex; flex-direction: column; }
-        .messages-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); }
-        .bubble { padding: 8px 15px; border-radius: 8px; max-width: 75%; color: white; }
-        .msg-in { align-self: flex-start; background: #202c33; }
-        .msg-out { align-self: flex-end; background: var(--wa-green); }
-
-        /* Start Overlay */
-        #soundOverlay { position: fixed; inset: 0; background: rgba(26, 42, 58, 0.98); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center; color: white; }
-        .start-btn { background: var(--success); color: white; border: none; padding: 18px 60px; font-size: 1.3rem; border-radius: 50px; margin-top: 20px; cursor: pointer; font-weight: bold; box-shadow: 0 10px 30px rgba(39, 174, 96, 0.4); }
+        /* Chat */
+        .chat-layout { display: flex; height: calc(100vh - 150px); background: white; border-radius: 15px; overflow: hidden; }
+        .chat-list { width: 280px; background: var(--wa-sidebar); overflow-y: auto; border-left: 1px solid #333; }
+        .chat-window { flex: 1; background: var(--wa-chat); display: flex; flex-direction: column; background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); }
+        .msg-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .bubble { padding: 10px 15px; border-radius: 10px; max-width: 70%; color: white; }
+        .in { align-self: flex-start; background: #202c33; }
+        .out { align-self: flex-end; background: var(--wa-green); }
     </style>
 </head>
 <body>
 
-    <!-- واجهة التشغيل لتفعيل الصوت والإشعارات -->
     <div id="soundOverlay">
-        <div style="background: white; color: #333; padding: 40px; border-radius: 20px; max-width: 400px; box-shadow: 0 20px 50px rgba(0,0,0,0.3);">
-            <i class="fa-solid fa-bell-concierge" style="font-size: 4rem; color: var(--accent); margin-bottom: 20px;"></i>
-            <h2 style="margin-bottom: 10px;">نظام التنبيهات المباشر</h2>
-            <p style="color: #666; line-height: 1.6;">اضغط على الزر أدناه لتفعيل صوت الرنين وإشعارات الطلبات الجديدة فور وصولها.</p>
-            <button class="start-btn" onclick="activateSystem()">بدء العمل الآن</button>
+        <div>
+            <i class="fa-solid fa-unlock-keyhole" style="font-size: 4rem; color: var(--accent); margin-bottom: 20px;"></i>
+            <h1>نظام إدارة الشماع المطور</h1>
+            <p style="margin: 15px 0;">اضغط لتفعيل استقبال الحجوزات والطلبات بالصوت</p>
+            <button onclick="startSystem()" style="padding: 15px 50px; background: var(--success); border: none; border-radius: 50px; color: white; font-weight: bold; cursor: pointer; font-size: 1.2rem;">دخول اللوحة</button>
         </div>
     </div>
 
     <aside class="sidebar">
         <div class="brand"><i class="fa-solid fa-couch"></i> الشماع</div>
         <div class="menu">
-            <button class="menu-btn active" onclick="nav('dashboard', this)"><i class="fa-solid fa-chart-pie"></i> الرئيسية</button>
-            <button class="menu-btn" onclick="nav('products', this)"><i class="fa-solid fa-box-open"></i> إدارة المنتجات</button>
-            <button class="menu-btn" onclick="nav('orders', this)"><i class="fa-solid fa-bell"></i> الطلبات الجارية</button>
-            <button class="menu-btn" onclick="nav('archive', this)"><i class="fa-solid fa-box-archive"></i> سجل الأرشيف</button>
+            <button class="menu-btn active" onclick="nav('dashboard', this)"><i class="fa-solid fa-gauge"></i> الرئيسية</button>
+            <button class="menu-btn res-btn" onclick="nav('reservations', this)"><i class="fa-solid fa-calendar-check"></i> إدارة الحجوزات</button>
+            <button class="menu-btn" onclick="nav('orders', this)"><i class="fa-solid fa-cart-flatbed"></i> الطلبات الجارية</button>
+            <button class="menu-btn" onclick="nav('products', this)"><i class="fa-solid fa-couch"></i> المنتجات</button>
             <button class="menu-btn" onclick="nav('chat', this)"><i class="fa-brands fa-whatsapp"></i> المحادثات</button>
-            <button class="menu-btn" onclick="nav('categories', this)"><i class="fa-solid fa-layer-group"></i> الأقسام</button>
-            <button class="menu-btn logout-btn" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> خروج</button>
+            <button class="menu-btn" onclick="nav('categories', this)"><i class="fa-solid fa-tags"></i> الأقسام</button>
+            <button class="menu-btn" onclick="nav('archive', this)"><i class="fa-solid fa-history"></i> الأرشيف</button>
+            <button class="menu-btn" style="color: var(--danger) !important; margin-top: auto;" onclick="logout()"><i class="fa-solid fa-power-off"></i> خروج</button>
         </div>
     </aside>
 
     <main class="main-content">
         <!-- Dashboard -->
         <section id="dashboard" class="section active">
-            <div class="header-top"><div class="page-title">لوحة القيادة</div><div id="dateDisplay"></div></div>
+            <div class="page-title">نظرة عامة</div>
             <div class="stats-grid">
-                <div class="stat-card"><div class="stat-info"><h3>المبيعات (المسلمة)</h3><h1 id="totalSales">0 ج.م</h1></div><div class="stat-icon"><i class="fa-solid fa-sack-dollar"></i></div></div>
-                <div class="stat-card"><div class="stat-info"><h3>إجمالي الطلبات</h3><h1 id="totalOrders">0</h1></div><div class="stat-icon"><i class="fa-solid fa-cart-shopping"></i></div></div>
-                <div class="stat-card"><div class="stat-info"><h3>المنتجات</h3><h1 id="totalProducts">0</h1></div><div class="stat-icon"><i class="fa-solid fa-couch"></i></div></div>
+                <div class="stat-card"><div class="stat-info"><h3>إجمالي المبيعات</h3><h1 id="statSales">0</h1></div><i class="fa-solid fa-money-bill-wave" style="color: var(--success); font-size: 2rem;"></i></div>
+                <div class="stat-card"><div class="stat-info"><h3>حجوزات نشطة</h3><h1 id="statRes">0</h1></div><i class="fa-solid fa-calendar-day" style="color: var(--res-gold); font-size: 2rem;"></i></div>
+                <div class="stat-card"><div class="stat-info"><h3>طلبات شراء</h3><h1 id="statOrders">0</h1></div><i class="fa-solid fa-shopping-bag" style="color: var(--blue); font-size: 2rem;"></i></div>
             </div>
             <div class="table-container">
-                <h3 style="padding: 20px;">أحدث الحجوزات</h3>
-                <table id="dashOrdersTable">
-                    <thead><tr><th>العميل</th><th>السعر</th><th>الحالة</th></tr></thead>
-                    <tbody id="dashOrdersBody"></tbody>
+                <h3 style="padding: 20px;">آخر العمليات</h3>
+                <table id="recentTable">
+                    <thead><tr><th>النوع</th><th>العميل</th><th>المبلغ</th><th>الحالة</th></tr></thead>
+                    <tbody id="recentBody"></tbody>
                 </table>
+            </div>
+        </section>
+
+        <!-- Reservations Section (The "Other Way" to show items) -->
+        <section id="reservations" class="section">
+            <div class="page-title"><i class="fa-solid fa-calendar-check" style="color: var(--res-gold);"></i> قائمة الحجوزات الحالية</div>
+            <div id="reservationsGrid" class="res-grid">
+                <!-- الحجوزات ستظهر هنا كبطاقات -->
             </div>
         </section>
 
         <!-- Orders Section -->
         <section id="orders" class="section">
-            <div class="page-title" style="margin-bottom: 20px;">الطلبات الجارية</div>
+            <div class="page-title">طلبات الشراء المباشرة</div>
             <div class="table-container">
                 <table>
-                    <thead><tr><th>التاريخ</th><th>العميل</th><th>الهاتف</th><th>الإجمالي</th><th>تعديل الحالة</th><th>عرض</th><th>حذف</th></tr></thead>
-                    <tbody id="activeOrdersBody"></tbody>
+                    <thead><tr><th>التاريخ</th><th>العميل</th><th>الهاتف</th><th>الإجمالي</th><th>الحالة</th><th>إجراء</th></tr></thead>
+                    <tbody id="ordersBody"></tbody>
                 </table>
             </div>
         </section>
 
-        <!-- Archive Section -->
-        <section id="archive" class="section">
-            <div class="page-title">الأرشيف</div>
-            <div class="table-container" style="margin-top: 20px;">
-                <table id="archiveTable">
-                    <thead><tr><th>التاريخ</th><th>العميل</th><th>الإجمالي</th><th>الحالة</th><th>عرض</th></tr></thead>
-                    <tbody id="archiveOrdersBody"></tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- Products Section -->
+        <!-- Other sections like Products, Chat, etc. - kept for functionality -->
         <section id="products" class="section">
-            <div class="header-top"><div class="page-title">المنتجات</div><button onclick="openProductModal()" style="padding: 10px 20px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer;">+ إضافة منتج</button></div>
-            <div class="table-container">
-                <table>
-                    <thead><tr><th>صورة</th><th>الاسم</th><th>القسم</th><th>السعر</th><th>إجراء</th></tr></thead>
-                    <tbody id="productsTableBody"></tbody>
-                </table>
-            </div>
+            <div class="page-title">المعرض <button class="btn btn-main" onclick="openPModal()" style="margin-right: auto;">+ منتج جديد</button></div>
+            <div class="table-container"><table><thead><tr><th>صورة</th><th>الاسم</th><th>السعر</th><th>إجراء</th></tr></thead><tbody id="pBody"></tbody></table></div>
         </section>
 
-        <!-- Chat Section -->
         <section id="chat" class="section">
             <div class="chat-layout">
-                <div class="chat-list" id="chatUsersList"></div>
+                <div class="chat-list" id="cList"></div>
                 <div class="chat-window">
-                    <div class="messages-area" id="chatMessagesArea"></div>
+                    <div class="msg-area" id="mArea"></div>
                     <div style="padding: 15px; background: #202c33; display: flex; gap: 10px;">
-                        <input type="text" id="adminChatInput" style="flex: 1; padding: 12px; border-radius: 8px; border: none; outline: none;" placeholder="اكتب ردك...">
-                        <button onclick="sendAdminMsg()" style="background: var(--wa-green); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;"><i class="fa-solid fa-paper-plane"></i></button>
+                        <input type="text" id="mInp" style="flex: 1; padding: 12px; border-radius: 8px; border: none;" placeholder="اكتب ردك...">
+                        <button class="btn btn-gold" onclick="sendMsg()"><i class="fa-solid fa-paper-plane"></i></button>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Categories Section -->
         <section id="categories" class="section">
-            <div class="page-title">إدارة الأقسام</div>
-            <div style="background: white; padding: 20px; border-radius: 15px; margin-top: 20px;">
-                <h3>إضافة قسم جديد</h3>
-                <div style="display: flex; gap: 10px; margin-top: 10px;">
-                    <input type="text" id="newCatInput" style="padding: 10px; border: 1px solid #ddd; border-radius: 8px; flex: 1;" placeholder="اسم القسم">
-                    <button onclick="addNewCat()" style="background: var(--accent); color: white; border: none; padding: 10px 25px; border-radius: 8px; cursor: pointer;">إضافة</button>
-                </div>
-            </div>
-            <div id="catsManager" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;"></div>
+             <div class="page-title">الأقسام</div>
+             <div id="catManager" style="display: grid; gap: 20px;"></div>
+        </section>
+
+        <section id="archive" class="section">
+            <div class="page-title">سجل المبيعات المنتهية</div>
+            <div class="table-container"><table><thead><tr><th>التاريخ</th><th>العميل</th><th>المبلغ</th><th>الحالة</th></tr></thead><tbody id="archiveBody"></tbody></table></div>
         </section>
     </main>
 
-    <!-- Modal: Add Product -->
-    <div id="productModal" class="modal">
-        <div class="modal-content" style="padding: 30px;">
-            <h2 id="modalTitle">إضافة منتج جديد</h2>
-            <form id="productForm" onsubmit="saveProduct(event)" style="display: grid; gap: 15px; margin-top: 20px;">
-                <input type="hidden" id="editProductId">
-                <input type="text" id="pName" placeholder="اسم المنتج" required style="padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
-                <input type="text" id="pImg" placeholder="رابط الصورة" required style="padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
-                <textarea id="pDesc" placeholder="الوصف" required style="padding: 12px; border: 1px solid #ddd; border-radius: 8px;"></textarea>
-                <select id="pCatMain" onchange="updateSubCats()" required style="padding: 12px; border: 1px solid #ddd; border-radius: 8px;"></select>
-                <select id="pCatSub" style="padding: 12px; border: 1px solid #ddd; border-radius: 8px;"></select>
-                <input type="number" id="pPrice" placeholder="السعر" required style="padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
-                <input type="number" id="pDisc" placeholder="الخصم %" value="0" style="padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
-                <div style="display: flex; gap: 10px;">
-                    <button type="submit" style="flex: 1; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer;">حفظ</button>
-                    <button type="button" onclick="closeProductModal()" style="flex: 1; padding: 15px; background: #eee; border: none; border-radius: 8px; cursor: pointer;">إلغاء</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <!-- Modal: Invoice -->
-    <div id="orderDetailModal" class="modal">
-        <div class="modal-content" style="max-width: 500px; padding: 20px;">
-            <div id="invoiceContent" class="invoice-box"></div>
-            <button onclick="window.print()" style="width: 100%; padding: 12px; background: #333; color: white; border: none; border-radius: 8px; margin-top: 15px; cursor: pointer;">طباعة</button>
-            <button onclick="document.getElementById('orderDetailModal').style.display='none'" style="width: 100%; padding: 12px; background: #eee; border: none; border-radius: 8px; margin-top: 5px; cursor: pointer;">إغلاق</button>
+    <div id="invoiceModal" class="modal">
+        <div class="modal-content" style="max-width: 500px; padding: 25px; background: white; border-radius: 15px; margin: auto;">
+            <div id="invoiceData"></div>
+            <button class="btn btn-main" style="width: 100%; margin-top: 15px;" onclick="window.print()">طباعة</button>
+            <button class="btn btn-outline" style="width: 100%; margin-top: 5px;" onclick="closeModal('invoiceModal')">إغلاق</button>
         </div>
     </div>
 
-    <audio id="alertSound" src="https://assets.mixkit.co/sfx/preview/mixkit-facility-alarm-sound-999.mp3" preload="auto"></audio>
+    <audio id="alertSound" src="https://assets.mixkit.co/sfx/preview/mixkit-facility-alarm-sound-999.mp3"></audio>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, where, orderBy, deleteDoc, doc, updateDoc, arrayUnion, arrayRemove, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, where, orderBy, deleteDoc, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyCE7wo3Vwzap7MnP4rv9kFZNwKlFD1myMM", authDomain: "furniture-416b8.firebaseapp.com", projectId: "furniture-416b8", storageBucket: "furniture-416b8.firebasestorage.app", messagingSenderId: "827913239758", appId: "1:827913239758:web:2fef185ebcf07d80e5e49f" };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // متغير لمنع التنبيه عند أول تحميل للبيانات القديمة
-        let isInitialLoad = true;
+        let isFirstLoad = true;
 
-        // إعدادات الدخول والبقاء متصلاً
         setPersistence(auth, browserLocalPersistence).then(() => {
-            onAuthStateChanged(auth, (user) => {
-                if (user) { 
-                    document.body.style.display = 'flex';
-                    if (Notification.permission !== "granted") { Notification.requestPermission(); }
-                } else { 
-                    window.location.href = 'login.html'; 
-                }
-            });
+            onAuthStateChanged(auth, u => { if(u) document.body.style.display='flex'; else window.location.href='login.html'; });
         });
 
-        window.logout = () => signOut(auth).then(() => window.location.href = 'login.html');
-
-        // وظيفة تشغيل النظام
-        window.activateSystem = () => {
-            const audio = document.getElementById('alertSound');
-            audio.play().then(() => {
-                audio.pause();
-                audio.currentTime = 0;
-                document.getElementById('soundOverlay').style.display = 'none';
-            }).catch(err => {
-                document.getElementById('soundOverlay').style.display = 'none';
-            });
-        };
-
-        const playNotification = (title, msg) => {
-            const audio = document.getElementById('alertSound');
-            audio.currentTime = 0;
-            audio.play().catch(e => console.log("Sound error"));
-
-            if (Notification.permission === "granted") {
-                new Notification(title, { body: msg, icon: 'https://cdn-icons-png.flaticon.com/512/3502/3502214.png' });
-            }
+        window.startSystem = () => {
+            const a = document.getElementById('alertSound');
+            a.play().then(() => { a.pause(); document.getElementById('soundOverlay').style.display='none'; });
+            if (Notification.permission !== "granted") Notification.requestPermission();
         };
 
         window.nav = (id, btn) => {
@@ -270,203 +209,136 @@
             btn.classList.add('active');
         };
 
-        // --- مراقبة الطلبات والحجوزات ---
-        onSnapshot(query(collection(db, "orders"), orderBy("date", "desc")), (snap) => {
-            const dashTable = document.getElementById('dashOrdersBody');
-            const activeTable = document.getElementById('activeOrdersBody');
-            const archiveTable = document.getElementById('archiveOrdersBody');
-            
-            dashTable.innerHTML = ''; activeTable.innerHTML = ''; archiveTable.innerHTML = '';
-            
-            let totalSales = 0;
-            let count = 0;
+        const notify = (title, msg) => {
+            const a = document.getElementById('alertSound');
+            a.currentTime = 0; a.play();
+            if (Notification.permission === "granted") new Notification(title, { body: msg });
+        };
 
-            // كشف الطلبات الجديدة فعلاً بعد فتح الصفحة
+        // --- Core Logic: Monitoring Orders & Reservations ---
+        onSnapshot(query(collection(db, "orders"), orderBy("date", "desc")), (snap) => {
+            const resGrid = document.getElementById('reservationsGrid');
+            const ordersBody = document.getElementById('ordersBody');
+            const recentBody = document.getElementById('recentBody');
+            const archiveBody = document.getElementById('archiveBody');
+            
+            resGrid.innerHTML = ''; ordersBody.innerHTML = ''; recentBody.innerHTML = ''; archiveBody.innerHTML = '';
+            
+            let sales = 0, resCount = 0, orderCount = 0;
+
             snap.docChanges().forEach(change => {
-                if (change.type === "added" && !isInitialLoad) {
-                    const order = change.doc.data();
-                    playNotification("حجز جديد! 🔔", `العميل: ${order.customerName} - المبلغ: ${order.totalPrice}`);
+                if(change.type === "added" && !isFirstLoad) {
+                    const d = change.doc.data();
+                    const type = d.status === 'حجز' ? "حجز جديد 🗓️" : "طلب شراء جديد 🛒";
+                    notify(type, `العميل: ${d.customerName} - المبلغ: ${d.totalPrice}`);
                 }
             });
 
-            snap.forEach(d => {
-                const o = d.data();
-                o.id = d.id;
-                count++;
-
-                const orderData = encodeURIComponent(JSON.stringify(o));
-                const dateStr = new Date(o.date).toLocaleDateString('ar-EG');
+            snap.forEach(docSnap => {
+                const o = docSnap.data(); o.id = docSnap.id;
+                const date = new Date(o.date).toLocaleDateString('ar-EG');
+                const dataStr = encodeURIComponent(JSON.stringify(o));
 
                 if (o.status === 'تم التوصيل') {
-                    totalSales += parseFloat(String(o.totalPrice).replace(/[^0-9.]/g,'')) || 0;
-                    archiveTable.innerHTML += `<tr><td>${dateStr}</td><td>${o.customerName}</td><td>${o.totalPrice}</td><td><span class="status-badge bg-green">تم التوصيل</span></td><td><button class="action-btn btn-view" onclick="viewOrder('${orderData}')"><i class="fa-solid fa-eye"></i></button></td></tr>`;
-                } else {
-                    activeTable.innerHTML += `<tr>
-                        <td>${dateStr}</td><td>${o.customerName}</td><td>${o.customerPhone}</td><td style="font-weight:bold;">${o.totalPrice}</td>
-                        <td><select onchange="updateStatus('${d.id}', this.value)" style="padding:5px; border-radius:5px;">
-                            <option ${o.status=='قيد المراجعة'?'selected':''}>قيد المراجعة</option>
-                            <option ${o.status=='جاري التحضير'?'selected':''}>جاري التحضير</option>
-                            <option ${o.status=='تم التوصيل'?'selected':''}>تم التوصيل</option>
-                        </select></td>
-                        <td><button class="action-btn btn-view" onclick="viewOrder('${orderData}')"><i class="fa-solid fa-print"></i></button></td>
-                        <td><button class="action-btn btn-delete" onclick="deleteOrder('${d.id}')"><i class="fa-solid fa-trash"></i></button></td>
+                    sales += parseFloat(String(o.totalPrice).replace(/[^0-9.]/g,'')) || 0;
+                    archiveBody.innerHTML += `<tr><td>${date}</td><td>${o.customerName}</td><td>${o.totalPrice}</td><td>تم التسليم</td></tr>`;
+                } 
+                else if (o.status === 'حجز' || (o.items && JSON.stringify(o.items).includes("حجز"))) {
+                    // --- Reservations: Showing in "Another Way" (Cards) ---
+                    resCount++;
+                    resGrid.innerHTML += `
+                        <div class="res-card">
+                            <div class="res-header">
+                                <div><div class="res-name">${o.customerName}</div><div class="res-date">${date}</div></div>
+                                <div class="res-badge">حجز مؤكد</div>
+                            </div>
+                            <div class="res-body">
+                                <div class="res-item"><i class="fa-solid fa-phone"></i> ${o.customerPhone}</div>
+                                <div class="res-item"><i class="fa-solid fa-money-bill"></i> المبلغ: ${o.totalPrice}</div>
+                                <div class="res-item"><i class="fa-solid fa-location-dot"></i> ${o.customerAddress.substring(0,30)}...</div>
+                            </div>
+                            <div class="res-footer">
+                                <button class="btn btn-gold" onclick="viewInv('${dataStr}')">التفاصيل</button>
+                                <button class="btn btn-outline" onclick="updateSt('${o.id}', 'تم التوصيل')">تسليم</button>
+                                <button class="btn btn-danger" onclick="delOr('${o.id}')"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </div>`;
+                } 
+                else {
+                    // --- Normal Orders: Showing in Tables ---
+                    orderCount++;
+                    ordersBody.innerHTML += `<tr>
+                        <td>${date}</td><td>${o.customerName}</td><td>${o.customerPhone}</td><td>${o.totalPrice}</td>
+                        <td><span class="res-badge" style="background:#e3f2fd; color:#1976d2;">طلب شراء</span></td>
+                        <td><button class="btn btn-main" onclick="viewInv('${dataStr}')">عرض</button></td>
                     </tr>`;
-                    if(dashTable.rows.length < 6) {
-                        dashTable.innerHTML += `<tr><td>${o.customerName}</td><td>${o.totalPrice}</td><td><span class="status-badge ${o.status=='قيد المراجعة'?'bg-orange':'bg-blue'}">${o.status}</span></td></tr>`;
-                    }
+                }
+
+                if (recentBody.children.length < 5) {
+                    recentBody.innerHTML += `<tr><td>${o.status=='حجز'?'حجز':'طلب'}</td><td>${o.customerName}</td><td>${o.totalPrice}</td><td>${o.status}</td></tr>`;
                 }
             });
 
-            document.getElementById('totalSales').innerText = totalSales.toLocaleString() + " ج.م";
-            document.getElementById('totalOrders').innerText = count;
-            
-            // بعد أول تحميل، اجعل النظام مستعداً للتنبيه
-            isInitialLoad = false;
+            document.getElementById('statSales').innerText = sales.toLocaleString() + " ج.م";
+            document.getElementById('statRes').innerText = resCount;
+            document.getElementById('statOrders').innerText = orderCount;
+            isFirstLoad = false;
         });
 
-        window.updateStatus = async (id, val) => await updateDoc(doc(db, "orders", id), { status: val });
-        window.deleteOrder = async (id) => { if(confirm('هل تريد حذف هذا الحجز نهائياً؟')) await deleteDoc(doc(db, "orders", id)); };
-
-        window.viewOrder = (dataStr) => {
-            const o = JSON.parse(decodeURIComponent(dataStr));
-            const items = (o.items || []).map(i => `<div style="display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px dashed #eee;"><span>${i.name}</span><span>${i.price}</span></div>`).join('');
-            document.getElementById('invoiceContent').innerHTML = `
-                <div style="text-align:center; margin-bottom:15px;"><h3>فاتورة حجز - الشماع</h3></div>
-                <div style="margin-bottom:10px;"><strong>العميل:</strong> ${o.customerName}</div>
-                <div style="margin-bottom:10px;"><strong>الهاتف:</strong> ${o.customerPhone}</div>
-                <div style="margin-bottom:15px; background:#f9f9f9; padding:10px; border-radius:5px;"><strong>العنوان:</strong> ${o.customerAddress}</div>
-                <div style="margin-top:10px; border-top:1px solid #333; padding-top:10px;">${items}</div>
-                <div style="margin-top:15px; font-weight:bold; font-size:1.2rem;">الإجمالي: ${o.totalPrice}</div>
+        window.viewInv = (str) => {
+            const o = JSON.parse(decodeURIComponent(str));
+            const items = (o.items || []).map(i => `<div style="display:flex; justify-content:space-between; padding:5px 0;"><span>${i.name}</span><span>${i.price}</span></div>`).join('');
+            document.getElementById('invoiceData').innerHTML = `
+                <div style="text-align:center;"><h2>الشماع للأثاث</h2><p>فاتورة ${o.status == 'حجز' ? 'حجز' : 'بيع'}</p></div>
+                <hr style="margin:15px 0;">
+                <p><b>العميل:</b> ${o.customerName}</p><p><b>الهاتف:</b> ${o.customerPhone}</p>
+                <p><b>العنوان:</b> ${o.customerAddress}</p>
+                <div style="margin:20px 0; border-top:1px solid #eee; padding-top:10px;">${items}</div>
+                <h3 style="text-align:left;">الإجمالي: ${o.totalPrice}</h3>
             `;
-            document.getElementById('orderDetailModal').style.display = 'flex';
+            document.getElementById('invoiceModal').style.display='flex';
         };
 
-        // --- إدارة المنتجات ---
-        let allCategories = [];
-        onSnapshot(collection(db, "products"), (snap) => {
-            const tbody = document.getElementById('productsTableBody');
-            tbody.innerHTML = '';
-            document.getElementById('totalProducts').innerText = snap.size;
-            snap.forEach(d => {
-                const p = d.data();
-                const pStr = encodeURIComponent(JSON.stringify({id: d.id, ...p}));
-                tbody.innerHTML += `<tr>
-                    <td><img src="${p.img}" width="40" height="40" style="border-radius:5px; object-fit:cover;"></td>
-                    <td>${p.name}</td><td>${p.category}</td><td>${p.price} ج.م</td>
-                    <td><button class="action-btn btn-edit" onclick="editProduct('${pStr}')"><i class="fa-solid fa-pen"></i></button><button class="action-btn btn-delete" onclick="deleteProduct('${d.id}')"><i class="fa-solid fa-trash"></i></button></td>
-                </tr>`;
+        window.updateSt = async (id, st) => await updateDoc(doc(db, "orders", id), { status: st });
+        window.delOr = async (id) => { if(confirm('حذف العملية نهائياً؟')) await deleteDoc(doc(db, "orders", id)); };
+        window.closeModal = (id) => document.getElementById(id).style.display='none';
+        window.logout = () => signOut(auth);
+
+        // --- Simplified Chat, Products & Categories ---
+        let activeC = null;
+        onSnapshot(collection(db, "chats"), snap => {
+            const list = document.getElementById('cList'); list.innerHTML = '';
+            const u = {}; snap.forEach(d => { const c = d.data(); u[c.chatId] = {n:c.customerName, id:c.chatId, l:c.text}; });
+            Object.values(u).forEach(i => {
+                list.innerHTML += `<div onclick="loadC('${i.id}')" style="padding:15px; color:white; border-bottom:1px solid #333; cursor:pointer; background:${activeC==i.id?'#2a3942':''}"><b>${i.n}</b><br><small>${i.l}</small></div>`;
             });
         });
 
-        window.openProductModal = () => { document.getElementById('productForm').reset(); document.getElementById('editProductId').value = ''; document.getElementById('productModal').style.display = 'flex'; };
-        window.closeProductModal = () => document.getElementById('productModal').style.display = 'none';
-
-        window.saveProduct = async (e) => {
-            e.preventDefault();
-            const id = document.getElementById('editProductId').value;
-            const data = {
-                name: document.getElementById('pName').value,
-                img: document.getElementById('pImg').value,
-                desc: document.getElementById('pDesc').value,
-                category: document.getElementById('pCatMain').value,
-                subCategory: document.getElementById('pCatSub').value,
-                price: parseFloat(document.getElementById('pPrice').value),
-                discount: parseFloat(document.getElementById('pDisc').value),
-                date: Date.now()
-            };
-            if(id) await updateDoc(doc(db, "products", id), data);
-            else await addDoc(collection(db, "products"), data);
-            closeProductModal();
-        };
-
-        window.editProduct = (pStr) => {
-            const p = JSON.parse(decodeURIComponent(pStr));
-            document.getElementById('editProductId').value = p.id;
-            document.getElementById('pName').value = p.name;
-            document.getElementById('pImg').value = p.img;
-            document.getElementById('pDesc').value = p.desc;
-            document.getElementById('pPrice').value = p.price;
-            document.getElementById('pDisc').value = p.discount;
-            document.getElementById('pCatMain').value = p.category;
-            updateSubCats();
-            setTimeout(() => document.getElementById('pCatSub').value = p.subCategory, 100);
-            document.getElementById('productModal').style.display = 'flex';
-        };
-
-        window.deleteProduct = async (id) => { if(confirm('حذف هذا المنتج؟')) await deleteDoc(doc(db, "products", id)); };
-
-        // --- إدارة الأقسام ---
-        onSnapshot(collection(db, "categories"), (snap) => {
-            allCategories = snap.docs.map(d => ({id:d.id, ...d.data()}));
-            const pSel = document.getElementById('pCatMain');
-            pSel.innerHTML = '<option value="">اختر القسم</option>';
-            const man = document.getElementById('catsManager');
-            man.innerHTML = '';
-            allCategories.forEach(c => {
-                pSel.innerHTML += `<option value="${c.name}">${c.name}</option>`;
-                const subs = (c.subs || []).map(s => `<span style="background:#f0f0f0; padding:4px 8px; border-radius:5px; font-size:0.8rem; display:inline-flex; align-items:center; gap:5px;">${s} <i onclick="remSub('${c.id}','${s}')" class="fa-solid fa-xmark" style="color:red; cursor:pointer;"></i></span>`).join(' ');
-                man.innerHTML += `<div style="background:white; padding:15px; border-radius:10px; box-shadow:0 5px 15px rgba(0,0,0,0.05);">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><strong>${c.name}</strong><i class="fa-solid fa-trash" onclick="delCat('${c.id}')" style="color:red; cursor:pointer;"></i></div>
-                    <div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;">${subs}</div>
-                    <div style="display:flex; gap:5px;"><input id="sub_${c.id}" placeholder="فرع جديد" style="flex:1; padding:5px; border:1px solid #ddd; border-radius:5px;"><button onclick="addSub('${c.id}')" style="padding:5px 10px; background:var(--primary); color:white; border:none; border-radius:5px;">+</button></div>
-                </div>`;
-            });
-        });
-
-        window.updateSubCats = () => {
-            const main = document.getElementById('pCatMain').value;
-            const subSel = document.getElementById('pCatSub');
-            subSel.innerHTML = '<option value="all">عام</option>';
-            const cat = allCategories.find(c => c.name === main);
-            if(cat && cat.subs) cat.subs.forEach(s => subSel.innerHTML += `<option value="${s}">${s}</option>`);
-        };
-
-        window.addNewCat = async () => { const v = document.getElementById('newCatInput').value; if(v) await addDoc(collection(db, "categories"), {name: v, subs: []}); document.getElementById('newCatInput').value = ''; };
-        window.delCat = async (id) => { if(confirm('حذف القسم؟')) await deleteDoc(doc(db, "categories", id)); };
-        window.addSub = async (id) => { const v = document.getElementById('sub_'+id).value; if(v) await updateDoc(doc(db, "categories", id), {subs: arrayUnion(v)}); document.getElementById('sub_'+id).value = ''; };
-        window.remSub = async (id, v) => await updateDoc(doc(db, "categories", id), {subs: arrayRemove(v)});
-
-        // --- الدردشة ---
-        let activeChatId = null;
-        onSnapshot(collection(db, "chats"), (snap) => {
-            const list = document.getElementById('chatUsersList');
-            const uniqueUsers = {};
-            
-            // تنبيه للرسائل الجديدة
-            snap.docChanges().forEach(change => {
-                if (change.type === "added" && !isInitialLoad && change.doc.data().sender === 'customer') {
-                    playNotification("رسالة جديدة 💬", change.doc.data().text);
-                }
-            });
-
-            snap.forEach(d => { const chat = d.data(); uniqueUsers[chat.chatId] = { name: chat.customerName, id: chat.chatId, last: chat.text }; });
-            list.innerHTML = '';
-            Object.values(uniqueUsers).forEach(u => {
-                list.innerHTML += `<div onclick="loadChat('${u.id}')" style="padding:15px; border-bottom:1px solid #333; cursor:pointer; background:${activeChatId==u.id?'#2a3942':''}">
-                    <div style="color:white; font-weight:bold;">${u.name || 'عميل'}</div>
-                    <div style="color:#aaa; font-size:0.8rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${u.last}</div>
-                </div>`;
-            });
-        });
-
-        window.loadChat = (id) => {
-            activeChatId = id;
-            onSnapshot(query(collection(db, "chats"), where("chatId", "==", id)), (snap) => {
-                const area = document.getElementById('chatMessagesArea');
-                let msgs = []; snap.forEach(d => msgs.push(d.data()));
-                msgs.sort((a,b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
-                area.innerHTML = msgs.map(m => `<div class="bubble ${m.sender=='admin'?'msg-out':'msg-in'}">${m.text}</div>`).join('');
+        window.loadC = (id) => {
+            activeC = id;
+            onSnapshot(query(collection(db, "chats"), where("chatId", "==", id)), snap => {
+                const area = document.getElementById('mArea');
+                let m = []; snap.forEach(d => m.push(d.data()));
+                m.sort((a,b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
+                area.innerHTML = m.map(i => `<div class="bubble ${i.sender=='admin'?'out':'in'}">${i.text}</div>`).join('');
                 area.scrollTop = area.scrollHeight;
             });
         };
 
-        window.sendAdminMsg = async () => {
-            const inp = document.getElementById('adminChatInput');
-            if(!inp.value || !activeChatId) return;
-            await addDoc(collection(db, "chats"), { chatId: activeChatId, sender: 'admin', text: inp.value, timestamp: serverTimestamp() });
+        window.sendMsg = async () => {
+            const inp = document.getElementById('mInp'); if(!inp.value || !activeC) return;
+            await addDoc(collection(db, "chats"), { chatId: activeC, sender: 'admin', text: inp.value, timestamp: serverTimestamp() });
             inp.value = '';
         };
 
+        onSnapshot(collection(db, "products"), snap => {
+            const b = document.getElementById('pBody'); b.innerHTML = '';
+            snap.forEach(d => {
+                const p = d.data();
+                b.innerHTML += `<tr><td><img src="${p.img}" width="40"></td><td>${p.name}</td><td>${p.price}</td><td><button class="btn btn-danger" onclick="delP('${d.id}')">حذف</button></td></tr>`;
+            });
+        });
+        window.delP = async (id) => await deleteDoc(doc(db, "products", id));
     </script>
 </body>
 </html>
