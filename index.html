@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الشماع | أثاث عصري فاخر</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <nav class="navbar">
+        <div class="logo"><i class="fa-solid fa-couch"></i> الشماع</div>
+        <div class="menu-toggle" id="mobile-menu"><i class="fa-solid fa-bars"></i></div>
+        <ul class="nav-links" id="nav-list">
+            <li><a href="#" class="active">الرئيسية</a></li>
+            <li><a href="#" onclick="window.toggleCart()">السلة <span id="cartCount" class="badge">0</span></a></li>
+            <li><a href="#" onclick="window.openProfileModal()">حسابي</a></li>
+        </ul>
+    </nav>
+
+    <header id="heroHeader" class="hero-section">
+        <div class="hero-overlay">
+            <div class="hero-content">
+                <h1>فخامة منزلك تبدأ من هنا</h1>
+                <p>تصاميم عصرية تجمع بين الراحة والأناقة بأسعار تنافسية.</p>
+                <button onclick="window.scrollToProducts()" class="cta-btn">تصفح المجموعة <i class="fa-solid fa-arrow-left"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container main-content">
+        <section id="homeSection">
+            <div class="section-title"><h2>أحدث المنتجات</h2><div class="line"></div></div>
+            <div id="mainCategoriesTabs" class="categories-tabs"></div>
+            <div id="subCategoriesTabs" class="sub-categories-tabs"></div>
+            <div class="products-grid" id="productsContainer"><p style="text-align:center; width:100%">جاري تحميل المنتجات...</p></div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p>جميع الحقوق محفوظة &copy; 2025 معرض الشماع للأثاث</p>
+            <div class="socials">
+                <i class="fa-brands fa-facebook"></i>
+                <i class="fa-brands fa-instagram"></i>
+                <i class="fa-brands fa-whatsapp"></i>
+            </div>
+        </div>
+    </footer>
+
+    <!-- السلة -->
+    <div class="cart-overlay" id="cartOverlay" onclick="window.toggleCart()"></div>
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header"><h3>سلة المشتريات</h3><span class="close-cart" onclick="window.toggleCart()"><i class="fa-solid fa-xmark"></i></span></div>
+        <div id="cartItems" class="cart-items-container"></div>
+        <div class="cart-footer">
+            <div class="total-row"><span>المجموع:</span><span id="totalPrice">0 ج.م</span></div>
+            <button class="checkout-btn" onclick="window.openCheckoutModal()">إتمام الطلب</button>
+        </div>
+    </div>
+
+    <!-- البروفايل -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content profile-content">
+            <span class="close-btn" onclick="window.closeProfileModal()"><i class="fa-solid fa-xmark"></i></span>
+            <div class="profile-header-modal">
+                <div class="avatar-circle-small"><i class="fa-solid fa-user"></i></div>
+                <h3 id="profileNameDisplay">ضيف</h3>
+                <p>أهلاً بك في ملفك الشخصي</p>
+            </div>
+            <div class="profile-body-container">
+                <div class="profile-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h4><i class="fa-solid fa-id-card"></i> بياناتي</h4>
+                        <button class="edit-btn-small" onclick="window.toggleProfileEdit()"><i class="fa-solid fa-pen"></i> تعديل</button>
+                    </div>
+                    <div id="profileViewMode">
+                        <p class="profile-info-row"><i class="fa-solid fa-user"></i> <span id="viewName">لم يتم التسجيل</span></p>
+                        <p class="profile-info-row"><i class="fa-solid fa-phone"></i> <span id="viewPhone">--</span></p>
+                        <p class="profile-info-row"><i class="fa-solid fa-location-dot"></i> <span id="viewAddress">--</span></p>
+                    </div>
+                    <form id="profileEditMode" style="display: none;" onsubmit="window.saveProfileData(event)">
+                        <input type="text" id="editName" placeholder="الاسم بالكامل" required>
+                        <input type="tel" id="editPhone" placeholder="رقم الهاتف" required>
+                        <input type="text" id="editAddress" placeholder="العنوان" required>
+                        <div style="display: flex; gap: 5px;">
+                            <button type="submit" class="save-btn-small">حفظ</button>
+                            <button type="button" class="cancel-btn-small" onclick="window.toggleProfileEdit()">إلغاء</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="profile-section" style="border-top: 1px solid #eee; margin-top: 15px; padding-top: 15px;">
+                    <h4><i class="fa-solid fa-clock-rotate-left"></i> أرشيف الطلبات</h4>
+                    <div class="orders-log-container-modal">
+                        <table class="user-log-table">
+                            <thead><tr><th>الطلب</th><th>التاريخ</th><th>الحالة</th></tr></thead>
+                            <tbody id="myOrdersLog"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- المنتج -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="window.closeModal()"><i class="fa-solid fa-xmark"></i></span>
+            <div class="modal-body">
+                <div class="modal-img-wrapper"><img id="mImg" src="" alt=""></div>
+                <div class="m-details">
+                    <h2 id="mTitle"></h2>
+                    <div style="margin-bottom: 15px;"><span class="category-tag" id="mCatTag"></span><span class="category-tag sub-tag" id="mSubCatTag"></span></div>
+                    <p id="mDesc"></p>
+                    <div class="price-wrapper"><span id="mPrice" class="current-price"></span><span id="mOldPrice" class="old-price"></span></div>
+                    <div class="action-buttons">
+                        <button class="btn-buy" onclick="window.addToCart('buy')"><i class="fa-solid fa-cart-shopping"></i> إضافة للسلة</button>
+                        <button class="btn-reserve" onclick="window.prepareDirectOrder('reserve')"><i class="fa-regular fa-calendar-check"></i> حجز مباشر</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- الشراء -->
+    <div id="checkoutModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <span class="close-btn" onclick="window.closeCheckoutModal()"><i class="fa-solid fa-xmark"></i></span>
+            <div style="padding: 20px;">
+                <h2 style="text-align: center; color: var(--primary); margin-bottom: 20px;">تأكيد الطلب</h2>
+                <form id="customerDetailsForm" onsubmit="window.finalizeOrder(event)">
+                    <input type="text" id="cName" placeholder="الاسم بالكامل" required>
+                    <input type="tel" id="cPhone" placeholder="رقم الهاتف" required>
+                    <textarea id="cAddress" placeholder="العنوان بالتفصيل" required></textarea>
+                    <button type="submit" class="checkout-btn">إرسال الطلب</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- لاحظ type="module" -->
+    <script type="module" src="script.js"></script>
+</body>
+</html>
