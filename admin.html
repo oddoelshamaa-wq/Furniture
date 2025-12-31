@@ -2,308 +2,293 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة الشماع - واتساب ستايل</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>إدارة الشماع | Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --wa-header: #00a884; --wa-bg: #111b21; --wa-panel: #202c33; --wa-list-active: #2a3942; --wa-msg-out: #005c4b; --wa-msg-in: #202c33; --text: #e9edef; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
-        body { background: #0c1317; color: var(--text); height: 100vh; overflow: hidden; display: flex; }
+        :root { --primary: #1a2a3a; --accent: #cda45e; --bg: #f4f6f8; --text: #333; 
+        /* WhatsApp Theme */ --wa-head: #202c33; --wa-list: #111b21; --wa-chat: #0b141a; --wa-msg-in: #202c33; --wa-msg-out: #005c4b; }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Cairo', sans-serif; }
+        body { background: var(--bg); display:flex; height:100vh; overflow:hidden; }
 
         /* Sidebar */
-        .sidebar { width: 60px; background: var(--wa-panel); display: flex; flex-direction: column; align-items: center; padding-top: 20px; border-left: 1px solid rgba(255,255,255,0.1); gap: 20px; z-index: 10; }
-        .sidebar i { font-size: 1.4rem; color: #aebac1; cursor: pointer; transition: 0.3s; padding: 10px; border-radius: 50%; }
-        .sidebar i.active, .sidebar i:hover { color: var(--wa-header); background: rgba(255,255,255,0.05); }
+        .sidebar { width:240px; background:var(--primary); color:white; display:flex; flex-direction:column; padding:20px; gap:10px; }
+        .sidebar h2 { text-align:center; margin-bottom:20px; padding-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.1); }
+        .sidebar button { background:none; border:none; color:white; text-align:right; padding:12px; cursor:pointer; border-radius:8px; transition:0.3s; font-size:1rem; display:flex; align-items:center; gap:10px; }
+        .sidebar button:hover, .sidebar button.active { background:rgba(255,255,255,0.1); color:var(--accent); }
 
         /* Main Content */
-        .main-area { flex: 1; display: flex; height: 100vh; position: relative; }
+        .main { flex:1; overflow-y:auto; position:relative; }
+        .section { display:none; padding:30px; }
+        .section.active { display:block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+        /* Cards & Tables */
+        .stats-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:20px; margin-bottom:30px; }
+        .card { background:white; padding:20px; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,0.05); }
+        table { width:100%; background:white; border-collapse:collapse; border-radius:10px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.05); }
+        th, td { padding:15px; text-align:right; border-bottom:1px solid #eee; }
+        th { background:var(--primary); color:white; }
         
-        /* Section Styles */
-        .section { display: none; width: 100%; height: 100%; }
-        .section.active { display: flex; }
-
-        /* CHAT SECTION LAYOUT (WhatsApp Web Style) */
-        .chat-list { width: 30%; min-width: 300px; background: var(--wa-bg); border-left: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; }
-        .chat-view { flex: 1; background: #0b141a; background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); opacity: 0.95; display: flex; flex-direction: column; position: relative; }
-        .chat-view::before { content:''; position:absolute; top:0; left:0; width:100%; height:100%; background:#0b141a; opacity:0.9; z-index:0; }
-
-        /* Chat Items */
-        .cl-header { height: 60px; background: var(--wa-panel); display: flex; align-items: center; padding: 0 15px; font-weight: bold; border-right: 1px solid rgba(255,255,255,0.1); }
-        .cl-items { flex: 1; overflow-y: auto; }
-        .cl-item { display: flex; align-items: center; padding: 12px 15px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.2s; }
-        .cl-item:hover, .cl-item.active { background: var(--wa-list-active); }
-        .cl-avatar { width: 45px; height: 45px; border-radius: 50%; background: #dfe5e7; margin-left: 15px; display: flex; align-items: center; justify-content: center; color: #555; font-size: 20px; }
-        .cl-info h4 { font-size: 1rem; color: var(--text); margin-bottom: 3px; }
-        .cl-info p { font-size: 0.85rem; color: #8696a0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
-
-        /* Chat Box */
-        .cv-header { height: 60px; background: var(--wa-panel); padding: 0 20px; display: flex; align-items: center; z-index: 1; border-right: 1px solid rgba(255,255,255,0.1); }
-        .cv-body { flex: 1; overflow-y: auto; padding: 20px 5%; display: flex; flex-direction: column; gap: 5px; z-index: 1; }
-        .cv-footer { height: 65px; background: var(--wa-panel); padding: 10px 20px; display: flex; align-items: center; gap: 15px; z-index: 1; }
+        /* WhatsApp Chat UI (Embed inside Dashboard) */
+        .chat-container { display:flex; height:80vh; background:white; border-radius:15px; overflow:hidden; box-shadow:0 5px 20px rgba(0,0,0,0.1); }
+        .chat-list { width:30%; background:var(--wa-list); border-left:1px solid #333; overflow-y:auto; }
+        .cl-item { padding:15px; border-bottom:1px solid #333; cursor:pointer; color:#e9edef; display:flex; align-items:center; gap:10px; }
+        .cl-item:hover, .cl-item.active { background:#2a3942; }
+        .cl-avatar { width:40px; height:40px; background:#666; border-radius:50%; display:flex; align-items:center; justify-content:center; }
         
-        .bubble { padding: 8px 12px; border-radius: 8px; max-width: 65%; font-size: 0.95rem; position: relative; color: var(--text); box-shadow: 0 1px 0.5px rgba(0,0,0,0.13); line-height: 1.5; }
-        .bubble-in { align-self: flex-start; background: var(--wa-msg-in); border-top-right-radius: 0; }
-        .bubble-out { align-self: flex-end; background: var(--wa-msg-out); border-top-left-radius: 0; }
-        .bubble-time { font-size: 0.7rem; color: #8696a0; float: left; margin-top: 5px; margin-right: -5px; margin-left: 10px; }
+        .chat-area { flex:1; background:var(--wa-chat); display:flex; flex-direction:column; background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); opacity:0.95; }
+        .ca-msgs { flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:8px; }
+        .admin-msg { padding:8px 15px; border-radius:8px; max-width:60%; color:#e9edef; font-size:0.95rem; line-height:1.5; }
+        .msg-in { align-self:flex-start; background:var(--wa-msg-in); border-top-right-radius:0; }
+        .msg-out { align-self:flex-end; background:var(--wa-msg-out); border-top-left-radius:0; }
+        .ca-input { padding:15px; background:var(--wa-head); display:flex; gap:10px; }
+        .ca-input input { flex:1; padding:10px; border-radius:8px; border:none; outline:none; background:#2a3942; color:white; }
+        .ca-input button { background:none; border:none; color:#8696a0; font-size:1.5rem; cursor:pointer; }
 
-        .cv-footer input { flex: 1; background: #2a3942; border: none; padding: 12px 15px; border-radius: 8px; color: white; outline: none; }
-        .cv-footer button { background: transparent; border: none; color: #8696a0; font-size: 1.5rem; cursor: pointer; }
-        
-        /* Dashboard & Products & Orders (Styled Dark) */
-        .page-content { padding: 30px; width: 100%; overflow-y: auto; background: var(--wa-bg); }
-        h2 { border-bottom: 2px solid var(--wa-header); padding-bottom: 10px; margin-bottom: 20px; color: var(--wa-header); }
-        
-        table { width: 100%; border-collapse: collapse; background: var(--wa-panel); border-radius: 8px; overflow: hidden; }
-        th, td { padding: 15px; text-align: right; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        th { background: #2a3942; color: var(--wa-header); }
-        tr:hover { background: rgba(255,255,255,0.03); }
+        /* Forms */
+        .form-box { background:white; padding:25px; border-radius:10px; max-width:600px; box-shadow:0 2px 10px rgba(0,0,0,0.05); }
+        .inp-grp { margin-bottom:15px; }
+        .inp-grp input, .inp-grp select, .inp-grp textarea { width:100%; padding:10px; border:1px solid #ddd; border-radius:5px; }
+        .btn-save { background:var(--primary); color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer; width:100%; }
 
-        .form-group { margin-bottom: 15px; }
-        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; background: var(--wa-panel); border: 1px solid #2a3942; color: white; border-radius: 5px; outline: none; }
-        .btn-submit { background: var(--wa-header); color: white; padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; }
-
-        /* Sound Enable Overlay */
-        #soundOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-        #soundOverlay button { padding: 15px 40px; font-size: 1.2rem; background: var(--wa-header); color: white; border: none; border-radius: 50px; cursor: pointer; margin-top: 20px; }
+        /* Sound Overlay */
+        #soundOverlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:9999; display:flex; align-items:center; justify-content:center; flex-direction:column; color:white; }
     </style>
 </head>
 <body>
 
-    <!-- Sound Activation -->
     <div id="soundOverlay">
-        <h1 style="color:white; margin-bottom:10px;">لوحة تحكم الشماع</h1>
-        <p style="color:#aaa;">يجب تفعيل التنبيهات الصوتية للبدء</p>
-        <button onclick="enableSound()">بدء العمل <i class="fa-solid fa-play"></i></button>
+        <h1>مرحباً بك في لوحة التحكم</h1>
+        <p>يجب تفعيل التنبيهات الصوتية للبدء</p>
+        <button onclick="startAdmin()" style="margin-top:20px; padding:10px 30px; border-radius:20px; border:none; background:#25d366; cursor:pointer; font-size:1.2rem;">بدء العمل <i class="fa-solid fa-play"></i></button>
     </div>
 
     <aside class="sidebar">
-        <i class="fa-solid fa-comments active" onclick="switchTab('chat')"></i>
-        <i class="fa-solid fa-cart-shopping" onclick="switchTab('orders')"></i>
-        <i class="fa-solid fa-plus-circle" onclick="switchTab('add')"></i>
+        <h2>الشماع <i class="fa-solid fa-couch"></i></h2>
+        <button class="active" onclick="show('dashboard')"><i class="fa-solid fa-chart-pie"></i> الرئيسية</button>
+        <button onclick="show('orders')"><i class="fa-solid fa-clipboard-list"></i> الطلبات</button>
+        <button onclick="show('chat')"><i class="fa-brands fa-whatsapp"></i> المحادثات</button>
+        <button onclick="show('products')"><i class="fa-solid fa-box"></i> المنتجات</button>
+        <button onclick="show('categories')"><i class="fa-solid fa-layer-group"></i> الأقسام</button>
+        <button onclick="show('archive')"><i class="fa-solid fa-box-archive"></i> الأرشيف</button>
     </aside>
 
-    <main class="main-area">
-        
-        <!-- Chat Section -->
-        <section id="chat" class="section active">
-            <div class="chat-list">
-                <div class="cl-header">المحادثات</div>
-                <div class="cl-items" id="chatUsersList">
-                    <!-- Users Loaded via Firebase -->
-                </div>
-            </div>
-            <div class="chat-view">
-                <div class="cv-header" id="activeChatHeader">اختر محادثة...</div>
-                <div class="cv-body" id="adminChatMessages"></div>
-                <div class="cv-footer" id="chatFooter" style="visibility:hidden;">
-                    <input type="text" id="adminMsgInput" placeholder="اكتب رسالة..." onkeypress="if(event.key==='Enter') sendAdminMsg()">
-                    <button onclick="sendAdminMsg()"><i class="fa-solid fa-paper-plane"></i></button>
-                </div>
+    <main class="main">
+        <!-- Dashboard -->
+        <section id="dashboard" class="section active">
+            <h1>لوحة القيادة</h1>
+            <div class="stats-grid">
+                <div class="card"><h3>الطلبات</h3><h1 id="statOrders">0</h1></div>
+                <div class="card"><h3>المنتجات</h3><h1 id="statProducts">0</h1></div>
+                <div class="card"><h3>المبيعات</h3><h1 id="statSales" style="color:#27ae60">0</h1></div>
             </div>
         </section>
 
-        <!-- Orders Section -->
+        <!-- Orders -->
         <section id="orders" class="section">
-            <div class="page-content">
-                <h2>الطلبات الواردة</h2>
-                <table>
-                    <thead><tr><th>العميل</th><th>الهاتف</th><th>المنتجات</th><th>الإجمالي</th><th>الحالة</th><th>حذف</th></tr></thead>
-                    <tbody id="ordersTable"></tbody>
-                </table>
+            <h1>الطلبات الجارية</h1>
+            <table>
+                <thead><tr><th>العميل</th><th>الهاتف</th><th>المنتجات</th><th>الإجمالي</th><th>الحالة</th><th>إجراء</th></tr></thead>
+                <tbody id="ordersBody"></tbody>
+            </table>
+        </section>
+
+        <!-- Chat -->
+        <section id="chat" class="section">
+            <div class="chat-container">
+                <div class="chat-list" id="chatUsers"></div>
+                <div class="chat-area">
+                    <div class="ca-msgs" id="chatMsgs"></div>
+                    <div class="ca-input">
+                        <input type="text" id="adminReply" placeholder="اكتب ردك...">
+                        <button onclick="sendAdminReply()"><i class="fa-solid fa-paper-plane"></i></button>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <!-- Add Product Section -->
-        <section id="add" class="section">
-            <div class="page-content">
-                <h2>إضافة منتج جديد</h2>
-                <div style="max-width: 600px; margin: 0 auto;">
-                    <div class="form-group"><input type="text" id="pName" placeholder="اسم المنتج"></div>
-                    <div class="form-group"><input type="text" id="pImg" placeholder="رابط الصورة (URL)"></div>
-                    <div class="form-group"><input type="text" id="pCategory" placeholder="القسم (مثال: غرف نوم)"></div>
-                    <div class="form-group"><input type="number" id="pPrice" placeholder="السعر"></div>
-                    <div class="form-group"><textarea id="pDesc" rows="5" placeholder="وصف المنتج"></textarea></div>
-                    <button class="btn-submit" onclick="addProduct()">نشر المنتج فوراً</button>
+        <!-- Products -->
+        <section id="products" class="section">
+            <div style="display:flex; gap:20px; margin-bottom:20px;">
+                <div class="form-box" style="flex:1;">
+                    <h3>إضافة منتج</h3>
+                    <div class="inp-grp"><input id="pName" placeholder="اسم المنتج"></div>
+                    <div class="inp-grp"><input id="pImg" placeholder="رابط الصورة"></div>
+                    <div class="inp-grp"><textarea id="pDesc" placeholder="الوصف"></textarea></div>
+                    <div class="inp-grp" style="display:flex; gap:10px;">
+                        <input id="pPrice" placeholder="السعر" type="number">
+                        <input id="pDisc" placeholder="الخصم %" type="number">
+                    </div>
+                    <div class="inp-grp" style="display:flex; gap:10px;">
+                        <select id="pCatMain" onchange="loadSubSelect()"><option>القسم الرئيسي</option></select>
+                        <select id="pCatSub"><option value="all">الفرعي</option></select>
+                    </div>
+                    <button class="btn-save" onclick="addProduct()">نشر المنتج</button>
                 </div>
             </div>
+        </section>
+
+        <!-- Categories -->
+        <section id="categories" class="section">
+            <h1>إدارة الأقسام</h1>
+            <div class="form-box" style="margin-bottom:20px;">
+                <input id="newCatName" placeholder="اسم القسم الرئيسي الجديد" style="width:70%; padding:10px;">
+                <button onclick="addMainCat()" class="btn-save" style="width:25%;">إضافة</button>
+            </div>
+            <div id="catsContainer"></div>
+        </section>
+
+        <!-- Archive -->
+        <section id="archive" class="section">
+            <h1>أرشيف الطلبات المكتملة</h1>
+            <table style="margin-top:20px;">
+                <thead><tr><th>العميل</th><th>التاريخ</th><th>الإجمالي</th></tr></thead>
+                <tbody id="archiveBody"></tbody>
+            </table>
         </section>
 
     </main>
 
-    <!-- Hidden Audio -->
-    <audio id="alertSound" src="https://assets.mixkit.co/sfx/preview/mixkit-message-pop-alert-2354.mp3"></audio>
+    <audio id="alertSound" src="https://assets.mixkit.co/sfx/preview/mixkit-software-interface-start-2574.mp3"></audio>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, where, orderBy, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, where, orderBy, deleteDoc, doc, updateDoc, arrayUnion, arrayRemove, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const firebaseConfig = { apiKey: "AIzaSyCE7wo3Vwzap7MnP4rv9kFZNwKlFD1myMM", authDomain: "furniture-416b8.firebaseapp.com", projectId: "furniture-416b8", storageBucket: "furniture-416b8.firebasestorage.app", messagingSenderId: "827913239758", appId: "1:827913239758:web:2fef185ebcf07d80e5e49f" };
-        const app = initializeApp(firebaseConfig);
+        const app = initializeApp({ apiKey: "AIzaSyCE7wo3Vwzap7MnP4rv9kFZNwKlFD1myMM", authDomain: "furniture-416b8.firebaseapp.com", projectId: "furniture-416b8", storageBucket: "furniture-416b8.firebasestorage.app", messagingSenderId: "827913239758", appId: "1:827913239758:web:2fef185ebcf07d80e5e49f" });
         const db = getFirestore(app);
-
-        let activeChatId = null;
+        
+        let allCats = [];
+        let activeChat = null;
         const sound = document.getElementById('alertSound');
 
-        // Sound Enabler
-        window.enableSound = () => {
-            sound.play().then(() => {
-                sound.pause();
-                sound.currentTime = 0;
-                document.getElementById('soundOverlay').style.display = 'none';
-            }).catch(e => console.log('Audio init failed', e));
+        window.startAdmin = () => {
+            sound.play().then(() => { sound.pause(); document.getElementById('soundOverlay').style.display='none'; }).catch(console.error);
         }
+        const playSound = () => { sound.currentTime=0; sound.play().catch(e=>{}); }
 
-        function playAlert() {
-            sound.currentTime = 0;
-            sound.play().catch(e => console.log('Autoplay blocked'));
-        }
+        // 1. إدارة الطلبات (REAL-TIME + Sound)
+        onSnapshot(query(collection(db, "orders"), orderBy("date", "desc")), (snap) => {
+            const b = document.getElementById('ordersBody'); b.innerHTML = '';
+            const a = document.getElementById('archiveBody'); a.innerHTML = '';
+            let sCount = 0, sTotal = 0;
 
-        // 1. إدارة الطلبات (Real-time + Sound)
-        const qOrders = query(collection(db, "orders"), orderBy("date", "desc"));
-        onSnapshot(qOrders, (snapshot) => {
-            const tbody = document.getElementById('ordersTable');
-            tbody.innerHTML = '';
-            
-            // التحقق من وجود طلبات جديدة للتنبيه
-            snapshot.docChanges().forEach((change) => {
-                if (change.type === "added") {
-                    // إذا كان الطلب جديداً جداً (أقل من دقيقة)، شغل الصوت
-                    const isNew = (Date.now() - change.doc.data().date) < 60000;
-                    if(isNew) playAlert();
-                }
-            });
+            snap.docChanges().forEach(c => { if(c.type==='added' && (Date.now()-c.doc.data().date)<60000) playSound(); });
 
-            snapshot.forEach(d => {
+            snap.forEach(d => {
                 const o = d.data();
-                const itemsStr = o.items.map(i => i.name).join(', ');
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${o.customerName}</td>
-                        <td>${o.customerPhone}</td>
-                        <td>${itemsStr}</td>
-                        <td style="color:#00a884; font-weight:bold;">${o.totalPrice}</td>
-                        <td>${o.status}</td>
-                        <td><i class="fa-solid fa-trash" style="color:#e53935; cursor:pointer;" onclick="window.delOrder('${d.id}')"></i></td>
+                if(o.status === 'تم التوصيل') {
+                    a.innerHTML += `<tr><td>${o.customerName}</td><td>${new Date(o.date).toLocaleDateString()}</td><td>${o.totalPrice}</td></tr>`;
+                    sTotal += parseFloat(o.totalPrice);
+                } else {
+                    b.innerHTML += `<tr>
+                        <td>${o.customerName}</td><td>${o.customerPhone}</td>
+                        <td>${o.items.map(i=>i.name).join(', ')}</td><td>${o.totalPrice}</td>
+                        <td><select onchange="updStatus('${d.id}',this.value)"><option>${o.status}</option><option>جاري التحضير</option><option>تم التوصيل</option></select></td>
+                        <td><i class="fa-solid fa-trash" style="color:red; cursor:pointer" onclick="delOrder('${d.id}')"></i></td>
                     </tr>`;
+                    sCount++;
+                }
             });
+            document.getElementById('statOrders').innerText = sCount;
+            document.getElementById('statSales').innerText = sTotal + " ج.م";
         });
 
-        // 2. إدارة الشات (Real-time List + Messages)
-        // جلب قائمة المتحدثين (تجميع يدوي بسيط)
-        onSnapshot(collection(db, "chats"), (snapshot) => {
+        window.updStatus = async (id, s) => await updateDoc(doc(db, "orders", id), {status:s});
+        window.delOrder = async (id) => { if(confirm('حذف؟')) await deleteDoc(doc(db, "orders", id)); }
+
+        // 2. إدارة الشات (WhatsApp Style)
+        onSnapshot(collection(db, "chats"), (snap) => {
             let users = {};
-            // نتحقق من الرسائل الجديدة للتنبيه
-            snapshot.docChanges().forEach((change) => {
-                if (change.type === "added") {
-                   const data = change.doc.data();
-                   // صوت فقط إذا كانت الرسالة من العميل وجديدة
-                   if(data.sender === 'customer' && (Date.now() - (data.timestamp?.seconds * 1000 || Date.now())) < 10000) {
-                       playAlert();
-                   }
-                }
+            snap.docChanges().forEach(c => { if(c.type==='added' && c.doc.data().sender==='customer' && Date.now()-(c.doc.data().timestamp?.seconds*1000)<10000) playSound(); });
+            
+            snap.forEach(d => {
+                const x = d.data(); users[x.chatId] = { name: x.customerName, last: x.text, id: x.chatId };
             });
-
-            snapshot.forEach(d => {
-                const data = d.data();
-                if(!users[data.chatId]) {
-                    users[data.chatId] = { name: data.customerName || 'عميل', lastMsg: '', id: data.chatId };
-                }
-                users[data.chatId].lastMsg = data.text; // تحديث آخر رسالة
-            });
-
-            const list = document.getElementById('chatUsersList');
-            list.innerHTML = '';
+            
+            const ul = document.getElementById('chatUsers'); ul.innerHTML = '';
             Object.values(users).forEach(u => {
-                const activeClass = activeChatId === u.id ? 'active' : '';
-                list.innerHTML += `
-                    <div class="cl-item ${activeClass}" onclick="window.loadChat('${u.id}', '${u.name}')">
-                        <div class="cl-avatar"><i class="fa-solid fa-user"></i></div>
-                        <div class="cl-info">
-                            <h4>${u.name}</h4>
-                            <p>${u.lastMsg}</p>
-                        </div>
-                    </div>`;
+                ul.innerHTML += `<div class="cl-item ${activeChat===u.id?'active':''}" onclick="loadChat('${u.id}')">
+                    <div class="cl-avatar"><i class="fa-solid fa-user"></i></div>
+                    <div><b>${u.name}</b><br><small style="color:#aaa">${u.last}</small></div>
+                </div>`;
             });
         });
 
-        window.loadChat = (chatId, name) => {
-            activeChatId = chatId;
-            document.getElementById('activeChatHeader').innerHTML = `<div style="display:flex; align-items:center; gap:10px;"><div class="cl-avatar" style="width:35px; height:35px; margin:0; font-size:15px;"><i class="fa-solid fa-user"></i></div> ${name}</div>`;
-            document.getElementById('chatFooter').style.visibility = 'visible';
-            
-            // Highlight active user
-            document.querySelectorAll('.cl-item').forEach(el => el.classList.remove('active'));
-            // (Re-rendering logic in onSnapshot handles the active class update based on activeChatId)
-
-            const qMsg = query(collection(db, "chats"), where("chatId", "==", chatId));
-            
-            // إلغاء الاشتراك السابق إذا وجد (للتبسيط سنعتمد على التحديث المباشر)
-            // ملاحظة: في التطبيقات الكبيرة يجب إدارة الـ listeners، هنا للسرعة نعتمد على استبدال المحتوى
-            onSnapshot(qMsg, (snap) => {
-                if(activeChatId !== chatId) return; // منع التداخل
-                const box = document.getElementById('adminChatMessages');
-                let msgs = [];
-                snap.forEach(d => msgs.push(d.data()));
-                msgs.sort((a,b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
-
-                box.innerHTML = '';
+        window.loadChat = (id) => {
+            activeChat = id;
+            document.querySelectorAll('.cl-item').forEach(e=>e.classList.remove('active')); // refresh happens via snapshot mostly
+            const q = query(collection(db, "chats"), where("chatId", "==", id));
+            onSnapshot(q, (snap) => {
+                const box = document.getElementById('chatMsgs'); box.innerHTML = '';
+                let msgs = []; snap.forEach(d => msgs.push(d.data()));
+                msgs.sort((a,b)=>(a.timestamp?.seconds||0)-(b.timestamp?.seconds||0));
                 msgs.forEach(m => {
-                    const type = m.sender === 'admin' ? 'bubble-out' : 'bubble-in';
-                    const time = m.timestamp ? new Date(m.timestamp.seconds * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
-                    box.innerHTML += `
-                        <div class="bubble ${type}">
-                            ${m.text}
-                            <span class="bubble-time">${time}</span>
-                        </div>`;
+                    const type = m.sender==='admin' ? 'msg-out' : 'msg-in';
+                    box.innerHTML += `<div class="admin-msg ${type}">${m.text}</div>`;
                 });
                 box.scrollTop = box.scrollHeight;
             });
-        };
+        }
+        window.sendAdminReply = async () => {
+            const t = document.getElementById('adminReply').value;
+            if(!t || !activeChat) return;
+            document.getElementById('adminReply').value = '';
+            await addDoc(collection(db, "chats"), { chatId: activeChat, sender: 'admin', text: t, timestamp: serverTimestamp() });
+        }
 
-        window.sendAdminMsg = async () => {
-            const inp = document.getElementById('adminMsgInput');
-            const txt = inp.value.trim();
-            if(!txt || !activeChatId) return;
-            inp.value = '';
-            await addDoc(collection(db, "chats"), {
-                chatId: activeChatId,
-                sender: 'admin',
-                text: txt,
-                timestamp: serverTimestamp()
-            });
-        };
+        // 3. المنتجات والأقسام
+        onSnapshot(collection(db, "products"), (snap) => { document.getElementById('statProducts').innerText = snap.size; });
+        onSnapshot(collection(db, "categories"), (snap) => {
+            allCats = snap.docs.map(d=>({id:d.id, ...d.data()}));
+            renderCatsManage();
+            const sel = document.getElementById('pCatMain'); sel.innerHTML = '<option>اختر القسم</option>';
+            allCats.forEach(c => sel.innerHTML += `<option value="${c.name}">${c.name}</option>`);
+        });
 
-        // 3. إضافة المنتجات
+        window.loadSubSelect = () => {
+            const main = document.getElementById('pCatMain').value;
+            const sub = document.getElementById('pCatSub'); sub.innerHTML = '<option value="all">فرعي (اختياري)</option>';
+            const c = allCats.find(x=>x.name===main);
+            if(c && c.subs) c.subs.forEach(s => sub.innerHTML += `<option value="${s}">${s}</option>`);
+        }
+
         window.addProduct = async () => {
-            const name = document.getElementById('pName').value;
-            const img = document.getElementById('pImg').value;
-            const cat = document.getElementById('pCategory').value;
-            const price = document.getElementById('pPrice').value;
-            const desc = document.getElementById('pDesc').value;
-
-            if(!name || !price) return alert('البيانات ناقصة');
-
+            const n=document.getElementById('pName').value, p=document.getElementById('pPrice').value;
+            if(!n || !p) return alert('أكمل البيانات');
             await addDoc(collection(db, "products"), {
-                name, img, category: cat, price, desc, date: Date.now()
+                name:n, img:document.getElementById('pImg').value, desc:document.getElementById('pDesc').value,
+                price: parseFloat(p), discount: parseFloat(document.getElementById('pDisc').value)||0,
+                category: document.getElementById('pCatMain').value, subCategory: document.getElementById('pCatSub').value
             });
-            alert('تم نشر المنتج وتحديث موقع العميل فوراً!');
-            // مسح الحقول
-            document.querySelectorAll('#add input, #add textarea').forEach(i => i.value = '');
-        };
+            alert('تم النشر بنجاح');
+        }
 
-        window.delOrder = async (id) => {
-            if(confirm('حذف هذا الطلب؟')) await deleteDoc(doc(db, "orders", id));
-        };
+        function renderCatsManage() {
+            const d = document.getElementById('catsContainer'); d.innerHTML = '';
+            allCats.forEach(c => {
+                let subsHTML = '';
+                (c.subs||[]).forEach(s => subsHTML += `<span style="background:#eee; padding:5px; margin:2px; border-radius:5px;">${s} <i class="fa-solid fa-xmark" style="color:red; cursor:pointer" onclick="delSub('${c.id}','${s}')"></i></span>`);
+                d.innerHTML += `<div class="card" style="margin-bottom:15px;">
+                    <div style="display:flex; justify-content:space-between;"><b>${c.name}</b> <button onclick="delMain('${c.id}')" style="color:red; border:none; background:none; cursor:pointer">حذف</button></div>
+                    <div style="margin-top:10px;">${subsHTML}</div>
+                    <div style="margin-top:10px; display:flex; gap:5px;"><input id="sub_${c.id}" placeholder="اسم فرع جديد"><button onclick="addSub('${c.id}')" style="background:var(--primary); color:white; border:none; border-radius:3px;">+</button></div>
+                </div>`;
+            });
+        }
 
-        // Tab Switching
-        window.switchTab = (id) => {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        window.addMainCat = async () => { await addDoc(collection(db, "categories"), {name:document.getElementById('newCatName').value, subs:[]}); }
+        window.delMain = async (id) => { if(confirm('حذف؟')) await deleteDoc(doc(db, "categories", id)); }
+        window.addSub = async (id) => { const v=document.getElementById('sub_'+id).value; if(v) await updateDoc(doc(db,"categories",id),{subs:arrayUnion(v)}); }
+        window.delSub = async (id,v) => { await updateDoc(doc(db,"categories",id),{subs:arrayRemove(v)}); }
+
+        window.show = (id) => {
+            document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.sidebar i').forEach(i => i.classList.remove('active'));
-            event.target.classList.add('active');
-        };
-
+            document.querySelectorAll('.sidebar button').forEach(b=>b.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
     </script>
 </body>
 </html>
