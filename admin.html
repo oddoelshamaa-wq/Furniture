@@ -73,6 +73,10 @@
         .msg-in { align-self: flex-start; background: #202c33; }
         .msg-out { align-self: flex-end; background: var(--wa-green); }
 
+        /* New Message Indicator */
+        .new-msg-indicator { background: var(--wa-green); color: white; font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; animation: pulse 1.5s infinite; font-weight: bold; }
+        @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.7; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1); } }
+
         /* Start Overlay */
         #soundOverlay { position: fixed; inset: 0; background: rgba(26, 42, 58, 0.98); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center; color: white; }
         .start-btn { background: var(--success); color: white; border: none; padding: 18px 60px; font-size: 1.3rem; border-radius: 50px; margin-top: 20px; cursor: pointer; font-weight: bold; box-shadow: 0 10px 30px rgba(39, 174, 96, 0.4); }
@@ -83,9 +87,9 @@
     <div id="soundOverlay">
         <div style="background: white; color: #333; padding: 40px; border-radius: 20px; max-width: 400px; box-shadow: 0 20px 50px rgba(0,0,0,0.3);">
             <i class="fa-solid fa-bell-concierge" style="font-size: 4rem; color: var(--accent); margin-bottom: 20px;"></i>
-            <h2 style="margin-bottom: 10px;">نظام تنبيهات الطلبات</h2>
-            <p style="color: #666; line-height: 1.6;">يرجى تفعيل النظام لاستقبال صوت الإنذار عند وصول أي حجز جديد من العملاء.</p>
-            <button class="start-btn" onclick="activateSystem()">تفعيل وتشغيل</button>
+            <h2 style="margin-bottom: 10px;">نظام تنبيهات الشماع</h2>
+            <p style="color: #666; line-height: 1.6;">يرجى تفعيل النظام لاستقبال تنبيهات صوتية عند وصول طلبات أو رسائل جديدة من العملاء.</p>
+            <button class="start-btn" onclick="activateSystem()">تفعيل النظام</button>
         </div>
     </div>
 
@@ -103,7 +107,7 @@
     </aside>
 
     <main class="main-content">
-        <div id="alarmBanner"><i class="fa-solid fa-triangle-exclamation"></i> تنبيه: يوجد طلبات جديدة لم يتم قبولها!</div>
+        <div id="alarmBanner"><i class="fa-solid fa-triangle-exclamation"></i> تنبيه: يوجد طلبات جديدة قيد الانتظار!</div>
 
         <!-- Dashboard -->
         <section id="dashboard" class="section active">
@@ -212,8 +216,9 @@
         </div>
     </div>
 
-    <!-- صوت الإنذار المستمر -->
-    <audio id="alertSound" src="https://assets.mixkit.co/sfx/preview/mixkit-security-facility-breach-alarm-994.mp3" preload="auto" loop></audio>
+    <!-- أصوات التنبيه -->
+    <audio id="orderSound" src="https://assets.mixkit.co/sfx/preview/mixkit-bell-notification-933.mp3" preload="auto"></audio>
+    <audio id="chatSound" src="https://assets.mixkit.co/sfx/preview/mixkit-message-pop-alert-2354.mp3" preload="auto"></audio>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -226,7 +231,8 @@
         const auth = getAuth(app);
 
         let isInitialLoad = true;
-        let alarmTriggered = false;
+        let lastOrdersCount = -1;
+        let activeChatId = null;
 
         setPersistence(auth, browserLocalPersistence).then(() => {
             onAuthStateChanged(auth, (user) => {
@@ -238,29 +244,11 @@
         window.logout = () => signOut(auth).then(() => window.location.href = 'login.html');
 
         window.activateSystem = () => {
-            const audio = document.getElementById('alertSound');
-            audio.play().then(() => {
-                audio.pause();
-                audio.currentTime = 0;
+            document.getElementById('orderSound').play().then(() => {
+                document.getElementById('orderSound').pause();
                 document.getElementById('soundOverlay').style.display = 'none';
-            }).catch(() => {
-                document.getElementById('soundOverlay').style.display = 'none';
+                isInitialLoad = false; // تفعيل استقبال الأصوات بعد الضغط
             });
-        };
-
-        const toggleAlarm = (status) => {
-            const audio = document.getElementById('alertSound');
-            const banner = document.getElementById('alarmBanner');
-            if(status) {
-                audio.play().catch(e => console.log("User interaction required"));
-                banner.style.display = 'block';
-                alarmTriggered = true;
-            } else {
-                audio.pause();
-                audio.currentTime = 0;
-                banner.style.display = 'none';
-                alarmTriggered = false;
-            }
         };
 
         window.nav = (id, btn) => {
@@ -270,14 +258,19 @@
             btn.classList.add('active');
         };
 
-        // --- مراقبة الطلبات والإنذار ---
+        // --- مراقبة الطلبات ---
         onSnapshot(query(collection(db, "orders"), orderBy("date", "desc")), (snap) => {
             const dashTable = document.getElementById('dashOrdersBody');
             const activeTable = document.getElementById('activeOrdersBody');
             const archiveTable = document.getElementById('archiveOrdersBody');
             
+            // تنبيه صوتي عند وصول طلب جديد
+            if (!isInitialLoad && lastOrdersCount !== -1 && snap.size > lastOrdersCount) {
+                document.getElementById('orderSound').play();
+            }
+            lastOrdersCount = snap.size;
+
             dashTable.innerHTML = ''; activeTable.innerHTML = ''; archiveTable.innerHTML = '';
-            
             let totalSales = 0;
             let pendingFound = false;
 
@@ -311,19 +304,12 @@
                 }
             });
 
-            // تفعيل أو إيقاف الإنذار
-            if(pendingFound) toggleAlarm(true);
-            else toggleAlarm(false);
-
+            document.getElementById('alarmBanner').style.display = pendingFound ? 'block' : 'none';
             document.getElementById('totalSales').innerText = totalSales.toLocaleString() + " ج.م";
             document.getElementById('totalOrders').innerText = snap.size;
-            isInitialLoad = false;
         });
 
-        window.acceptOrder = async (id) => {
-            await updateDoc(doc(db, "orders", id), { status: 'جاري التحضير' });
-        };
-
+        window.acceptOrder = async (id) => await updateDoc(doc(db, "orders", id), { status: 'جاري التحضير' });
         window.updateStatus = async (id, val) => await updateDoc(doc(db, "orders", id), { status: val });
         window.deleteOrder = async (id) => { if(confirm('حذف الحجز؟')) await deleteDoc(doc(db, "orders", id)); };
 
@@ -341,7 +327,67 @@
             document.getElementById('orderDetailModal').style.display = 'flex';
         };
 
-        // --- المنتجات والأقسام والدردشة (كما هي بدون حذف) ---
+        // --- إدارة الشات مع التنبيهات ---
+        onSnapshot(collection(db, "chats"), (snap) => {
+            const list = document.getElementById('chatUsersList');
+            const uniqueUsers = {};
+
+            // تنبيه صوتي عند رسالة جديدة من عميل
+            snap.docChanges().forEach(change => {
+                if (change.type === "added" && !isInitialLoad) {
+                    if (change.doc.data().sender !== 'admin') {
+                        document.getElementById('chatSound').play();
+                    }
+                }
+            });
+
+            snap.forEach(d => { 
+                const chat = d.data(); 
+                if (!uniqueUsers[chat.chatId] || (chat.timestamp?.seconds > uniqueUsers[chat.chatId].time)) {
+                    uniqueUsers[chat.chatId] = { 
+                        name: chat.customerName, 
+                        id: chat.chatId, 
+                        last: chat.text, 
+                        sender: chat.sender,
+                        time: chat.timestamp?.seconds || 0 
+                    }; 
+                }
+            });
+
+            list.innerHTML = '';
+            Object.values(uniqueUsers).sort((a,b) => b.time - a.time).forEach(u => {
+                const hasNew = (u.sender !== 'admin' && activeChatId !== u.id);
+                list.innerHTML += `<div onclick="loadChat('${u.id}')" style="padding:15px; border-bottom:1px solid #333; cursor:pointer; background:${activeChatId==u.id?'#2a3942':''}">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div style="color:white; font-weight:bold;">${u.name || 'عميل'}</div>
+                        ${hasNew ? '<span class="new-msg-indicator">رسالة جديدة</span>' : ''}
+                    </div>
+                    <div style="color:#aaa; font-size:0.8rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                        ${u.sender === 'admin' ? 'أنت: ' : ''}${u.last}
+                    </div>
+                </div>`;
+            });
+        });
+
+        window.loadChat = (id) => {
+            activeChatId = id;
+            onSnapshot(query(collection(db, "chats"), where("chatId", "==", id)), (snap) => {
+                const area = document.getElementById('chatMessagesArea');
+                let msgs = []; snap.forEach(d => msgs.push(d.data()));
+                msgs.sort((a,b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
+                area.innerHTML = msgs.map(m => `<div class="bubble ${m.sender=='admin'?'msg-out':'msg-in'}">${m.text}</div>`).join('');
+                area.scrollTop = area.scrollHeight;
+            });
+        };
+
+        window.sendAdminMsg = async () => {
+            const inp = document.getElementById('adminChatInput');
+            if(!inp.value || !activeChatId) return;
+            await addDoc(collection(db, "chats"), { chatId: activeChatId, sender: 'admin', text: inp.value, timestamp: serverTimestamp() });
+            inp.value = '';
+        };
+
+        // --- باقي وظائف المنتجات والأقسام ---
         let allCategories = [];
         onSnapshot(collection(db, "products"), (snap) => {
             const tbody = document.getElementById('productsTableBody');
@@ -418,38 +464,6 @@
         window.delCat = async (id) => { if(confirm('حذف القسم؟')) await deleteDoc(doc(db, "categories", id)); };
         window.addSub = async (id) => { const v = document.getElementById('sub_'+id).value; if(v) await updateDoc(doc(db, "categories", id), {subs: arrayUnion(v)}); document.getElementById('sub_'+id).value = ''; };
         window.remSub = async (id, v) => await updateDoc(doc(db, "categories", id), {subs: arrayRemove(v)});
-
-        let activeChatId = null;
-        onSnapshot(collection(db, "chats"), (snap) => {
-            const list = document.getElementById('chatUsersList');
-            const uniqueUsers = {};
-            snap.forEach(d => { const chat = d.data(); uniqueUsers[chat.chatId] = { name: chat.customerName, id: chat.chatId, last: chat.text }; });
-            list.innerHTML = '';
-            Object.values(uniqueUsers).forEach(u => {
-                list.innerHTML += `<div onclick="loadChat('${u.id}')" style="padding:15px; border-bottom:1px solid #333; cursor:pointer; background:${activeChatId==u.id?'#2a3942':''}">
-                    <div style="color:white; font-weight:bold;">${u.name || 'عميل'}</div>
-                    <div style="color:#aaa; font-size:0.8rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${u.last}</div>
-                </div>`;
-            });
-        });
-
-        window.loadChat = (id) => {
-            activeChatId = id;
-            onSnapshot(query(collection(db, "chats"), where("chatId", "==", id)), (snap) => {
-                const area = document.getElementById('chatMessagesArea');
-                let msgs = []; snap.forEach(d => msgs.push(d.data()));
-                msgs.sort((a,b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
-                area.innerHTML = msgs.map(m => `<div class="bubble ${m.sender=='admin'?'msg-out':'msg-in'}">${m.text}</div>`).join('');
-                area.scrollTop = area.scrollHeight;
-            });
-        };
-
-        window.sendAdminMsg = async () => {
-            const inp = document.getElementById('adminChatInput');
-            if(!inp.value || !activeChatId) return;
-            await addDoc(collection(db, "chats"), { chatId: activeChatId, sender: 'admin', text: inp.value, timestamp: serverTimestamp() });
-            inp.value = '';
-        };
 
     </script>
 </body>
