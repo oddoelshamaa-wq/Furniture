@@ -88,7 +88,7 @@
         .chat-controls button { background: none; border: none; color: #8696a0; font-size: 1.5rem; cursor: pointer; }
 
         /* Sound Overlay */
-        #soundOverlay { position: fixed; inset: 0; background: rgba(26, 42, 58, 0.98); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center; color: white; }
+        #soundOverlay { position: fixed; inset: 0; background: rgba(26, 42, 58, 0.98); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center; color: white; transition: 0.5s; }
         .start-btn { background: var(--success); color: white; border: none; padding: 15px 50px; font-size: 1.2rem; border-radius: 50px; margin-top: 20px; cursor: pointer; box-shadow: 0 0 20px rgba(39, 174, 96, 0.4); font-weight: bold; animation: pulse 2s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
     </style>
@@ -97,8 +97,8 @@
 
     <div id="soundOverlay">
         <h1 style="color:var(--accent); font-size:2.5rem; margin-bottom:10px;">نظام إدارة الشماع</h1>
-        <p>يجب الضغط هنا لبدء العمل وتفعيل الجرس وتجنب المشاكل</p>
-        <button class="start-btn" onclick="initSystem()">بدء العمل الآن <i class="fa-solid fa-play"></i></button>
+        <p>يجب الضغط هنا لبدء العمل وتفعيل الجرس لتنبيهك بالطلبات الجديدة</p>
+        <button class="start-btn" onclick="initSystem()">تفعيل النظام الآن <i class="fa-solid fa-play"></i></button>
     </div>
 
     <aside class="sidebar">
@@ -234,8 +234,7 @@
                     <div class="form-group full-width"><label>اسم المنتج</label><input type="text" id="pName" class="form-input" required></div>
                     <div class="form-group full-width"><label>رابط الصورة</label><input type="text" id="pImg" class="form-input" oninput="document.getElementById('imgPreview').src=this.value; document.getElementById('imgPreview').style.display='block'" required><img id="imgPreview" class="img-preview"></div>
                     <div class="form-group full-width"><label>وصف المنتج</label><textarea id="pDesc" class="form-input" rows="3" required></textarea></div>
-                    <div class="form-group"><label>القسم الرئيسي</label><select id="pCatMain" class="form-input" onchange="updateSubCats()" required></select></div>
-                    <div class="form-group"><label>القسم الفرعي</label><select id="pCatSub" class="form-input"><option value="all">عام</option></select></div>
+                    <div class="form-group"><label>القسم الرئيسي</label><select id="pCatMain" class="form-input" required></select></div>
                     <div class="form-group"><label>السعر (ج.م)</label><input type="number" id="pPrice" class="form-input" required></div>
                     <div class="form-group"><label>الخصم (%)</label><input type="number" id="pDisc" class="form-input" value="0"></div>
                 </div>
@@ -258,7 +257,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, where, orderBy, deleteDoc, doc, updateDoc, arrayUnion, arrayRemove, serverTimestamp, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, where, orderBy, deleteDoc, doc, updateDoc, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const app = initializeApp({ apiKey: "AIzaSyCE7wo3Vwzap7MnP4rv9kFZNwKlFD1myMM", authDomain: "furniture-416b8.firebaseapp.com", projectId: "furniture-416b8", storageBucket: "furniture-416b8.firebasestorage.app", messagingSenderId: "827913239758", appId: "1:827913239758:web:2fef185ebcf07d80e5e49f" });
         const db = getFirestore(app);
@@ -267,43 +266,42 @@
         onAuthStateChanged(auth, (user) => { if (user) document.body.style.display = 'flex'; else window.location.href = 'login.html'; });
         window.logout = () => signOut(auth).then(() => window.location.href = 'login.html');
 
-        // ====== SYSTEM CORE ======
+        // ====== SYSTEM CORE & SOUND ======
         let globalArchivedOrders = [];
         let isSystemReady = false;
-        const alarmAudio = new Audio("https://assets.mixkit.co/sfx/preview/mixkit-facility-alarm-sound-999.mp3");
+        // تم تحديث الرابط برابط صوت تنبيه احترافي
+        const alarmAudio = new Audio("https://notificationsounds.com/storage/sounds/file-sounds-1150-pristine.mp3");
 
         window.initSystem = () => {
-            // Force Audio Unlock
-            alarmAudio.volume = 1.0;
+            // فك حظر الصوت في المتصفح عبر تشغيل وهمي
             alarmAudio.play().then(() => {
                 alarmAudio.pause();
                 alarmAudio.currentTime = 0;
                 document.getElementById('soundOverlay').style.opacity = '0';
-                setTimeout(() => document.getElementById('soundOverlay').style.display = 'none', 500);
-                isSystemReady = true;
-                console.log("System Ready & Audio Unlocked");
+                setTimeout(() => {
+                    document.getElementById('soundOverlay').style.display = 'none';
+                    isSystemReady = true;
+                    console.log("Audio Unlocked - System Ready");
+                }, 500);
             }).catch(e => {
-                alert("يرجى الضغط مرة أخرى للتأكد من تفعيل الصوت");
                 console.error("Audio error:", e);
+                alert("يرجى الضغط مرة أخرى للسماح بالصوت");
             });
         }
 
         const playAlert = () => {
             if(isSystemReady) {
                 alarmAudio.currentTime = 0;
-                alarmAudio.play().catch(e => console.log("Sound blocked by browser"));
+                alarmAudio.play().catch(err => console.log("Blocked:", err));
             }
         }
 
-        // ====== ORDERS LOGIC (FIXED) ======
-        // FIX: Added 'limit(150)' to prevent hanging/lagging with large data
+        // ====== ORDERS LOGIC ======
         const ordersQuery = query(collection(db, "orders"), orderBy("date", "desc"), limit(150));
         
         onSnapshot(ordersQuery, (snap) => {
             const dashTable = document.getElementById('dashOrdersBody');
             const activeTable = document.getElementById('activeOrdersBody');
-            
-            // Temporary containers to avoid flickering
             let newActiveHtml = '';
             let newDashHtml = '';
             let tempArchive = [];
@@ -311,88 +309,62 @@
             let activeCount = 0;
 
             snap.docChanges().forEach(c => { 
+                // تنبيه فقط عند إضافة طلب جديد والصفحة مفتوحة
                 if(c.type === 'added' && isSystemReady) {
-                    const diff = Date.now() - (c.doc.data().date || 0);
-                    // Alert only if order is new (less than 5 mins)
-                    if(diff < 300000) { 
+                    const orderDate = c.doc.data().date || 0;
+                    if(Date.now() - orderDate < 10000) { // لو الطلب مضاف في آخر 10 ثواني
                         playAlert();
-                        // Optional: Show notification toast here
                     }
                 }
             });
 
             snap.forEach(d => {
-                try {
-                    const o = d.data();
-                    o.id = d.id;
-
-                    if(o.status === 'تم التوصيل') {
-                        // Safe calculations
-                        const price = parseFloat((o.totalPrice || "0").toString().replace(/[^0-9.]/g,'')) || 0;
-                        totalSales += price;
-                        tempArchive.push(o);
-                    } else {
-                        activeCount++;
-                        let badgeClass = o.status === 'قيد المراجعة' ? 'bg-orange' : 'bg-blue';
-                        const orderData = encodeURIComponent(JSON.stringify(o));
-                        
-                        // Build Active Table Row
-                        newActiveHtml += `<tr>
-                            <td>${new Date(o.date).toLocaleDateString()}</td>
-                            <td>${o.customerName || 'بدون اسم'}</td>
-                            <td>${o.customerPhone || '-'}</td>
-                            <td style="font-weight:bold; color:var(--success)">${o.totalPrice}</td>
-                            <td>
-                                <select onchange="updateStatus('${d.id}', this.value)" style="padding:5px; border-radius:5px; border:1px solid #ddd; background:${o.status==='قيد المراجعة'?'#fff3cd':'#e3f2fd'}">
-                                    <option ${o.status=='قيد المراجعة'?'selected':''}>قيد المراجعة</option>
-                                    <option ${o.status=='جاري التحضير'?'selected':''}>جاري التحضير</option>
-                                    <option ${o.status=='خرج للشحن'?'selected':''}>خرج للشحن</option>
-                                    <option ${o.status=='تم التوصيل'?'selected':''}>تم التوصيل</option>
-                                </select>
-                            </td>
-                            <td><button class="action-btn btn-view" onclick="viewOrder('${orderData}')"><i class="fa-solid fa-print"></i></button></td>
-                            <td><button class="action-btn btn-delete" onclick="deleteOrder('${d.id}')"><i class="fa-solid fa-trash"></i></button></td>
-                        </tr>`;
-
-                        // Build Dashboard Row (Max 5)
-                        if(activeCount <= 5) {
-                            newDashHtml += `<tr><td>#${d.id.slice(0,5)}</td><td>${o.customerName}</td><td>${o.totalPrice}</td><td><span class="status-badge ${badgeClass}">${o.status}</span></td></tr>`;
-                        }
+                const o = d.data(); o.id = d.id;
+                if(o.status === 'تم التوصيل') {
+                    const price = parseFloat((o.totalPrice || "0").toString().replace(/[^0-9.]/g,'')) || 0;
+                    totalSales += price;
+                    tempArchive.push(o);
+                } else {
+                    activeCount++;
+                    let badgeClass = o.status === 'قيد المراجعة' ? 'bg-orange' : 'bg-blue';
+                    const orderData = encodeURIComponent(JSON.stringify(o));
+                    newActiveHtml += `<tr>
+                        <td>${new Date(o.date).toLocaleDateString()}</td>
+                        <td>${o.customerName || 'بدون اسم'}</td>
+                        <td>${o.customerPhone || '-'}</td>
+                        <td style="font-weight:bold; color:var(--success)">${o.totalPrice}</td>
+                        <td>
+                            <select onchange="updateStatus('${d.id}', this.value)" style="padding:5px; border-radius:5px; border:1px solid #ddd;">
+                                <option ${o.status=='قيد المراجعة'?'selected':''}>قيد المراجعة</option>
+                                <option ${o.status=='جاري التحضير'?'selected':''}>جاري التحضير</option>
+                                <option ${o.status=='خرج للشحن'?'selected':''}>خرج للشحن</option>
+                                <option ${o.status=='تم التوصيل'?'selected':''}>تم التوصيل</option>
+                            </select>
+                        </td>
+                        <td><button class="action-btn btn-view" onclick="viewOrder('${orderData}')"><i class="fa-solid fa-print"></i></button></td>
+                        <td><button class="action-btn btn-delete" onclick="deleteOrder('${d.id}')"><i class="fa-solid fa-trash"></i></button></td>
+                    </tr>`;
+                    if(activeCount <= 5) {
+                        newDashHtml += `<tr><td>#${d.id.slice(0,5)}</td><td>${o.customerName}</td><td>${o.totalPrice}</td><td><span class="status-badge ${badgeClass}">${o.status}</span></td></tr>`;
                     }
-                } catch(err) {
-                    console.error("Error parsing order:", err);
                 }
             });
 
-            // Update DOM efficiently
             activeTable.innerHTML = newActiveHtml;
             dashTable.innerHTML = newDashHtml;
-            
-            // Safely update archive data
             globalArchivedOrders = tempArchive;
-            
             document.getElementById('totalSales').innerText = Math.floor(totalSales) + " ج.م";
-            document.getElementById('totalOrders').innerText = snap.size; // Total fetched
-            
-            applyFilters(); // Re-render archive
+            document.getElementById('totalOrders').innerText = snap.size;
+            applyFilters();
         });
 
         window.applyFilters = () => {
             const searchText = document.getElementById('searchOrder').value.toLowerCase();
             const tableBody = document.getElementById('archiveOrdersBody');
             tableBody.innerHTML = '';
-            
-            if(!globalArchivedOrders.length) {
-                tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center">لا توجد طلبات مؤرشفة حديثاً</td></tr>';
-                return;
-            }
-
             let filteredCount = 0;
             globalArchivedOrders.forEach(o => {
-                const name = (o.customerName || "").toLowerCase();
-                const phone = (o.customerPhone || "");
-                
-                if(name.includes(searchText) || phone.includes(searchText)) {
+                if((o.customerName||"").toLowerCase().includes(searchText) || (o.customerPhone||"").includes(searchText)) {
                     filteredCount++;
                     const orderData = encodeURIComponent(JSON.stringify(o));
                     tableBody.innerHTML += `<tr>
@@ -410,23 +382,15 @@
         };
 
         window.updateStatus = async (id, val) => await updateDoc(doc(db, "orders", id), { status: val });
-        window.deleteOrder = async (id) => { if(confirm('هل أنت متأكد من حذف الطلب؟')) await deleteDoc(doc(db, "orders", id)); }
+        window.deleteOrder = async (id) => { if(confirm('حذف الطلب؟')) await deleteDoc(doc(db, "orders", id)); }
         
         window.viewOrder = (dataStr) => {
             const o = JSON.parse(decodeURIComponent(dataStr));
             const itemsHtml = (o.items || []).map(i => `<div style="display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px dashed #eee;"><span>${i.name}</span><span>${i.price}</span></div>`).join('');
-            
-            let address = o.customerAddress || "";
-            if(address.includes('http')) {
-                address = address.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color:blue;text-decoration:underline;">فتح الموقع (GPS) 📍</a>');
-            }
-
             document.getElementById('invoiceContent').innerHTML = `
-                <div style="display:flex; justify-content:space-between; border-bottom:2px solid var(--accent); padding-bottom:10px; margin-bottom:15px;">
-                    <div><strong>العميل:</strong> ${o.customerName}<br><strong>الهاتف:</strong> ${o.customerPhone}</div>
-                    <div style="text-align:left"><strong>التاريخ:</strong> ${new Date(o.date).toLocaleDateString()}</div>
+                <div style="border-bottom:2px solid var(--accent); padding-bottom:10px; margin-bottom:15px;">
+                    <strong>العميل:</strong> ${o.customerName}<br><strong>الهاتف:</strong> ${o.customerPhone}<br><strong>العنوان:</strong> ${o.customerAddress}
                 </div>
-                <div style="background:#f9f9f9; padding:10px; margin-bottom:15px; border-radius:5px;"><strong>العنوان:</strong><br>${address}</div>
                 <div><strong>المنتجات:</strong></div>${itemsHtml}
                 <div style="font-size:1.2rem; font-weight:bold; margin-top:15px;">الإجمالي: ${o.totalPrice}</div>`;
             document.getElementById('orderDetailModal').style.display = 'flex';
@@ -440,7 +404,6 @@
             btn.classList.add('active');
         }
 
-        // --- Other System Parts (Products, Chat, Categories) kept standard ---
         // Products
         onSnapshot(collection(db, "products"), (snap) => {
             document.getElementById('totalProducts').innerText = snap.size;
@@ -450,19 +413,20 @@
                 tbody.innerHTML += `<tr><td><img src="${p.img}" width="40" height="40" style="border-radius:5px;"></td><td>${p.name}</td><td>${p.category}</td><td>${p.price}</td><td><button class="action-btn btn-edit" onclick="editProduct('${pStr}')"><i class="fa-solid fa-pen"></i></button><button class="action-btn btn-delete" onclick="deleteProduct('${d.id}')"><i class="fa-solid fa-trash"></i></button></td></tr>`;
             });
         });
+
         window.openProductModal = () => { document.getElementById('productForm').reset(); document.getElementById('editProductId').value=''; document.getElementById('imgPreview').style.display='none'; document.getElementById('productModal').style.display='flex'; }
         window.closeProductModal = () => document.getElementById('productModal').style.display='none';
-        window.saveProduct = async (e) => { e.preventDefault(); const id=document.getElementById('editProductId').value; const d={name:document.getElementById('pName').value, img:document.getElementById('pImg').value, desc:document.getElementById('pDesc').value, price:parseFloat(document.getElementById('pPrice').value), category:document.getElementById('pCatMain').value, subCategory:document.getElementById('pCatSub').value}; if(id) await updateDoc(doc(db,"products",id),d); else await addDoc(collection(db,"products"),d); closeProductModal(); }
+        window.saveProduct = async (e) => { e.preventDefault(); const id=document.getElementById('editProductId').value; const d={name:document.getElementById('pName').value, img:document.getElementById('pImg').value, desc:document.getElementById('pDesc').value, price:parseFloat(document.getElementById('pPrice').value), category:document.getElementById('pCatMain').value}; if(id) await updateDoc(doc(db,"products",id),d); else await addDoc(collection(db,"products"),d); closeProductModal(); }
         window.deleteProduct = async (id) => confirm('حذف؟') && await deleteDoc(doc(db,"products",id));
         window.editProduct = (s) => { const p=JSON.parse(decodeURIComponent(s)); document.getElementById('editProductId').value=p.id; document.getElementById('pName').value=p.name; document.getElementById('pImg').value=p.img; document.getElementById('pPrice').value=p.price; document.getElementById('pCatMain').value=p.category; document.getElementById('productModal').style.display='flex'; }
 
         // Categories
         onSnapshot(collection(db, "categories"), (snap) => {
             const m = document.getElementById('catsManager'); m.innerHTML=''; const sel=document.getElementById('pCatMain'); sel.innerHTML='<option value="">اختر القسم</option>';
-            snap.forEach(d => { const c=d.data(); sel.innerHTML+=`<option value="${c.name}">${c.name}</option>`; m.innerHTML+=`<div style="background:#fff; padding:15px; border-radius:10px;"><b>${c.name}</b> <i class="fa-solid fa-trash" style="color:red; cursor:pointer" onclick="delCat('${d.id}')"></i></div>`; });
+            snap.forEach(d => { const c=d.data(); sel.innerHTML+=`<option value="${c.name}">${c.name}</option>`; m.innerHTML+=`<div style="background:#fff; padding:15px; border-radius:10px; display:flex; justify-content:space-between;"><b>${c.name}</b> <i class="fa-solid fa-trash" style="color:red; cursor:pointer" onclick="delCat('${d.id}')"></i></div>`; });
         });
-        window.addNewCat = async() => { const v=document.getElementById('newCatInput').value; if(v) await addDoc(collection(db,"categories"),{name:v}); }
-        window.delCat = async(id) => confirm('حذف؟') && await deleteDoc(doc(db,"categories",id));
+        window.addNewCat = async() => { const v=document.getElementById('newCatInput').value; if(v) await addDoc(collection(db,"categories"),{name:v}); document.getElementById('newCatInput').value=''; }
+        window.delCat = async(id) => confirm('حذف القسم؟') && await deleteDoc(doc(db,"categories",id));
 
     </script>
 </body>
