@@ -94,7 +94,7 @@
         /* Checkout Form */
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-        .form-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; outline: none; transition:0.3s; }
+        .form-input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; outline: none; transition:0.3s; }
         .form-input:focus { border-color: var(--accent); box-shadow: 0 0 5px rgba(205,164,94,0.3); }
         .btn-gps { background: #e74c3c; color: white; padding: 10px 15px; border: none; border-radius: 8px; margin-top: 5px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; font-weight: bold; transition:0.3s; width: 100%; justify-content: center; }
         .btn-gps:hover { background: #c0392b; transform:translateY(-2px); }
@@ -118,27 +118,21 @@
         .payment-methods { display: flex; gap: 10px; font-size: 2rem; color: #fff; }
         .copyright { text-align: center; margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px; font-size: 0.85rem; }
 
-        /* ======================== NEW AUTH/PROFILE STYLES (FURNITURE THEME) ======================== */
+        /* Auth Styles */
         .auth-container-flex { display: flex; border-radius: 15px; overflow: hidden; height: 500px; background: white; }
         .auth-side-img { flex: 1; background: url('https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=2070&auto=format&fit=crop') center/cover; position: relative; display: flex; align-items: center; justify-content: center; color: white; text-align: center; padding: 20px; }
         .auth-side-img::before { content:''; position:absolute; inset:0; background: rgba(26, 42, 58, 0.7); }
         .auth-side-content { position: relative; z-index: 1; }
-        
         .auth-side-form { flex: 1; padding: 30px; display: flex; flex-direction: column; justify-content: center; }
-        
         .auth-tabs { display: flex; margin-bottom: 25px; border-bottom: 2px solid #f0f0f0; }
         .auth-tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; font-weight: bold; color: #999; transition: 0.3s; padding-bottom: 15px; }
         .auth-tab.active { color: var(--primary); border-bottom: 3px solid var(--accent); }
-        
         .auth-form { display: none; animation: fadeIn 0.4s; }
         .auth-form.active { display: block; }
-        
         .profile-header-new { background: linear-gradient(135deg, var(--primary), #2c3e50); padding: 25px; border-radius: 12px; color: white; display: flex; align-items: center; gap: 20px; margin-bottom: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
         .profile-avatar { width: 70px; height: 70px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; color: white; font-weight: bold; border: 3px solid rgba(255,255,255,0.3); }
         .logout-btn { background: rgba(231, 76, 60, 0.2); color: #ffcccc; border: 1px solid rgba(231, 76, 60, 0.5); padding: 5px 15px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; margin-top: 8px; transition: 0.3s; }
         .logout-btn:hover { background: #e74c3c; color: white; }
-
-        /* تعديل المودال ليكون أعرض في حالة التسجيل */
         #profileModal .modal-content { max-width: 800px; padding: 0; }
         #profileView { padding: 30px; }
 
@@ -181,13 +175,11 @@
         </ul>
     </nav>
 
-    <!-- زر الشات -->
     <div class="chat-float-container" onclick="toggleChat()">
         <div class="chat-label">تواصل معنا</div>
         <div class="chat-btn-icon"><i class="fa-brands fa-whatsapp"></i></div>
     </div>
 
-    <!-- نافذة الشات -->
     <div id="chatModal">
         <div class="chat-header">
             <img src="https://cdn-icons-png.flaticon.com/512/4712/4712035.png" alt="Admin">
@@ -218,7 +210,6 @@
         </section>
     </div>
 
-    <!-- Footer -->
     <footer>
         <div class="footer-grid">
             <div class="footer-col"><h3>الشركة</h3><ul><li><a href="#">معلومات عنا</a></li><li><a href="#">الشروط والاحكام</a></li><li><a href="#">وظائف</a></li></ul></div>
@@ -233,7 +224,7 @@
         <div class="copyright">&copy; جميع الحقوق محفوظة 2025 الشماع للأثاث</div>
     </footer>
 
-    <!-- Product Modal -->
+    <!-- Product Modal with Reservation -->
     <div id="productModal" class="modal">
         <div class="modal-content" style="max-width: 600px; padding: 30px;">
             <span onclick="document.getElementById('productModal').style.display='none'" style="position:absolute; left:20px; top:20px; cursor:pointer; font-size:1.5rem;"><i class="fa-solid fa-xmark"></i></span>
@@ -242,7 +233,12 @@
                 <h2 id="mTitle" style="color:var(--primary); margin-bottom:10px;"></h2>
                 <p id="mDesc" style="color:#666; line-height:1.6; margin-bottom:20px;"></p>
                 <div style="margin-bottom:20px;"><span id="mPrice" class="current-price"></span> <span id="mOldPrice" class="old-price"></span></div>
-                <button class="cta-btn" style="width:100%;" onclick="addToCart()">إضافة للسلة</button>
+                
+                <!-- أزرار الإضافة والحجز -->
+                <div style="display:flex; gap:10px; margin-top:20px;">
+                    <button class="cta-btn" style="flex:1;" onclick="addToCart('cart')">إضافة للسلة <i class="fa-solid fa-cart-plus"></i></button>
+                    <button class="cta-btn" style="flex:1; background:transparent; border:2px solid var(--accent); color:var(--accent);" onclick="addToCart('reserve')">حجز الآن <i class="fa-regular fa-calendar-check"></i></button>
+                </div>
             </div>
         </div>
     </div>
@@ -263,33 +259,22 @@
         </div>
     </div>
 
-    <!-- Profile & Auth Modal (NEW DESIGN) -->
+    <!-- Profile & Auth Modal -->
     <div id="profileModal" class="modal">
         <div class="modal-content">
             <span onclick="document.getElementById('profileModal').style.display='none'" style="position:absolute; left:20px; top:20px; cursor:pointer; z-index:100; color:#333;"><i class="fa-solid fa-xmark"></i></span>
-            
-            <!-- Auth Layout -->
             <div id="authContainer" class="auth-container-flex">
-                <div class="auth-side-img">
-                    <div class="auth-side-content">
-                        <h2>مرحباً بك في الشماع</h2>
-                        <p>سجل دخولك الآن لتستمتع بتجربة تسوق فريدة ومتابعة طلباتك.</p>
-                    </div>
-                </div>
+                <div class="auth-side-img"><div class="auth-side-content"><h2>مرحباً بك في الشماع</h2><p>سجل دخولك الآن لتستمتع بتجربة تسوق فريدة ومتابعة طلباتك.</p></div></div>
                 <div class="auth-side-form">
                     <div class="auth-tabs">
                         <div class="auth-tab active" onclick="switchAuth('login', this)">تسجيل دخول</div>
                         <div class="auth-tab" onclick="switchAuth('signup', this)">إنشاء حساب</div>
                     </div>
-
-                    <!-- Login Form -->
                     <form id="loginForm" class="auth-form active" onsubmit="handleLogin(event)">
                         <div class="form-group"><label>البريد الإلكتروني</label><input type="email" id="lEmail" class="form-input" required></div>
                         <div class="form-group"><label>كلمة المرور</label><input type="password" id="lPass" class="form-input" required></div>
                         <button type="submit" class="cta-btn" style="width:100%; margin-top:10px;">دخول</button>
                     </form>
-
-                    <!-- Signup Form -->
                     <form id="signupForm" class="auth-form" onsubmit="handleSignup(event)">
                         <div class="form-group"><label>الاسم بالكامل</label><input type="text" id="sName" class="form-input" required></div>
                         <div class="form-group"><label>رقم الهاتف</label><input type="tel" id="sPhone" class="form-input" required></div>
@@ -300,21 +285,14 @@
                     </form>
                 </div>
             </div>
-
-            <!-- Profile View (Hidden by default) -->
             <div id="profileView" style="display:none;">
                 <div class="profile-header-new">
                     <div class="profile-avatar" id="avatarLetter">A</div>
-                    <div>
-                        <h3 id="pNameDisp" style="margin:0"></h3>
-                        <p id="pPhoneDisp" style="margin:5px 0 0; opacity:0.8; font-size:0.9rem"></p>
-                        <button class="logout-btn" onclick="userLogout()">تسجيل خروج <i class="fa-solid fa-right-from-bracket"></i></button>
-                    </div>
+                    <div><h3 id="pNameDisp" style="margin:0"></h3><p id="pPhoneDisp" style="margin:5px 0 0; opacity:0.8; font-size:0.9rem"></p><button class="logout-btn" onclick="userLogout()">تسجيل خروج <i class="fa-solid fa-right-from-bracket"></i></button></div>
                 </div>
                 <h4 style="border-bottom:1px solid #eee; padding-bottom:10px;">سجل طلباتي</h4>
                 <div id="myOrdersList" style="max-height:300px; overflow-y:auto; margin-top:10px;"></div>
             </div>
-
         </div>
     </div>
 
@@ -355,12 +333,9 @@
                     currentUserData.uid = user.uid;
                     localStorage.setItem('shamma_phone', currentUserData.phone);
                 }
-            } else {
-                currentUserData = null;
-            }
+            } else { currentUserData = null; }
         });
 
-        // UI Functions for Auth Modal
         window.switchAuth = (type, tab) => {
             document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
             tab.classList.add('active');
@@ -371,71 +346,38 @@
 
         window.handleSignup = async (e) => {
             e.preventDefault();
-            const email = document.getElementById('sEmail').value;
-            const pass = document.getElementById('sPass').value;
-            const name = document.getElementById('sName').value;
-            const phone = document.getElementById('sPhone').value;
-            const addr = document.getElementById('sAddr').value;
-
             try {
-                const cred = await createUserWithEmailAndPassword(auth, email, pass);
+                const cred = await createUserWithEmailAndPassword(auth, document.getElementById('sEmail').value, document.getElementById('sPass').value);
                 await setDoc(doc(db, "customers", cred.user.uid), {
-                    name: name, phone: phone, address: addr, email: email
+                    name: document.getElementById('sName').value, phone: document.getElementById('sPhone').value, address: document.getElementById('sAddr').value, email: document.getElementById('sEmail').value
                 });
-                alert("تم إنشاء الحساب بنجاح!");
-                window.location.reload();
-            } catch (error) {
-                alert("خطأ: " + error.message);
-            }
+                alert("تم إنشاء الحساب بنجاح!"); window.location.reload();
+            } catch (error) { alert("خطأ: " + error.message); }
         }
 
         window.handleLogin = async (e) => {
             e.preventDefault();
-            const email = document.getElementById('lEmail').value;
-            const pass = document.getElementById('lPass').value;
-            try {
-                await signInWithEmailAndPassword(auth, email, pass);
-                alert("تم تسجيل الدخول!");
-                window.location.reload();
-            } catch (error) {
-                alert("خطأ في البيانات");
-            }
+            try { await signInWithEmailAndPassword(auth, document.getElementById('lEmail').value, document.getElementById('lPass').value); alert("تم تسجيل الدخول!"); window.location.reload(); } catch (error) { alert("خطأ في البيانات"); }
         }
 
-        window.userLogout = () => {
-            signOut(auth).then(() => window.location.reload());
-        }
+        window.userLogout = () => { signOut(auth).then(() => window.location.reload()); }
 
         window.openProfileModal = async () => {
             document.getElementById('profileModal').style.display = 'block';
-            
             if(currentUserData) {
-                // Show Profile View
                 document.getElementById('authContainer').style.display = 'none';
                 document.getElementById('profileView').style.display = 'block';
-                
                 document.getElementById('pNameDisp').innerText = currentUserData.name;
                 document.getElementById('pPhoneDisp').innerText = currentUserData.phone;
                 document.getElementById('avatarLetter').innerText = currentUserData.name.charAt(0).toUpperCase();
-
-                // Fetch Orders
                 const q = query(collection(db, "orders"), where("customerPhone", "==", currentUserData.phone));
                 const snap = await getDocs(q);
                 const list = document.getElementById('myOrdersList'); list.innerHTML = '';
                 if(snap.empty) list.innerHTML = '<p style="text-align:center; padding:20px;">لا توجد طلبات بعد</p>';
-                snap.forEach(d => {
-                    const o = d.data();
-                    list.innerHTML += `<div style="background:#f9f9f9; padding:10px; margin-bottom:10px; border-radius:8px;">${new Date(o.date).toLocaleDateString()} - ${o.status}<br><b>${o.totalPrice}</b></div>`;
-                });
-
-            } else {
-                // Show Auth Forms
-                document.getElementById('authContainer').style.display = 'flex';
-                document.getElementById('profileView').style.display = 'none';
-            }
+                snap.forEach(d => { const o = d.data(); list.innerHTML += `<div style="background:#f9f9f9; padding:10px; margin-bottom:10px; border-radius:8px;">${new Date(o.date).toLocaleDateString()} - ${o.status}<br><b>${o.totalPrice}</b></div>`; });
+            } else { document.getElementById('authContainer').style.display = 'flex'; document.getElementById('profileView').style.display = 'none'; }
         }
 
-        // Fill Checkout automatically if logged in
         window.openCheckout = () => {
             window.toggleCart();
             document.getElementById('checkoutModal').style.display = 'block';
@@ -446,123 +388,58 @@
             }
         }
 
-        // GPS Function with High Accuracy
         window.getLocation = () => {
             if (navigator.geolocation) {
                 const btn = document.querySelector('.btn-gps');
                 btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري تحديد الموقع بدقة...';
-                
-                // High Accuracy Options
-                const options = {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 0
-                };
-
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
-                        const lat = position.coords.latitude;
-                        const long = position.coords.longitude;
-                        const mapLink = `https://maps.google.com/?q=${lat},${long}`;
+                        const mapLink = `https://maps.google.com/?q=${position.coords.latitude},${position.coords.longitude}`;
                         const addrBox = document.getElementById('cAddress');
                         addrBox.value = `📍 موقع GPS دقيق: ${mapLink} \n` + addrBox.value;
-                        btn.innerHTML = '<i class="fa-solid fa-check"></i> تم تحديد الموقع بنجاح';
-                        btn.style.background = "#27ae60";
+                        btn.innerHTML = '<i class="fa-solid fa-check"></i> تم تحديد الموقع بنجاح'; btn.style.background = "#27ae60";
                     },
-                    (error) => {
-                        alert("تعذر الحصول على الموقع. تأكد من تفعيل GPS والسماح للموقع.");
-                        document.querySelector('.btn-gps').innerHTML = '<i class="fa-solid fa-location-dot"></i> تحديد موقعي الحالي (GPS)';
-                    },
-                    options
+                    (error) => { alert("تعذر الحصول على الموقع."); document.querySelector('.btn-gps').innerHTML = '<i class="fa-solid fa-location-dot"></i> تحديد موقعي الحالي (GPS)'; },
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
                 );
-            } else {
-                alert("المتصفح لا يدعم تحديد الموقع.");
-            }
+            } else { alert("المتصفح لا يدعم تحديد الموقع."); }
         }
 
-        // --- Standard Logic (Products, Categories, Chat) ---
-        onSnapshot(collection(db, "products"), (snap) => {
-            productsData = snap.docs.map(doc => ({id: doc.id, ...doc.data()}));
-            renderProducts();
-        });
-
-        onSnapshot(collection(db, "categories"), (snap) => {
-            categoriesData = snap.docs.map(doc => doc.data());
-            renderCategories();
-        });
-
-        // Chat Logic
+        onSnapshot(collection(db, "products"), (snap) => { productsData = snap.docs.map(doc => ({id: doc.id, ...doc.data()})); renderProducts(); });
+        onSnapshot(collection(db, "categories"), (snap) => { categoriesData = snap.docs.map(doc => doc.data()); renderCategories(); });
         let phoneForChat = localStorage.getItem('shamma_phone') || 'Guest';
         onSnapshot(query(collection(db, "chats"), where("chatId", "==", phoneForChat)), (snap) => {
             const box = document.getElementById('chatMessages');
-            let msgs = [];
-            snap.forEach(d => msgs.push(d.data()));
+            let msgs = []; snap.forEach(d => msgs.push(d.data()));
             msgs.sort((a,b) => (a.timestamp?.seconds||0)-(b.timestamp?.seconds||0));
             if(msgs.length > 0) box.innerHTML = '';
-            msgs.forEach(m => {
-                const cls = m.sender === 'customer' ? 'msg-me' : 'msg-other';
-                box.innerHTML += `<div class="msg ${cls}">${m.text}</div>`;
-            });
+            msgs.forEach(m => { const cls = m.sender === 'customer' ? 'msg-me' : 'msg-other'; box.innerHTML += `<div class="msg ${cls}">${m.text}</div>`; });
             box.scrollTop = box.scrollHeight;
         });
 
-        // Functions
         function renderCategories() {
             const t = document.getElementById('mainCategoriesTabs');
             t.innerHTML = `<span class="${currentMainCat==='all'?'active-cat':''}" onclick="setMain('all')">الكل</span>`;
             categoriesData.forEach(c => t.innerHTML += `<span class="${currentMainCat===c.name?'active-cat':''}" onclick="setMain('${c.name}')">${c.name}</span>`);
         }
-
-        window.setMain = (n) => {
-            currentMainCat = n; currentSubCat = 'all';
-            renderCategories();
-            const s = document.getElementById('subCategoriesTabs'); s.innerHTML = '';
-            if(n !== 'all') {
-                const cat = categoriesData.find(c => c.name === n);
-                if(cat && cat.subs) {
-                    s.innerHTML = `<span class="active-sub" onclick="setSub('all', this)">الكل</span>`;
-                    cat.subs.forEach(sb => s.innerHTML += `<span onclick="setSub('${sb}', this)">${sb}</span>`);
-                }
-            }
-            renderProducts();
-        }
-
-        window.setSub = (n, el) => {
-            currentSubCat = n;
-            document.querySelectorAll('#subCategoriesTabs span').forEach(e => e.classList.remove('active-sub'));
-            el.classList.add('active-sub');
-            renderProducts();
-        }
-
+        window.setMain = (n) => { currentMainCat = n; currentSubCat = 'all'; renderCategories(); const s = document.getElementById('subCategoriesTabs'); s.innerHTML = ''; if(n !== 'all') { const cat = categoriesData.find(c => c.name === n); if(cat && cat.subs) { s.innerHTML = `<span class="active-sub" onclick="setSub('all', this)">الكل</span>`; cat.subs.forEach(sb => s.innerHTML += `<span onclick="setSub('${sb}', this)">${sb}</span>`); } } renderProducts(); }
+        window.setSub = (n, el) => { currentSubCat = n; document.querySelectorAll('#subCategoriesTabs span').forEach(e => e.classList.remove('active-sub')); el.classList.add('active-sub'); renderProducts(); }
+        
         function renderProducts() {
-            const c = document.getElementById('productsContainer');
-            c.innerHTML = '';
+            const c = document.getElementById('productsContainer'); c.innerHTML = '';
             let f = productsData;
             if(currentMainCat !== 'all') f = f.filter(p => p.category === currentMainCat);
             if(currentSubCat !== 'all') f = f.filter(p => p.subCategory === currentSubCat);
-            
             if(f.length === 0) { c.innerHTML = '<p style="text-align:center; grid-column:1/-1;">لا توجد منتجات حالياً</p>'; return; }
-
             f.forEach(p => {
                 const fp = p.discount ? p.price - (p.price * p.discount / 100) : p.price;
                 const pStr = encodeURIComponent(JSON.stringify(p));
-                c.innerHTML += `
-                    <div class="product-card" onclick="openP('${pStr}')">
-                        <div class="img-container">
-                            ${p.discount > 0 ? `<span class="discount-badge">-${p.discount}%</span>` : ''}
-                            <img src="${p.img}">
-                        </div>
-                        <div class="p-info">
-                            <h3>${p.name}</h3>
-                            <div><span class="current-price">${Math.floor(fp)} ج.م</span> ${p.discount>0?`<span class="old-price">${p.price}</span>`:''}</div>
-                        </div>
-                    </div>`;
+                c.innerHTML += `<div class="product-card" onclick="openP('${pStr}')"><div class="img-container">${p.discount > 0 ? `<span class="discount-badge">-${p.discount}%</span>` : ''}<img src="${p.img}"></div><div class="p-info"><h3>${p.name}</h3><div><span class="current-price">${Math.floor(fp)} ج.م</span> ${p.discount>0?`<span class="old-price">${p.price}</span>`:''}</div></div></div>`;
             });
         }
 
         window.openP = (s) => {
-            const p = JSON.parse(decodeURIComponent(s));
-            currentProduct = p;
+            const p = JSON.parse(decodeURIComponent(s)); currentProduct = p;
             document.getElementById('mImg').src = p.img;
             document.getElementById('mTitle').innerText = p.name;
             document.getElementById('mDesc').innerText = p.desc;
@@ -572,12 +449,26 @@
             document.getElementById('productModal').style.display = 'block';
         }
 
-        window.addToCart = () => {
+        window.addToCart = (type = 'cart') => {
             let c = JSON.parse(localStorage.getItem('shamma_cart')) || [];
-            c.push({name:currentProduct.name, price:document.getElementById('mPrice').innerText, img:currentProduct.img});
+            // إضافة نوع الطلب (شراء عادي أو حجز)
+            let itemData = {
+                name: currentProduct.name, 
+                price: document.getElementById('mPrice').innerText, 
+                img: currentProduct.img,
+                type: type === 'reserve' ? 'حجز' : 'شراء'
+            };
+            c.push(itemData);
             localStorage.setItem('shamma_cart', JSON.stringify(c));
+            
             document.getElementById('productModal').style.display = 'none';
-            updCart(); window.toggleCart();
+            updCart();
+            
+            if(type === 'reserve') {
+                window.openCheckout(); // فتح الشيك أوت فوراً للحجز
+            } else {
+                window.toggleCart(); // فتح السلة للشراء العادي
+            }
         }
 
         window.updCart = () => {
@@ -587,53 +478,26 @@
             let t = 0;
             c.forEach((i,x) => {
                 t += parseFloat(i.price.replace(/[^0-9.]/g, ''));
-                d.innerHTML += `<div style="display:flex; gap:10px; margin-bottom:10px; align-items:center;">
-                    <img src="${i.img}" width="50" style="border-radius:5px;">
-                    <div style="flex:1"><b>${i.name}</b><br>${i.price}</div>
-                    <i class="fa-solid fa-trash" style="color:red; cursor:pointer" onclick="remItem(${x})"></i>
-                </div>`;
+                d.innerHTML += `<div style="display:flex; gap:10px; margin-bottom:10px; align-items:center;"><img src="${i.img}" width="50" style="border-radius:5px;"><div style="flex:1"><b>${i.name}</b><br>${i.price} <small style="color:var(--accent)">(${i.type || 'شراء'})</small></div><i class="fa-solid fa-trash" style="color:red; cursor:pointer" onclick="remItem(${x})"></i></div>`;
             });
             document.getElementById('totalPrice').innerText = Math.floor(t)+" ج.م";
         }
 
-        window.remItem = (x) => {
-            let c = JSON.parse(localStorage.getItem('shamma_cart')); c.splice(x,1);
-            localStorage.setItem('shamma_cart', JSON.stringify(c)); updCart();
-        }
+        window.remItem = (x) => { let c = JSON.parse(localStorage.getItem('shamma_cart')); c.splice(x,1); localStorage.setItem('shamma_cart', JSON.stringify(c)); updCart(); }
         window.toggleCart = () => document.getElementById('cartSidebar').classList.toggle('open');
 
         window.finalizeOrder = async () => {
             const n = document.getElementById('cName').value;
             const p = document.getElementById('cPhone').value;
             const a = document.getElementById('cAddress').value;
-            
             if(!n || !p || !a) return alert("يرجى ملء جميع البيانات");
-
             const c = JSON.parse(localStorage.getItem('shamma_cart'));
-            await addDoc(collection(db, "orders"), {
-                customerName:n, customerPhone:p, customerAddress:a, items:c,
-                totalPrice:document.getElementById('totalPrice').innerText, date:Date.now(), status:'قيد المراجعة'
-            });
-            localStorage.removeItem('shamma_cart'); 
-            document.getElementById('checkoutModal').style.display = 'none';
-            updCart(); 
-            alert("تم إرسال الطلب بنجاح!");
+            await addDoc(collection(db, "orders"), { customerName:n, customerPhone:p, customerAddress:a, items:c, totalPrice:document.getElementById('totalPrice').innerText, date:Date.now(), status:'قيد المراجعة' });
+            localStorage.removeItem('shamma_cart'); document.getElementById('checkoutModal').style.display = 'none'; updCart(); alert("تم إرسال الطلب بنجاح!");
         }
 
-        window.toggleChat = () => {
-            const m = document.getElementById('chatModal');
-            m.style.display = m.style.display==='flex' ? 'none' : 'flex';
-        }
-        window.sendChat = async () => {
-            const i = document.getElementById('chatInput');
-            if(!i.value) return;
-            const t = i.value; i.value = '';
-            await addDoc(collection(db, "chats"), {
-                chatId: localStorage.getItem('shamma_phone') || 'Guest', 
-                text:t, sender:'customer', timestamp:serverTimestamp(), 
-                customerName: localStorage.getItem('shamma_cust_name') || 'عميل'
-            });
-        }
+        window.toggleChat = () => { const m = document.getElementById('chatModal'); m.style.display = m.style.display==='flex' ? 'none' : 'flex'; }
+        window.sendChat = async () => { const i = document.getElementById('chatInput'); if(!i.value) return; const t = i.value; i.value = ''; await addDoc(collection(db, "chats"), { chatId: localStorage.getItem('shamma_phone') || 'Guest', text:t, sender:'customer', timestamp:serverTimestamp(), customerName: localStorage.getItem('shamma_cust_name') || 'عميل' }); }
 
         updCart();
     </script>
