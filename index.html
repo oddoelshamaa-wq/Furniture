@@ -117,6 +117,19 @@
         .payment-methods { display: flex; gap: 10px; font-size: 2rem; color: #fff; }
         .copyright { text-align: center; margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px; font-size: 0.85rem; }
 
+        /* ======================== NEW PROFILE STYLES ======================== */
+        .auth-tabs { display: flex; margin-bottom: 20px; border-bottom: 1px solid #ddd; }
+        .auth-tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; font-weight: bold; color: #777; transition: 0.3s; }
+        .auth-tab.active { color: var(--primary); border-bottom: 3px solid var(--accent); }
+        .auth-form { display: none; animation: fadeIn 0.3s; }
+        .auth-form.active { display: block; }
+        
+        .profile-header-new { background: linear-gradient(135deg, var(--primary), #2c3e50); padding: 20px; border-radius: 12px; color: white; display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .profile-avatar { width: 60px; height: 60px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; color: white; font-weight: bold; }
+        .logout-btn { background: #e74c3c; color: white; border: none; padding: 5px 15px; border-radius: 20px; cursor: pointer; font-size: 0.8rem; margin-top: 5px; }
+
+        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
         @media(max-width: 768px) { 
             .chat-float-container { bottom: 20px; right: 20px; } 
             #chatModal { width: 90%; right: 5%; bottom: 90px; } 
@@ -146,15 +159,17 @@
         <ul class="nav-links">
             <li><a onclick="document.getElementById('homeSection').scrollIntoView({behavior:'smooth'})">الرئيسية</a></li>
             <li><a onclick="toggleCart()">السلة <span id="cartCount" class="badge">0</span></a></li>
-            <li><a onclick="openProfile()">حسابي</a></li>
+            <li><a onclick="openProfileModal()">حسابي <i class="fa-solid fa-user"></i></a></li>
         </ul>
     </nav>
 
+    <!-- زر الشات -->
     <div class="chat-float-container" onclick="toggleChat()">
         <div class="chat-label">تواصل معنا</div>
         <div class="chat-btn-icon"><i class="fa-brands fa-whatsapp"></i></div>
     </div>
 
+    <!-- نافذة الشات -->
     <div id="chatModal">
         <div class="chat-header">
             <img src="https://cdn-icons-png.flaticon.com/512/4712/4712035.png" alt="Admin">
@@ -185,6 +200,7 @@
         </section>
     </div>
 
+    <!-- Footer -->
     <footer>
         <div class="footer-grid">
             <div class="footer-col"><h3>الشركة</h3><ul><li><a href="#">معلومات عنا</a></li><li><a href="#">الشروط والاحكام</a></li><li><a href="#">وظائف</a></li></ul></div>
@@ -213,7 +229,7 @@
         </div>
     </div>
 
-    <!-- Checkout Modal with GPS -->
+    <!-- Checkout Modal -->
     <div id="checkoutModal" class="modal">
         <div class="modal-content" style="max-width: 500px;">
             <span onclick="document.getElementById('checkoutModal').style.display='none'" style="position:absolute; left:20px; top:20px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></span>
@@ -229,17 +245,50 @@
         </div>
     </div>
 
-    <!-- Profile Modal -->
+    <!-- Profile & Auth Modal (New) -->
     <div id="profileModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 450px;">
             <span onclick="document.getElementById('profileModal').style.display='none'" style="position:absolute; left:20px; top:20px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></span>
-            <h3>ملفي الشخصي</h3>
-            <div style="margin:20px 0; border-bottom:1px solid #eee; padding-bottom:10px;">
-                <p><strong>الاسم:</strong> <span id="pNameDisp">-</span></p>
-                <p><strong>الهاتف:</strong> <span id="pPhoneDisp">-</span></p>
+            
+            <!-- Auth Container -->
+            <div id="authContainer">
+                <div class="auth-tabs">
+                    <div class="auth-tab active" onclick="switchAuth('login', this)">تسجيل دخول</div>
+                    <div class="auth-tab" onclick="switchAuth('signup', this)">إنشاء حساب</div>
+                </div>
+
+                <!-- Login Form -->
+                <form id="loginForm" class="auth-form active" onsubmit="handleLogin(event)">
+                    <div class="form-group"><label>البريد الإلكتروني</label><input type="email" id="lEmail" class="form-input" required></div>
+                    <div class="form-group"><label>كلمة المرور</label><input type="password" id="lPass" class="form-input" required></div>
+                    <button type="submit" class="cta-btn" style="width:100%">دخول</button>
+                </form>
+
+                <!-- Signup Form -->
+                <form id="signupForm" class="auth-form" onsubmit="handleSignup(event)">
+                    <div class="form-group"><label>الاسم بالكامل</label><input type="text" id="sName" class="form-input" required></div>
+                    <div class="form-group"><label>رقم الهاتف</label><input type="tel" id="sPhone" class="form-input" required></div>
+                    <div class="form-group"><label>العنوان</label><input type="text" id="sAddr" class="form-input" required></div>
+                    <div class="form-group"><label>البريد الإلكتروني</label><input type="email" id="sEmail" class="form-input" required></div>
+                    <div class="form-group"><label>كلمة المرور</label><input type="password" id="sPass" class="form-input" required></div>
+                    <button type="submit" class="cta-btn" style="width:100%">تسجيل</button>
+                </form>
             </div>
-            <h4>سجل الطلبات</h4>
-            <div id="myOrdersList" style="margin-top:10px; max-height:300px; overflow-y:auto;"></div>
+
+            <!-- Profile View (Hidden by default) -->
+            <div id="profileView" style="display:none;">
+                <div class="profile-header-new">
+                    <div class="profile-avatar" id="avatarLetter">A</div>
+                    <div>
+                        <h3 id="pNameDisp" style="margin:0"></h3>
+                        <p id="pPhoneDisp" style="margin:5px 0 0; opacity:0.8; font-size:0.9rem"></p>
+                        <button class="logout-btn" onclick="userLogout()">تسجيل خروج <i class="fa-solid fa-right-from-bracket"></i></button>
+                    </div>
+                </div>
+                <h4 style="border-bottom:1px solid #eee; padding-bottom:10px;">سجل طلباتي</h4>
+                <div id="myOrdersList" style="max-height:300px; overflow-y:auto; margin-top:10px;"></div>
+            </div>
+
         </div>
     </div>
 
@@ -258,26 +307,120 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, where, orderBy, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, where, orderBy, serverTimestamp, getDocs, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const firebaseConfig = { apiKey: "AIzaSyCE7wo3Vwzap7MnP4rv9kFZNwKlFD1myMM", authDomain: "furniture-416b8.firebaseapp.com", projectId: "furniture-416b8", storageBucket: "furniture-416b8.firebasestorage.app", messagingSenderId: "827913239758", appId: "1:827913239758:web:2fef185ebcf07d80e5e49f" };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const auth = getAuth(app);
 
         let productsData = [], categoriesData = [];
         let currentMainCat = 'all', currentSubCat = 'all';
         let currentProduct = null;
-        let userPhone = localStorage.getItem('shamma_phone') || 'Guest_' + Math.floor(Math.random()*100000);
-        if(!localStorage.getItem('shamma_phone')) localStorage.setItem('shamma_phone', userPhone);
+        let currentUserData = null; // Store logged in user data
 
-        // Load Saved Data
-        window.loadProfileData = () => {
-            const savedName = localStorage.getItem('shamma_cust_name');
-            const savedPhone = localStorage.getItem('shamma_cust_phone');
-            const savedAddr = localStorage.getItem('shamma_cust_addr');
-            if(savedName) document.getElementById('cName').value = savedName;
-            if(savedPhone) document.getElementById('cPhone').value = savedPhone;
-            if(savedAddr) document.getElementById('cAddress').value = savedAddr;
+        // Auth Logic
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // User is signed in
+                const docSnap = await getDoc(doc(db, "customers", user.uid));
+                if (docSnap.exists()) {
+                    currentUserData = docSnap.data();
+                    currentUserData.uid = user.uid;
+                    // Auto-set phone for chat
+                    localStorage.setItem('shamma_phone', currentUserData.phone);
+                }
+            } else {
+                currentUserData = null;
+            }
+        });
+
+        // UI Functions for Auth Modal
+        window.switchAuth = (type, tab) => {
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            if(type === 'login') document.getElementById('loginForm').classList.add('active');
+            else document.getElementById('signupForm').classList.add('active');
+        }
+
+        window.handleSignup = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('sEmail').value;
+            const pass = document.getElementById('sPass').value;
+            const name = document.getElementById('sName').value;
+            const phone = document.getElementById('sPhone').value;
+            const addr = document.getElementById('sAddr').value;
+
+            try {
+                const cred = await createUserWithEmailAndPassword(auth, email, pass);
+                // Save extra data
+                await setDoc(doc(db, "customers", cred.user.uid), {
+                    name: name, phone: phone, address: addr, email: email
+                });
+                alert("تم إنشاء الحساب بنجاح!");
+                window.location.reload();
+            } catch (error) {
+                alert("خطأ: " + error.message);
+            }
+        }
+
+        window.handleLogin = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('lEmail').value;
+            const pass = document.getElementById('lPass').value;
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+                alert("تم تسجيل الدخول!");
+                window.location.reload();
+            } catch (error) {
+                alert("خطأ في البيانات");
+            }
+        }
+
+        window.userLogout = () => {
+            signOut(auth).then(() => window.location.reload());
+        }
+
+        window.openProfileModal = async () => {
+            document.getElementById('profileModal').style.display = 'block';
+            
+            if(currentUserData) {
+                // Show Profile View
+                document.getElementById('authContainer').style.display = 'none';
+                document.getElementById('profileView').style.display = 'block';
+                
+                document.getElementById('pNameDisp').innerText = currentUserData.name;
+                document.getElementById('pPhoneDisp').innerText = currentUserData.phone;
+                document.getElementById('avatarLetter').innerText = currentUserData.name.charAt(0).toUpperCase();
+
+                // Fetch Orders
+                const q = query(collection(db, "orders"), where("customerPhone", "==", currentUserData.phone));
+                const snap = await getDocs(q);
+                const list = document.getElementById('myOrdersList'); list.innerHTML = '';
+                if(snap.empty) list.innerHTML = '<p style="text-align:center; padding:20px;">لا توجد طلبات بعد</p>';
+                snap.forEach(d => {
+                    const o = d.data();
+                    list.innerHTML += `<div style="background:#f9f9f9; padding:10px; margin-bottom:10px; border-radius:8px;">${new Date(o.date).toLocaleDateString()} - ${o.status}<br><b>${o.totalPrice}</b></div>`;
+                });
+
+            } else {
+                // Show Auth Forms
+                document.getElementById('authContainer').style.display = 'block';
+                document.getElementById('profileView').style.display = 'none';
+            }
+        }
+
+        // Fill Checkout automatically if logged in
+        window.openCheckout = () => {
+            window.toggleCart();
+            document.getElementById('checkoutModal').style.display = 'block';
+            if(currentUserData) {
+                document.getElementById('cName').value = currentUserData.name;
+                document.getElementById('cPhone').value = currentUserData.phone;
+                document.getElementById('cAddress').value = currentUserData.address;
+            }
         }
 
         // GPS Function
@@ -296,7 +439,7 @@
                         btn.style.background = "#27ae60";
                     },
                     (error) => {
-                        alert("تعذر الحصول على الموقع. تأكد من تفعيل GPS.");
+                        alert("تعذر الحصول على الموقع.");
                         document.querySelector('.btn-gps').innerHTML = '<i class="fa-solid fa-location-crosshairs"></i> تحديد موقعي الحالي (GPS)';
                     }
                 );
@@ -305,7 +448,7 @@
             }
         }
 
-        // Real-time Listeners
+        // --- Standard Logic (Products, Categories, Chat) ---
         onSnapshot(collection(db, "products"), (snap) => {
             productsData = snap.docs.map(doc => ({id: doc.id, ...doc.data()}));
             renderProducts();
@@ -316,7 +459,9 @@
             renderCategories();
         });
 
-        onSnapshot(query(collection(db, "chats"), where("chatId", "==", userPhone)), (snap) => {
+        // Chat Logic
+        let phoneForChat = localStorage.getItem('shamma_phone') || 'Guest';
+        onSnapshot(query(collection(db, "chats"), where("chatId", "==", phoneForChat)), (snap) => {
             const box = document.getElementById('chatMessages');
             let msgs = [];
             snap.forEach(d => msgs.push(d.data()));
@@ -425,24 +570,12 @@
         }
         window.toggleCart = () => document.getElementById('cartSidebar').classList.toggle('open');
 
-        window.openCheckout = () => {
-            window.toggleCart();
-            document.getElementById('checkoutModal').style.display = 'block';
-            window.loadProfileData(); // Auto-fill profile
-        }
-
         window.finalizeOrder = async () => {
             const n = document.getElementById('cName').value;
             const p = document.getElementById('cPhone').value;
             const a = document.getElementById('cAddress').value;
             
             if(!n || !p || !a) return alert("يرجى ملء جميع البيانات");
-
-            // Save Profile for next time
-            localStorage.setItem('shamma_cust_name', n);
-            localStorage.setItem('shamma_cust_phone', p);
-            localStorage.setItem('shamma_cust_addr', a);
-            localStorage.setItem('shamma_phone', p); 
 
             const c = JSON.parse(localStorage.getItem('shamma_cart'));
             await addDoc(collection(db, "orders"), {
@@ -452,7 +585,7 @@
             localStorage.removeItem('shamma_cart'); 
             document.getElementById('checkoutModal').style.display = 'none';
             updCart(); 
-            alert("تم إرسال الطلب بنجاح! شكراً لثقتكم.");
+            alert("تم إرسال الطلب بنجاح!");
         }
 
         window.toggleChat = () => {
@@ -464,28 +597,10 @@
             if(!i.value) return;
             const t = i.value; i.value = '';
             await addDoc(collection(db, "chats"), {
-                chatId: userPhone, text:t, sender:'customer', timestamp:serverTimestamp(), customerName: localStorage.getItem('shamma_cust_name') || 'عميل'
+                chatId: localStorage.getItem('shamma_phone') || 'Guest', 
+                text:t, sender:'customer', timestamp:serverTimestamp(), 
+                customerName: localStorage.getItem('shamma_cust_name') || 'عميل'
             });
-        }
-
-        window.openProfile = async () => {
-            const p = localStorage.getItem('shamma_cust_phone');
-            document.getElementById('pNameDisp').innerText = localStorage.getItem('shamma_cust_name') || 'غير مسجل';
-            document.getElementById('pPhoneDisp').innerText = p || 'غير مسجل';
-            
-            if(!p) { 
-                document.getElementById('myOrdersList').innerHTML = '<p style="text-align:center">سجل أول طلب لتظهر بياناتك هنا</p>';
-            } else {
-                const q = query(collection(db, "orders"), where("customerPhone", "==", p));
-                const snap = await getDocs(q);
-                const l = document.getElementById('myOrdersList'); l.innerHTML = '';
-                if(snap.empty) l.innerHTML = '<p style="text-align:center">لا توجد طلبات سابقة</p>';
-                snap.forEach(d => {
-                    const o = d.data();
-                    l.innerHTML += `<div style="background:#f5f5f5; padding:10px; margin-bottom:10px; border-radius:8px;">${new Date(o.date).toLocaleDateString()} - <span style="color:var(--primary)">${o.status}</span><br><b>${o.totalPrice}</b></div>`;
-                });
-            }
-            document.getElementById('profileModal').style.display = 'block';
         }
 
         updCart();
