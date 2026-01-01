@@ -75,7 +75,7 @@
         .msg-in { align-self: flex-start; background: #202c33; }
         .msg-out { align-self: flex-end; background: var(--wa-green); }
 
-        /* Start Overlay - IMPORTANT for Sound */
+        /* Start Overlay */
         #soundOverlay { position: fixed; inset: 0; background: rgba(26, 42, 58, 0.98); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center; color: white; }
         .start-btn { background: var(--success); color: white; border: none; padding: 18px 60px; font-size: 1.3rem; border-radius: 50px; margin-top: 20px; cursor: pointer; font-weight: bold; box-shadow: 0 10px 30px rgba(39, 174, 96, 0.4); transition: 0.3s; }
         .start-btn:hover { transform: scale(1.05); background: #2ecc71; }
@@ -220,8 +220,11 @@
         </div>
     </div>
 
-    <!-- صوت الإنذار: يستخدم رابط موثوق من CDN -->
-    <audio id="alertSound" src="https://assets.mixkit.co/sfx/preview/mixkit-security-facility-breach-alarm-994.mp3" preload="auto" loop></audio>
+    <!-- 
+    تم تغيير رابط الصوت إلى رابط موثوق. 
+    ملاحظة: للحصول على أفضل نتيجة، قم بتحميل ملف mp3 وضعه في مجلد مشروعك واستخدم: src="alarm.mp3"
+    -->
+    <audio id="alertSound" src="https://media.geeksforgeeks.org/wp-content/uploads/20190531135120/beep.mp3" preload="auto" loop></audio>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -236,7 +239,6 @@
         let systemActivated = false;
         let alarmPlaying = false;
 
-        // التحقق من تسجيل الدخول
         setPersistence(auth, browserLocalPersistence).then(() => {
             onAuthStateChanged(auth, (user) => {
                 if (user) { 
@@ -249,26 +251,27 @@
 
         window.logout = () => signOut(auth).then(() => window.location.href = 'login.html');
 
-        // دالة تفعيل النظام (يجب أن يستدعيها المستخدم)
+        // وظيفة تفعيل النظام والصوت
         window.activateSystem = () => {
             const audio = document.getElementById('alertSound');
-            // تشغيل صامت للحظة لفتح صلاحية الصوت في المتصفح
+            
+            // محاولة تشغيل الصوت للحظة لفك الحظر من المتصفح
             audio.play().then(() => {
                 audio.pause();
                 audio.currentTime = 0;
                 document.getElementById('soundOverlay').style.display = 'none';
                 systemActivated = true;
-                // التحقق مرة أخرى إذا كان هناك طلبات معلقة
+                // التحقق الفوري بعد التفعيل
                 checkAlarmStatus(); 
             }).catch((err) => {
-                console.error("Audio error:", err);
+                console.error("خطأ في تشغيل الصوت:", err);
                 document.getElementById('soundOverlay').style.display = 'none';
-                alert("لم نتمكن من تفعيل الصوت. يرجى التأكد من إعدادات المتصفح.");
+                // حتى لو فشل الصوت، اسمح بدخول النظام
                 systemActivated = true;
+                alert("لم يتم تشغيل الصوت لأن الرابط قد يكون محظوراً أو بسبب إعدادات المتصفح. سيتم إخفاء النافذة.");
             });
         };
 
-        // التحكم في الصوت
         const toggleAlarm = (shouldPlay) => {
             const audio = document.getElementById('alertSound');
             const banner = document.getElementById('alarmBanner');
@@ -276,7 +279,7 @@
             if(shouldPlay) {
                 banner.style.display = 'block';
                 if(!alarmPlaying && systemActivated) {
-                    audio.play().catch(e => console.log("Waiting for user interaction..."));
+                    audio.play().catch(e => console.log("بانتظار تفاعل المستخدم لتشغيل الصوت..."));
                     alarmPlaying = true;
                 }
             } else {
@@ -294,9 +297,10 @@
             if(btn) btn.classList.add('active');
         };
 
-        // --- مراقبة الطلبات (Real-time Listener) ---
+        // متغير لتخزين حالة وجود طلبات
         let pendingOrdersCount = 0;
 
+        // مراقبة الطلبات
         onSnapshot(query(collection(db, "orders"), orderBy("date", "desc")), (snap) => {
             const dashTable = document.getElementById('dashOrdersBody');
             const activeTable = document.getElementById('activeOrdersBody');
@@ -316,13 +320,11 @@
                 if(o.status === 'قيد المراجعة') hasPending = true;
 
                 if (o.status === 'تم التوصيل') {
-                    // حساب المبيعات
                     let priceVal = parseFloat(String(o.totalPrice).replace(/[^0-9.]/g,''));
                     if(!isNaN(priceVal)) totalSales += priceVal;
 
                     archiveTable.innerHTML += `<tr><td>${dateStr}</td><td>${o.customerName}</td><td>${o.totalPrice}</td><td><span class="status-badge bg-green">تم التوصيل</span></td><td><button class="action-btn btn-view" onclick="viewOrder('${orderData}')"><i class="fa-solid fa-eye"></i></button></td></tr>`;
                 } else {
-                    // الطلبات الجارية
                     activeTable.innerHTML += `<tr style="${o.status === 'قيد المراجعة' ? 'background:#fff3cd;' : ''}">
                         <td>${dateStr}</td>
                         <td>${o.customerName}</td>
@@ -340,19 +342,16 @@
                         <td><button class="action-btn btn-delete" onclick="deleteOrder('${d.id}')"><i class="fa-solid fa-trash"></i></button></td>
                     </tr>`;
 
-                    // جدول لوحة التحكم المختصر
                     if(dashTable.rows.length < 6) {
                         dashTable.innerHTML += `<tr><td>${o.customerName}</td><td>${o.totalPrice}</td><td><span class="status-badge ${o.status=='قيد المراجعة'?'bg-orange':'bg-blue'}">${o.status}</span></td></tr>`;
                     }
                 }
             });
 
-            // تحديث الإحصائيات
             document.getElementById('totalSales').innerText = totalSales.toLocaleString() + " ج.م";
             document.getElementById('totalOrders').innerText = snap.size;
 
-            // منطق التنبيه
-            pendingOrdersCount = hasPending ? 1 : 0; // فقط علم إذا كان موجود
+            pendingOrdersCount = hasPending ? 1 : 0;
             checkAlarmStatus();
         });
 
@@ -364,11 +363,8 @@
             }
         }
 
-        // --- وظائف الطلبات ---
         window.acceptOrder = async (id) => {
-            // تحويل الحالة وإيقاف الجرس لهذا الطلب
             await updateDoc(doc(db, "orders", id), { status: 'جاري التحضير' });
-            // الجرس سيتوقف تلقائياً عبر onSnapshot إذا لم يعد هناك طلبات "قيد المراجعة"
         };
 
         window.updateStatus = async (id, val) => {
@@ -404,7 +400,7 @@
             document.getElementById('orderDetailModal').style.display = 'flex';
         };
 
-        // --- المنتجات ---
+        // --- المنتجات والأقسام والدردشة ---
         onSnapshot(collection(db, "products"), (snap) => {
             const tbody = document.getElementById('productsTableBody');
             tbody.innerHTML = ''; 
@@ -450,11 +446,7 @@
                 if(id) await updateDoc(doc(db, "products", id), data);
                 else await addDoc(collection(db, "products"), data);
                 closeProductModal();
-                alert('تم الحفظ بنجاح');
-            } catch(err) {
-                console.error(err);
-                alert('حدث خطأ أثناء الحفظ');
-            }
+            } catch(err) { console.error(err); }
         };
 
         window.editProduct = (pStr) => {
@@ -474,7 +466,6 @@
 
         window.deleteProduct = async (id) => { if(confirm('حذف المنتج؟')) await deleteDoc(doc(db, "products", id)); };
 
-        // --- الأقسام ---
         let allCategories = [];
         onSnapshot(collection(db, "categories"), (snap) => {
             allCategories = snap.docs.map(d => ({id:d.id, ...d.data()}));
@@ -502,30 +493,16 @@
             if(cat && cat.subs) cat.subs.forEach(s => subSel.innerHTML += `<option value="${s}">${s}</option>`);
         };
 
-        window.addNewCat = async () => { 
-            const v = document.getElementById('newCatInput').value; 
-            if(v) await addDoc(collection(db, "categories"), {name: v, subs: []}); 
-            document.getElementById('newCatInput').value = ''; 
-        };
+        window.addNewCat = async () => { const v = document.getElementById('newCatInput').value; if(v) await addDoc(collection(db, "categories"), {name: v, subs: []}); document.getElementById('newCatInput').value = ''; };
         window.delCat = async (id) => { if(confirm('حذف القسم؟')) await deleteDoc(doc(db, "categories", id)); };
-        window.addSub = async (id) => { 
-            const inp = document.getElementById('sub_'+id);
-            if(inp.value) await updateDoc(doc(db, "categories", id), {subs: arrayUnion(inp.value)}); 
-            inp.value = ''; 
-        };
+        window.addSub = async (id) => { const inp = document.getElementById('sub_'+id); if(inp.value) await updateDoc(doc(db, "categories", id), {subs: arrayUnion(inp.value)}); inp.value = ''; };
         window.remSub = async (id, v) => await updateDoc(doc(db, "categories", id), {subs: arrayRemove(v)});
 
-        // --- المحادثات ---
         let activeChatId = null;
         onSnapshot(collection(db, "chats"), (snap) => {
             const list = document.getElementById('chatUsersList');
             const uniqueUsers = {};
-            snap.forEach(d => { 
-                const chat = d.data(); 
-                if(chat.chatId) {
-                    uniqueUsers[chat.chatId] = { name: chat.customerName, id: chat.chatId, last: chat.text }; 
-                }
-            });
+            snap.forEach(d => { const chat = d.data(); if(chat.chatId) uniqueUsers[chat.chatId] = { name: chat.customerName, id: chat.chatId, last: chat.text }; });
             list.innerHTML = '';
             Object.values(uniqueUsers).forEach(u => {
                 list.innerHTML += `<div onclick="loadChat('${u.id}')" style="padding:15px; border-bottom:1px solid #333; cursor:pointer; background:${activeChatId==u.id?'#2a3942':''}">
@@ -538,12 +515,9 @@
         window.loadChat = (id) => {
             activeChatId = id;
             document.querySelectorAll('#chatUsersList div').forEach(d => d.style.background = '');
-            // إعادة رسم القائمة لتحديث التحديد
-            
             onSnapshot(query(collection(db, "chats"), where("chatId", "==", id)), (snap) => {
                 const area = document.getElementById('chatMessagesArea');
-                let msgs = []; 
-                snap.forEach(d => msgs.push(d.data()));
+                let msgs = []; snap.forEach(d => msgs.push(d.data()));
                 msgs.sort((a,b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
                 area.innerHTML = msgs.map(m => `<div class="bubble ${m.sender=='admin'?'msg-out':'msg-in'}">${m.text}</div>`).join('');
                 area.scrollTop = area.scrollHeight;
@@ -553,16 +527,9 @@
         window.sendAdminMsg = async () => {
             const inp = document.getElementById('adminChatInput');
             if(!inp.value || !activeChatId) return;
-            await addDoc(collection(db, "chats"), { 
-                chatId: activeChatId, 
-                sender: 'admin', 
-                text: inp.value, 
-                timestamp: serverTimestamp(),
-                customerName: 'Admin' // لضمان الظهور
-            });
+            await addDoc(collection(db, "chats"), { chatId: activeChatId, sender: 'admin', text: inp.value, timestamp: serverTimestamp(), customerName: 'Admin' });
             inp.value = '';
         };
-
     </script>
 </body>
 </html>
